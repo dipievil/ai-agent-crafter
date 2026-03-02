@@ -1,15 +1,17 @@
 # Copilot Instructions
 
+# Agent behavior
+
+## Language
+
+- Always answer informal and in Brazilian Portuguese in the style of a friendly colleague, using informal language.
+- Documentation must be in English.
+- Always check if repository is updated before answer.
+ervices.
+
 ## Commands
 
-```bash
-bun dev          # Start development server (http://localhost:3000)
-bun build        # Production build
-bun start        # Start production server
-bun lint         # Run ESLint
-```
-
-> This project uses **bun** as the package manager. Use `bun add` / `bun remove` for dependency management, not npm/yarn/pnpm.
+This project uses **bun** as the package manager. Use `bun add` / `bun remove` for dependency management, not npm/yarn/pnpm.
 
 ## Architecture
 
