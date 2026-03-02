@@ -1,7 +1,17 @@
 {
   "HomePage": {
-    "title": "Gerador de Prompts",
-    "roleLabel": "Papel/Persona",
-    "downloadBtn": "Descarregar Prompt"
+    "skipToContent": "Pular para conteúdo principal",
+    "title": "Bem-vindo ao AI Agent Crafter",
+    "subtitle": "Esta ferramenta ajuda a montar as instruções para seus agentes de IA. Siga as instruções e ao final faça o download do seu arquivo.",
+    "phase1Title": "Fase 1",
+    "phase1Description": "Selecione o tipo de arquivo que será criado",
+    "fileTypeLabel": "Tipo de arquivo",
+    "startButton": "Iniciar",
+    "options": {
+      "agentInstructions": "Instruções de agente",
+      "specificInstructions": "Instruções específicas",
+      "prompts": "Prompts",
+      "skill": "Skill"
+    }
   }
 }
