@@ -105,6 +105,69 @@
     },
     "padrões": {
       "description": "Arquivo de instruções padrão para agentes de IA (AGENTS.md, SKILLS.md, etc), contendo diretrizes e regras para o comportamento e interações dos agentes."
+    },
+    "standards": {
+      "description": "Arquivo de instruções padrão para agentes de IA (AGENTS.md, SKILLS.md, etc), contendo diretrizes e regras para o comportamento e interações dos agentes."
+    }
+  },
+  "templates": {
+    "github-copilot": {
+      "specific-instructions": {
+        "header": {
+          "description": {
+            "label": "Descrição",
+            "hint": "Uma descrição curta do projeto usada no template de instruções."
+          },
+          "applyto": {
+            "label": "Aplicar em",
+            "hint": "Descrição curta do escopo de aplicação das instruções."
+          }
+        },
+        "body": {
+          "maininstructions": {
+            "label": "Instruções principais",
+            "hint": "Instruções principais do projeto."
+          },
+          "repositoryname": {
+            "label": "Nome do repositório",
+            "hint": "Nome do repositório onde as instruções serão usadas."
+          }
+        }
+      },
+      "agent-instructions": {
+        "header": {
+          "name": {
+            "label": "Nome",
+            "hint": "Nome do agente"
+          },
+          "description": {
+            "label": "Descrição",
+            "hint": "Descrição curta do agente"
+          },
+          "argument-hint": {
+            "label": "Dica de argumento",
+            "hint": "Entradas esperadas por este agente"
+          },
+          "tools": {
+            "label": "Ferramentas",
+            "hint": "Especifique as ferramentas permitidas"
+          },
+          "mcp-servers": {
+            "label": "Servidores MCP",
+            "hint": "Servidores MCP acessíveis por este agente"
+          }
+        },
+        "body": {
+          "role": {
+            "label": "Função",
+            "hint": "Descreva a função do agente"
+          },
+          "repository-name": {
+            "label": "Nome do repositório",
+            "hint": "Nome do repositório"
+          }
+        }
+      }
     }
   }
 }

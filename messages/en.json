@@ -104,5 +104,65 @@
     "standards": {
       "description": "Standard instructions file for AI agents (AGENTS.md, SKILLS.md, etc), containing guidelines and rules for agent behavior and interactions."
     }
+  },
+  "templates": {
+    "github-copilot": {
+      "specific-instructions": {
+        "header": {
+          "description": {
+            "label": "Description",
+            "hint": "A short description of the project that will be used on the instructions template."
+          },
+          "applyto": {
+            "label": "Apply to",
+            "hint": "A short description of what the instructions apply to."
+          }
+        },
+        "body": {
+          "maininstructions": {
+            "label": "Main instructions",
+            "hint": "The main instructions for the project."
+          },
+          "repositoryname": {
+            "label": "Repository name",
+            "hint": "The name of the repository where the instructions will be used."
+          }
+        }
+      },
+      "agent-instructions": {
+        "header": {
+          "name": {
+            "label": "Name",
+            "hint": "Name of the agent"
+          },
+          "description": {
+            "label": "Description",
+            "hint": "A short description of the agent"
+          },
+          "argument-hint": {
+            "label": "Argument hint",
+            "hint": "The inputs this agent expects"
+          },
+          "tools": {
+            "label": "Tools",
+            "hint": "Specify tools this agent can use"
+          },
+          "mcp-servers": {
+            "label": "MCP servers",
+            "hint": "MCP servers this agent can access"
+          }
+        },
+        "body": {
+          "role": {
+            "label": "Role",
+            "hint": "Describe the role of the agent"
+          },
+          "repository-name": {
+            "label": "Repository name",
+            "hint": "Name of the repository"
+          }
+        }
+      }
+    }
   }
 }
