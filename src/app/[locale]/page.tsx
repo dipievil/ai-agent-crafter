@@ -1,9 +1,24 @@
 import { useTranslations } from "next-intl";
+import { FileTypeOption } from "../components/wizard.types";
+import {
+  clearSelections,
+  persistSelections,
+  readStoredSelections
+} from "../components/wizard.storage";
 
-import FileTypeStep from "../components/file-type-step";
+import StepsWizard from "../components/steps-wizard";
 
 export default function Home() {
   const t = useTranslations("HomePage");
+
+  const fileOptions : FileTypeOption[] = [
+    { value: "agent-instructions", label: t("options.agentInstructions") },
+    { value: "specific-instructions", label: t("options.specificInstructions") },    
+    { value: "prompts", label: t("options.prompts") },
+    { value: "skills", label: t("options.skills") }
+  ];
+
+  clearSelections();
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -19,28 +34,16 @@ export default function Home() {
         tabIndex={-1}
         className="mx-auto flex min-h-screen w-full max-w-4xl flex-col items-center justify-center px-4 py-10 text-center sm:px-6"
       >
-        <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+        <h1 className="text-balance text-shadow-sm text-3xl font-bold tracking-tight sm:text-4xl">
           {t("title")}
         </h1>
         <p className="mt-4 max-w-2xl text-pretty text-base text-foreground/80 sm:text-lg">
           {t("subtitle")}
         </p>
 
-        <div className="mt-8 w-full max-w-md">
-          <FileTypeStep
-            phaseTitle={t("phase1Title")}
-            phaseDescription={t("phase1Description")}
-            selectLabel={t("fileTypeLabel")}
-            startLabel={t("startButton")}
-            options={[
-              { value: "agent-instructions", label: t("options.agentInstructions") },
-              {
-                value: "specific-instructions",
-                label: t("options.specificInstructions")
-              },
-              { value: "prompts", label: t("options.prompts") },
-              { value: "skill", label: t("options.skill") }
-            ]}
+        <div className="mt-8 w-full max-w-2xl items-center">
+          <StepsWizard
+            fileOptions={fileOptions}
           />
         </div>
       </main>
