@@ -11,13 +11,22 @@ This is a simple Next.js 16 application that helps user to generate AI agents in
 - Always check if repository is updated before answer.
 ervices.
 
-## Basic Instructions
- - For new steps, create a new file under `src/app/components/` with the component logic and a corresponding `*.types.ts` file for TypeScript types.
- - Use `useTranslations` hook for all user-facing text, with keys defined in `messages/en.json`.
- - Persist user selections in `localStorage` using the API defined in `wizard.storage.ts`.
- - For the summary step, read the selected file type and tool from storage and display a summary of the choices, including the tool description and a link to its official site.
- - Ensure all components are properly typed with TypeScript and follow the existing project conventions for styling and structure.
+## Key points
+- The summary step, read the selected file type and tool from storage and display a summary of the choices, including the tool description and a link to its official site.
+
+## Development Instructions
+ - For new steps, create a new file under `src/app/components/` with the component logic and a corresponding `*.types.ts` file for TypeScript types. 
+ - Each step will add a new entry on the SummarySection, so ensure to update the summary component to include the new step's data.
+- Ensure all components are properly typed with TypeScript and follow the existing project conventions for styling and structure.
  - Use Tailwind CSS for styling, following the existing design patterns in the project.
+ - Avoid DRY violations by reusing existing components and utilities where possible, such as the `NavbarWizard` for navigation and the `SummarySection` for displaying the summary of selections.
+- For component common types, define them in a shared types file (e.g., `src/types/wizard/common.ts`) and import them across components to maintain consistency.
+
+ ### Current resources
+ - Use the existing `src/data/ai-tools.json` as the source of truth for available AI tools and file types. For any new tool or file type, add it to this JSON file with the required properties (`id`, `name`, `description`, `url`).
+ - Use `useTranslations` hook for all user-facing text, with keys defined in `messages/en.json`.
+ - Persist user selections in `localStorage` using the API defined in `src/features/wizard/infra/wizard.storage.service.ts`.
+  
 
 ## Commands
 
