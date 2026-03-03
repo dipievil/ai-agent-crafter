@@ -1,17 +1,52 @@
 {
-  "HomePage": {
-    "skipToContent": "Pular para conteúdo principal",
+  "HomePage":{
     "title": "Bem-vindo ao AI Agent Crafter",
     "subtitle": "Esta ferramenta ajuda a montar as instruções para seus agentes de IA. Siga as instruções e ao final faça o download do seu arquivo.",
-    "phase1Title": "Fase 1",
-    "phase1Description": "Selecione o tipo de arquivo que será criado",
-    "fileTypeLabel": "Tipo de arquivo",
-    "startButton": "Iniciar",
+    "skipToContent": "Pular para conteúdo principal",
     "options": {
       "agentInstructions": "Instruções de agente",
       "specificInstructions": "Instruções específicas",
       "prompts": "Prompts",
-      "skill": "Skill"
+      "skills": "Skills"
+    },
+    "creatingFor": "Criando um arquivo para:",
+    "creatingAType": "Criando um arquivo do tipo:"
+  },
+  "NavbarWizard":{
+    "backButton": "Voltar",
+    "startButton": "Iniciar",
+    "cancelButton": "Voltar",
+    "continueButton": "Continuar"
+  },
+  "Step1": {        
+    "phaseTitle": "Fase 1",
+    "phaseDescription": "Selecione o tipo de arquivo que será criado",
+    "fileTypeLabel": "Tipo de arquivo"
+  },
+  "Step2":{
+    "phaseTitle": "Fase 2",
+    "phaseDescription": "Em qual ferramenta você usará seu agente?",
+    "toolLabel": "Ferramenta",
+    "officialSite": "Site oficial"
+  },
+  "aiApps": {
+    "githubCopilot": {
+      "description": "O GitHub Copilot é um assistente de código com IA que sugere trechos e autocompleta linhas enquanto você programa, ajudando a acelerar o desenvolvimento."
+    },
+    "gemini": {
+      "description": "O Gemini é um modelo de IA da Google DeepMind para conversas, criação de conteúdo e apoio em tarefas de raciocínio e produtividade."
+    },
+    "chatGPT": {
+      "description": "O ChatGPT é um assistente conversacional da OpenAI que ajuda em escrita, ideação, explicações técnicas e automações baseadas em linguagem natural."
+    },
+    "codex": {
+      "description": "O Codex é um modelo da OpenAI focado em geração e entendimento de código, útil para criar, revisar e transformar trechos em várias linguagens."
+    },
+    "agentZero": {
+      "description": "O Agent Zero é um framework para criação e orquestração de agentes autônomos, permitindo montar fluxos com ferramentas e execução de tarefas."
+    },
+    "warp": {
+      "description": "O Warp é um terminal moderno com recursos de produtividade e suporte de IA para agilizar comandos, scripts e fluxos no dia a dia de desenvolvimento."
     }
   }
 }
