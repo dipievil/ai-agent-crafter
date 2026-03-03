@@ -1,7 +1,7 @@
 {
   "github-copilot": {
     "name": "GitHub Copilot",
-    "description": "{locale.aiApps.githubCopilot.description}",
+    "description": "{githubCopilot.description}",
     "url": "https://copilot.github.com/",
     "files": {
       "specific-instructions": [
@@ -64,7 +64,7 @@
   },
   "gemini": {
     "name": "Gemini",
-    "description": "{locale.aiApps.gemini.description}",
+    "description": "{gemini.description}",
     "url": "https://gemini.google.com/",
     "files": {
       "specific-instructions": {
@@ -77,7 +77,7 @@
   },
   "chat-gpt": {
     "name": "ChatGPT",
-    "description": "{locale.aiApps.chatGPT.description}",
+    "description": "{chatGPT.description}",
     "url": "https://openai.com/chatgpt",
     "files": {
       "agent-instructions": {
@@ -90,7 +90,7 @@
   },
   "codex": {
     "name": "Codex",
-    "description": "{locale.aiApps.codex.description}",
+    "description": "{codex.description}",
     "url": "https://openai.com/blog/openai-codex/",
     "files": {
       "specific-instructions": {
@@ -103,12 +103,12 @@
   },
   "agent-zero": {
     "name": "Agent Zero",
-    "description": "{locale.aiApps.agentZero.description}",
+    "description": "{agentZero.description}",
     "url": "https://agentzero.dev/"
   },
   "warp": {
     "name": "Warp",
-    "description": "{locale.aiApps.warp.description}",
+    "description": "{warp.description}",
     "url": "https://www.warp.dev/"
   }
 }

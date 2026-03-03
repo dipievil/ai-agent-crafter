@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import type { SummarySectionProps } from "./summary.types";
+import { fileTypes } from "../../utils/constants";
 import { useTranslations } from "next-intl";
 
 export default function SummarySection({
@@ -18,18 +19,21 @@ export default function SummarySection({
   
   return (
     <>
-      {selectedType && currentStep === 2 && (
+      {selectedType && currentStep > 1 && (
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingAType")}</p>
-          <p className="mt-1 text-left text-3xl font-semibold text-foreground">{t(`options.${selectedType}`)}</p>
+          <p className="mt-1 text-left text-2xl font-semibold text-foreground">{t(`options.${fileTypes[selectedType]}`)}</p>
         </>
       )}
-      {selectedToolId != undefined && currentStep === 3 && (
+      {selectedToolId != undefined && currentStep > 2 && (
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingFor")}</p>
           <p className="mt-1 text-left text-3xl font-semibold text-foreground">{selectedTool?.name}</p>
         </>
-      )}    
+      )}
+      {selectedType &&(
+        <hr className="my-8 h-px border-t-0 bg-gray-300" />
+      )}
     </>
   );
 }

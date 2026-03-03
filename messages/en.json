@@ -12,26 +12,26 @@
     "creatingFor": "Creating a file for:",
     "creatingAType": "Creating a file of type:"
   },
+  "NavbarWizard":{
+    "backButton": "Back",
+    "startButton": "Start",
+    "cancelButton": "Cancel",
+    "continueButton": "Continue"  
+  },
   "Step1": {
     "phaseTitle": "Step 1",
     "phaseDescription": "Select the file type that will be created",
-    "fileTypeLabel": "File type",
-    "startButton": "Start"
+    "fileTypeLabel": "File type"
   },
   "Step2":{
     "phaseTitle": "Step 2",
     "phaseDescription": "Which tool will you use with your agent?",
     "toolLabel": "Tool",
-    "cancelButton": "Back",
-    "continueButton": "Continue",
     "officialSite": "Official site"
   },  
   "aiApps": {
     "githubCopilot": {
       "description": "GitHub Copilot is an AI coding assistant developed by GitHub and OpenAI that suggests code and autocompletions while you build software."
-    },
-    "agentZero": {
-      "description": "Agent Zero is an AI agent framework that helps developers build and orchestrate autonomous agents for different workflows."
     },
     "gemini": {
       "description": "Gemini is a language model by Google DeepMind designed for conversational tasks, content generation, and reasoning assistance."
@@ -41,6 +41,9 @@
     },
     "codex": {
       "description": "Codex is an OpenAI model specialized in code understanding and generation across multiple programming languages."
+    },
+    "agentZero": {
+      "description": "Agent Zero is an AI agent framework that helps developers build and orchestrate autonomous agents for different workflows."
     },
     "warp": {
       "description": "Warp is a modern terminal focused on developer productivity, including AI-assisted command workflows."

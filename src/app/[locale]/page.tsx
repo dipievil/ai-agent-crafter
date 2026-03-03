@@ -1,9 +1,8 @@
 import { useTranslations } from "next-intl";
 import { FileTypeOption } from "../components/wizard.types";
+import { fileTypes } from "../../utils/constants";
 import {
-  clearSelections,
-  persistSelections,
-  readStoredSelections
+  clearSelections
 } from "../components/wizard.storage";
 
 import StepsWizard from "../components/steps-wizard";
@@ -11,12 +10,10 @@ import StepsWizard from "../components/steps-wizard";
 export default function Home() {
   const t = useTranslations("HomePage");
 
-  const fileOptions : FileTypeOption[] = [
-    { value: "agent-instructions", label: t("options.agentInstructions") },
-    { value: "specific-instructions", label: t("options.specificInstructions") },    
-    { value: "prompts", label: t("options.prompts") },
-    { value: "skills", label: t("options.skills") }
-  ];
+  const fileOptions: FileTypeOption[] = Object.entries(fileTypes).map(([value, label]) => ({
+    value: value as FileTypeOption["value"],
+    label: t(`options.${label}`)
+  }));
 
   clearSelections();
 

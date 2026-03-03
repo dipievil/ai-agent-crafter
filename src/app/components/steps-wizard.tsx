@@ -71,14 +71,14 @@ export default function StepsWizard({
   switch (step) {
     default: case 1:
       return (
-        <section className="w-full max-w-2xl items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
+        <section className="w-full max-w-xl items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
           <FileTypeStep
             selectedType={selectedType}
             fileOptions={options}
             onTypeChange={setSelectedType}
             />      
           <NavbarWizard 
-            currentStep={2} 
+            currentStep={1} 
             selectedType={selectedTool?.id as FileType} 
             onForward={() => setStep(2)} 
             onBack={handleBackToPhaseOne} />
@@ -86,7 +86,7 @@ export default function StepsWizard({
       );
     case 2:
       return (
-        <section className="w-full max-w-lg items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
+        <section className="w-full max-w-xl items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
           <SummarySection
             currentStep={2}
             aiTools={aiTools}

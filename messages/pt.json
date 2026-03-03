@@ -15,7 +15,7 @@
   "NavbarWizard":{
     "backButton": "Voltar",
     "startButton": "Iniciar",
-    "cancelButton": "Voltar",
+    "cancelButton": "Cancelar",
     "continueButton": "Continuar"
   },
   "Step1": {        

@@ -1,14 +1,5 @@
-import { useMemo } from "react";
-
 import type { FileType, FileTypeStepProps } from "./wizard.types";
 import { useTranslations } from "next-intl";
-
-const emojiByType: Record<FileType, string> = {
-  "agent-instructions": "🤖",
-  "specific-instructions": "📓",
-  prompts: "📜",
-  skills: "⚒️"
-};
 
 export default function FileTypeStep({
   selectedType,
