@@ -9,7 +9,38 @@
           "name": "Project Instructions",
           "template-file": "templates/instructions/copilot-instructions.md",
           "output-file": ["copilot.instructions.md"],
-          "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions."
+          "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions.",
+          "template": {
+            "header" :[
+              {
+                "name": "description",
+                "hint": "A short description of the project that will be used on the instructions template.",
+                "format": "short"
+              },
+              {
+                "name": "applyTo",
+                "hint": "A short description of what the instructions apply to.",
+                "format": "short"
+              }
+            ],
+            "body": [
+              {
+                "name": "mainInstructions",
+                "sectionName": "Main instructions",
+                "type": "mainSection",
+                "format": "long",
+                "description": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
+                "required": true
+              },
+              {
+                "name": "repositoryName",
+                "sectionName": "Repository Name",
+                "type": "mainSection",
+                "variable": "{repository_name}",
+                "description": "The name of the repository where the instructions will be used. This variable can be used on the instructions template to customize the instructions based on the repository name."
+              }
+            ]
+          }
         },
         {
           "name": "Context Instructions",
@@ -38,7 +69,49 @@
         ],
         "template-file": "templates/agents/copilot-agent.md",
         "output-file": ["context.agent.md"],
-        "installation": "Create a subfolder on repository called \".github/agents\" and put the agent file."
+        "installation": "Create a subfolder on repository called \".github/agents\" and put the agent file.",
+        "template": {
+          "header" :[
+            {
+              "name": "name",              
+              "format": "short"
+            },
+            {
+              "name": "description",
+              "hint": "A short description of the agent that will be used on the agent template.",
+              "format": "short"
+            },
+            {
+              "name": "argument-hint:",
+              "hint": "The inputs this agent expects, e.g., \"a task to implement\" or \"a question to answer\".",
+              "format": "comma-list"
+            },
+            {
+              "name": "tools",
+              "hint": "specify the tools this agent can use. If not set, all enabled tools are allowed.",
+              "format": "short",
+              "required": false
+            },
+            {
+              "name": "mcp-servers",
+              "hint": "The MCPs online or local that only this agent will have access to. Must be in yml format.",
+              "format": "long"
+            }
+          ],
+          "body": [
+            {
+              "name": "role",
+              "type": "mainSection",
+              "hint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
+              "format": "long"
+            },
+            {
+              "name": "Repository Name",
+              "variable": "{repository_name}",
+              "description": "The name of the repository where the agent will be used. This variable can be used on the agent template to customize the agent based on the repository name."
+            }
+          ]
+        }
       },
       "skills": {
         "name": "Skill",
@@ -66,9 +139,9 @@
     "name": "Standards",
     "description": "{standards.description}",
     "files": {
-      "agent-instructions": {
+      "specific-instructions": {
         "name": "Agent",
-        "template-file": "templates/agents/agent.md",
+        "template-file": "templates/agents/standard-agent.md",
         "output-file": ["AGENTS.md"],
         "installation": "Check your tools documentation for installation instructions. Mostly is just put on the project root."
       },
@@ -122,7 +195,15 @@
   "agent-zero": {
     "name": "Agent Zero",
     "description": "{agentZero.description}",
-    "url": "https://agentzero.dev/"
+    "url": "https://www.agent-zero.ai/",
+    "files": {
+      "agent-instructions": {
+        "name": "Agent",
+        "template-file": "templates/agents/a0-agent.md",
+        "output-file": ["_context.md"],
+        "installation": "On your Agent Zero instance, create a folder with your agent name and paste this file inside."
+      }
+    }
   },
   "warp": {
     "name": "Warp",
