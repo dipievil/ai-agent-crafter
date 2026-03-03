@@ -1,51 +1,90 @@
-# Ai Agent Crafter
+# AI Agent Crafter
 
-A web tool to help users to generate AI Agent instruction files for several agents including templates and UI guided form.
+AI Agent Crafter is a Next.js application that guides users through a simple wizard to select:
 
-## How This App Work
+- the type of AI file to create (agent instructions, specific instructions, prompts, or skills), and
+- the AI tool target (for example GitHub Copilot, Gemini, ChatGPT, Codex, and others).
 
-User will access the app on the web. With a single form based workflow he will answer some basic answers, and then the system will generate a complete md file for the agent instructions, prompts and skills.
+The current implementation focuses on the guided selection flow, localized UI, and persisted user choices.
 
-### Detailed workflow
+## Current Status
 
-1. Access the app
-2. Choose a agent type from a dropdownlist (Copilot, AGENTS.md, Agent-Zero, etc)
-3. Choose a file type from a list: main instruction, specific instructions, prompts, skill
-4. Fill up all content specific for this kind of agent and file type like name, overview, response style, etc
-5. Click on Generate button and the file will be avaiable to download
+The app currently provides a **2-step wizard**:
 
-## How to run locally
+1. Select file type.
+2. Select AI tool.
 
-Start a development server [http://localhost:3000](http://localhost:3000).
+Current behavior:
+
+- File type options are built from constants and localized labels.
+- AI tool options are loaded from `src/data/ai-tools.json`.
+- Tool descriptions support i18n placeholder resolution.
+- Selections are persisted in `localStorage`.
+- The back action resets the flow and clears persisted data.
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19
+- TypeScript (strict mode)
+- Tailwind CSS v4
+- next-intl (localization)
+- Bun (package manager)
+
+## Local Development
+
+Install dependencies:
 
 ```bash
-bun dev
+bun install
 ```
 
-To run a production build
+Run development server:
 
 ```bash
-bun build
+bun run dev
 ```
 
-Start production server
+Open [http://localhost:3000](http://localhost:3000).
+
+Build for production:
 
 ```bash
-bun start
+bun run build
 ```
 
-Run ESLint
+Start production server:
 
 ```bash
-bun lint
+bun run start
 ```
 
-## Development detailed information
+Run lint:
 
-Check the docs on [docs/development.md](docs/development.md)
+```bash
+bun run lint
+```
 
-## Stack
+## Internationalization
 
-- Typescript
-- Framework Next.js
-- Tailwind CSS for styling
+- Supported locales: `pt` (default) and `en`.
+- Locale routing and middleware are configured with `next-intl`.
+- Message files:
+	- `messages/pt.json`
+	- `messages/en.json`
+
+## Project Structure
+
+- `src/app/[locale]/page.tsx`: localized home page composition.
+- `src/app/components/steps-wizard.tsx`: client-side wizard orchestrator.
+- `src/app/components/file-type-step.tsx`: step 1 UI.
+- `src/app/components/ai-type-step.tsx`: step 2 UI.
+- `src/app/components/navbar-wizard.tsx`: wizard navigation buttons.
+- `src/app/components/summary.tsx`: summary section between steps.
+- `src/app/components/wizard.storage.ts`: localStorage persistence contract.
+- `src/data/ai-tools.json`: AI tools and file metadata source.
+- `src/templates/`: markdown templates by category.
+
+## Documentation
+
+For architecture and implementation details, see [docs/development.md](docs/development.md).

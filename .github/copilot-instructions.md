@@ -1,5 +1,7 @@
 # Copilot Instructions
 
+This is a simple Next.js 16 application that helps user to generate AI agents instructions and includes a multi-step wizard interface for selecting file types and AI tools, with state persistence and i18n support. It uses React Server Components, Tailwind CSS, and TypeScript.
+
 # Agent behavior
 
 ## Language
@@ -8,6 +10,14 @@
 - Documentation must be in English.
 - Always check if repository is updated before answer.
 ervices.
+
+## Basic Instructions
+ - For new steps, create a new file under `src/app/components/` with the component logic and a corresponding `*.types.ts` file for TypeScript types.
+ - Use `useTranslations` hook for all user-facing text, with keys defined in `messages/en.json`.
+ - Persist user selections in `localStorage` using the API defined in `wizard.storage.ts`.
+ - For the summary step, read the selected file type and tool from storage and display a summary of the choices, including the tool description and a link to its official site.
+ - Ensure all components are properly typed with TypeScript and follow the existing project conventions for styling and structure.
+ - Use Tailwind CSS for styling, following the existing design patterns in the project.
 
 ## Commands
 
