@@ -4,6 +4,7 @@ export type StoredSelections = {
 	fileType: FileType;
 	toolId: string;
 	fileName: string;
+	description: string;
 };
 
 export interface WizardStorageService {
@@ -11,8 +12,9 @@ export interface WizardStorageService {
 		defaultFileType: FileType,
 		defaultToolId: string,
 		defaultFileName: string,
+		defaultDescription: string,
 		aiTools: AiToolOption[]
 	): StoredSelections;
-	persistSelections(fileType: FileType, toolId: string, fileName: string): void;
+	persistSelections(fileType: FileType, toolId: string, fileName: string, description: string): void;
 	clearSelections(): void;
 }

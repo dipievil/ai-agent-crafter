@@ -15,7 +15,8 @@ export default function NavbarWizard({
     currentStep,
     selectedType,
     onForward,
-    onBack
+  onBack,
+  onCancel
 }: NavbarWizardStepProps) {
 
   const t = useTranslations("NavbarWizard");
@@ -27,10 +28,10 @@ export default function NavbarWizard({
   return (
     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
 
-      {(onBack && currentStep > 2) && (
+      {(onCancel && currentStep > 2) && (
         <button
             type="button"
-            onClick={onBack}
+            onClick={onCancel}
             className="inline-flex h-11 w-full items-center justify-center rounded-full border border-black/20 px-4 text-base font-semibold opacity-100 transition-opacity hover:opacity-80 dark:border-white/25 bg-pink-500 text-white "
           >
             {t("cancelButton")}

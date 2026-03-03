@@ -84,6 +84,33 @@
       }
     }
   },
+  "Step4": {
+    "phaseTitle": "Fase 4",
+    "phaseDescription": "Descrição",
+    "descriptionForType": "Descrição do seu {item}",
+    "entities": {
+      "agentInstructions": {
+        "name": "agente",
+        "descriptionPlaceholder": "Você é um agente especializado em...",
+        "helperText": "Descreva o que o seu agente fará. Dica: Use sempre a segunda pessoa do singular (você)."
+      },
+      "specificInstructions": {
+        "name": "arquivo de instruções",
+        "descriptionPlaceholder": "Instruções para...",
+        "helperText": "Descreva para que servem essas instruções."
+      },
+      "prompts": {
+        "name": "prompt",
+        "descriptionPlaceholder": "Use esse Prompt para...",
+        "helperText": "Descreva para que server o prompt."
+      },
+      "skills": {
+        "name": "skill",
+        "descriptionPlaceholder": "Esta skill faz...",
+        "helperText": "Descreva para que serve a skill."
+      }
+    }
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "O GitHub Copilot é um assistente de código com IA que sugere trechos e autocompleta linhas enquanto você programa, ajudando a acelerar o desenvolvimento."

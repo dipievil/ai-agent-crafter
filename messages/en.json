@@ -9,6 +9,8 @@
       "prompts": "Prompts",
       "skills": "Skills"
     },
+    "creating": "Creating",
+    "for": "for",
     "creatingFor": "Creating a file for:",
     "creatingAType": "Creating a file of type:"
   },
@@ -79,6 +81,33 @@
           "three": "Text review skill",
           "four": "Unit test skill for C#"
         }
+      }
+    }
+  },
+  "Step4": {
+    "phaseTitle": "Step 4",
+    "phaseDescription": "Description",
+    "descriptionForType": "Describe your {item}",
+    "entities": {
+      "agentInstructions": {
+        "name": "agent",
+        "descriptionPlaceholder": "You are an agent specialized in...",
+        "helperText": "Describe what your agent will do. Tip: always use second person singular (you)."
+      },
+      "specificInstructions": {
+        "name": "instructions file",
+        "descriptionPlaceholder": "Instructions for...",
+        "helperText": "Describe what your instructions file will do. Tip: always use second person singular (you)."
+      },
+      "prompts": {
+        "name": "prompt",
+        "descriptionPlaceholder": "Use this prompt for...",
+        "helperText": "Describe what your prompt will do. Tip: always use second person singular (you)."
+      },
+      "skills": {
+        "name": "skill",
+        "descriptionPlaceholder": "This skill does...",
+        "helperText": "Describe what your skill will do. Tip: always use second person singular (you)."
       }
     }
   },

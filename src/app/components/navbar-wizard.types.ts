@@ -4,5 +4,6 @@ export type NavbarWizardStepProps = {
   currentStep: number;
   selectedType: FileType;
   onForward?: () => void;
-  onBack?: () => void;    
+  onBack?: () => void;
+  onCancel?: () => void;
 }

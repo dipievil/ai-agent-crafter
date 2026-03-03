@@ -8,6 +8,7 @@ import { StepsWizardProps } from "./wizard.types";
 import AiTypeStep from "./wizard/ai-type-step";
 import FileTypeStep from "./wizard/file-type-step";
 import EntityNameStep from "./wizard/entity-name-step";
+import EntityDescriptionStep from "./wizard/entity-description-step";
 import SummarySection from "./summary-wizard";
 
 import {
@@ -46,23 +47,26 @@ export default function StepsWizard({
 
   const defaultToolId = aiTools[0]?.id ?? "";
   const defaultFileName = "";
+  const defaultDescription = "";
 
-  const storedSelections = readStoredSelections(defaultType, defaultToolId, defaultFileName, aiTools);
+  const storedSelections = readStoredSelections(defaultType, defaultToolId, defaultFileName, defaultDescription, aiTools);
 
   const [selectedType, setSelectedType] = useState<FileType>(storedSelections.fileType);
 
   const [selectedToolId, setSelectedToolId] = useState<string>(storedSelections.toolId);
   const [fileName, setFileName] = useState<string>(storedSelections.fileName);
+  const [description, setDescription] = useState<string>(storedSelections.description);
 
   useEffect(() => {
-    persistSelections(selectedType, selectedToolId, fileName);
-  }, [selectedType, selectedToolId, fileName]);
+    persistSelections(selectedType, selectedToolId, fileName, description);
+  }, [selectedType, selectedToolId, fileName, description]);
 
   function handleBackToPhaseOne() {
     clearSelections();
     setSelectedType(defaultType);
     setSelectedToolId(defaultToolId);
     setFileName(defaultFileName);
+    setDescription(defaultDescription);
     setStep(1);
   }
 
@@ -119,7 +123,32 @@ export default function StepsWizard({
             currentStep={3}
             selectedType={selectedType}
             onForward={() => setStep(4)}
-            onBack={handleBackToPhaseOne}
+            onBack={() => setStep(2)}
+            onCancel={handleBackToPhaseOne}
+          />
+        </section>
+      );
+    case 4:
+      return (
+        <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
+          <SummarySection
+            currentStep={4}
+            aiTools={aiTools}
+            selectedToolId={selectedToolId}
+            selectedType={selectedType}
+            fileName={fileName}
+          />
+          <EntityDescriptionStep
+            selectedType={selectedType}
+            description={description}
+            onDescriptionChange={setDescription}
+          />
+          <NavbarWizard
+            currentStep={4}
+            selectedType={selectedType}
+            onForward={() => setStep(4)}
+            onBack={() => setStep(3)}
+            onCancel={handleBackToPhaseOne}
           />
         </section>
       );

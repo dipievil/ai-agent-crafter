@@ -1,23 +1,10 @@
 # Development Guide
 
-## Templates folder structure
+## Templates structure
 
-The templates are structured on the folder `src/templates` as follows:
+The app will generate the templates based on the json structure for each ai tool and format the user choose.
 
-```text
-src/templates/
-├── agents/
-│   └── copilot-agent.md
-├── instructions/
-│   ├── copilot-instructions.md
-│   ├── copilot-context-instructions.md
-│   ├── chatgpt-instructions.md
-│   └── gemini-instructions.md
-├── prompts/
-│   └── copilot-prompt.md
-└── skills/
-  └── copilot-skill.md
-```
+The template node has two nodes 'header' and 'body'. Some projects has different header formart (Github Copilot) but others are markdown file formats exclusive.
 
 ## Current Step Flow Architecture
 

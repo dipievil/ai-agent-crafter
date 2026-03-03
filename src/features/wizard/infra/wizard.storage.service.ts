@@ -25,20 +25,36 @@ class LocalStorageWizardService implements WizardStorageService {
     defaultFileType: FileType,
     defaultToolId: string,
     defaultFileName: string,
+    defaultDescription: string,
     aiTools: AiToolOption[]
   ): StoredSelections {
     if (typeof window === "undefined") {
-      return { fileType: defaultFileType, toolId: defaultToolId, fileName: defaultFileName };
+      return {
+        fileType: defaultFileType,
+        toolId: defaultToolId,
+        fileName: defaultFileName,
+        description: defaultDescription
+      };
     }
 
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
 
       if (!raw) {
-        return { fileType: defaultFileType, toolId: defaultToolId, fileName: defaultFileName };
+        return {
+          fileType: defaultFileType,
+          toolId: defaultToolId,
+          fileName: defaultFileName,
+          description: defaultDescription
+        };
       }
 
-      const parsed = JSON.parse(raw) as { fileType?: unknown; toolId?: unknown; fileName?: unknown };
+      const parsed = JSON.parse(raw) as {
+        fileType?: unknown;
+        toolId?: unknown;
+        fileName?: unknown;
+        description?: unknown;
+      };
       const fileType = isFileType(parsed.fileType) ? parsed.fileType : defaultFileType;
       const toolId =
         typeof parsed.toolId === "string" &&
@@ -47,23 +63,29 @@ class LocalStorageWizardService implements WizardStorageService {
           ? parsed.toolId
           : defaultToolId;
       const fileName = typeof parsed.fileName === "string" ? parsed.fileName : defaultFileName;
+      const description = typeof parsed.description === "string" ? parsed.description : defaultDescription;
 
-      return { fileType, toolId, fileName };
+      return { fileType, toolId, fileName, description };
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
-      return { fileType: defaultFileType, toolId: defaultToolId, fileName: defaultFileName };
+      return {
+        fileType: defaultFileType,
+        toolId: defaultToolId,
+        fileName: defaultFileName,
+        description: defaultDescription
+      };
     }
   }
 
-  persistSelections(fileType: FileType, toolId: string, fileName: string): void {
+  persistSelections(fileType: FileType, toolId: string, fileName: string, description: string): void {
     if (typeof window === "undefined") {
       return;
     }
 
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName }));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName, description }));
     } catch {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName }));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName, description }));
     }
   }
 
@@ -82,13 +104,20 @@ export function readStoredSelections(
   defaultFileType: FileType,
   defaultToolId: string,
   defaultFileName: string,
+  defaultDescription: string,
   aiTools: AiToolOption[]
 ): StoredSelections {
-  return wizardStorageService.readStoredSelections(defaultFileType, defaultToolId, defaultFileName, aiTools);
+  return wizardStorageService.readStoredSelections(
+    defaultFileType,
+    defaultToolId,
+    defaultFileName,
+    defaultDescription,
+    aiTools
+  );
 }
 
-export function persistSelections(fileType: FileType, toolId: string, fileName: string): void {
-  wizardStorageService.persistSelections(fileType, toolId, fileName);
+export function persistSelections(fileType: FileType, toolId: string, fileName: string, description: string): void {
+  wizardStorageService.persistSelections(fileType, toolId, fileName, description);
 }
 
 export function clearSelections(): void {
