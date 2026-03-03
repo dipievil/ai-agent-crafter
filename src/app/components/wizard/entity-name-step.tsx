@@ -35,7 +35,7 @@ export default function EntityNameStep({
 
         <div>
           <p className="text-sm font-medium text-foreground">{t("examplesLabel")}</p>
-          <ul className="mt-1 list-inside list-disc text-sm text-foreground/80">
+          <ul className="mt-1 italic list-inside list-disc text-sm text-foreground/80">
             <li>{t(`entities.${fileTypes[selectedType]}.examples.one`)}</li>
             <li>{t(`entities.${fileTypes[selectedType]}.examples.two`)}</li>
             <li>{t(`entities.${fileTypes[selectedType]}.examples.three`)}</li>

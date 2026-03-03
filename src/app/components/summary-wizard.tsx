@@ -18,16 +18,17 @@ export default function SummarySection({
   
   return (
     <>
-      {selectedType && currentStep > 1 && (
+      {selectedType && currentStep === 1 && (
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingAType")}</p>
-          <p className="mt-1 text-left text-2xl font-semibold text-foreground">{t(`options.${fileTypes[selectedType]}`)}</p>
+          <p className="mt-1 text-left text-1xl font-semibold text-foreground">{t(`options.${fileTypes[selectedType]}`)}</p>
         </>
       )}
-      {selectedToolId != undefined && currentStep > 2 && (
+      {selectedType && selectedToolId != undefined && currentStep > 2 && (
         <>
-          <p className="text-sm text-left text-foreground/80">{t("creatingFor")}</p>
-          <p className="mt-1 text-left text-3xl font-semibold text-foreground">{selectedTool?.name}</p>
+          <p className="text-2xl text-left  text-foreground/80">
+            {t("creating")} <b>{t(`options.${fileTypes[selectedType]}`)}</b> {t("for")} <b>{selectedTool?.name}</b>
+          </p>
         </>
       )}
       {selectedType &&(

@@ -39,7 +39,7 @@ export default function AiTypeStep({
       </div>
 
       {selectedTool?.url ? (
-        <div className="mt-4 rounded-lg border border-black/10 p-4 text-left dark:border-white/15">
+        <div className="mt-4 rounded-lg border bg-gray-100 border-black/10 p-4 text-left dark:border-white/15">
           <p className="text-sm text-foreground/80">{selectedTool?.description}</p>
           <a
             className="mt-2 inline-block text-sm font-medium underline underline-offset-2"
