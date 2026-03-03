@@ -26,6 +26,7 @@ class LocalStorageWizardService implements WizardStorageService {
     defaultToolId: string,
     defaultFileName: string,
     defaultDescription: string,
+    defaultHeaderFormValues: Record<string, string | string[]>,
     aiTools: AiToolOption[]
   ): StoredSelections {
     if (typeof window === "undefined") {
@@ -33,7 +34,8 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType: defaultFileType,
         toolId: defaultToolId,
         fileName: defaultFileName,
-        description: defaultDescription
+        description: defaultDescription,
+        headerFormValues: defaultHeaderFormValues
       };
     }
 
@@ -45,7 +47,8 @@ class LocalStorageWizardService implements WizardStorageService {
           fileType: defaultFileType,
           toolId: defaultToolId,
           fileName: defaultFileName,
-          description: defaultDescription
+          description: defaultDescription,
+          headerFormValues: defaultHeaderFormValues
         };
       }
 
@@ -54,6 +57,7 @@ class LocalStorageWizardService implements WizardStorageService {
         toolId?: unknown;
         fileName?: unknown;
         description?: unknown;
+        headerFormValues?: unknown;
       };
       const fileType = isFileType(parsed.fileType) ? parsed.fileType : defaultFileType;
       const toolId =
@@ -64,29 +68,69 @@ class LocalStorageWizardService implements WizardStorageService {
           : defaultToolId;
       const fileName = typeof parsed.fileName === "string" ? parsed.fileName : defaultFileName;
       const description = typeof parsed.description === "string" ? parsed.description : defaultDescription;
+      const headerFormValues =
+        parsed.headerFormValues &&
+        typeof parsed.headerFormValues === "object" &&
+        !Array.isArray(parsed.headerFormValues)
+          ? this.normalizeHeaderFormValues(parsed.headerFormValues)
+          : defaultHeaderFormValues;
 
-      return { fileType, toolId, fileName, description };
+      return { fileType, toolId, fileName, description, headerFormValues };
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
       return {
         fileType: defaultFileType,
         toolId: defaultToolId,
         fileName: defaultFileName,
-        description: defaultDescription
+        description: defaultDescription,
+        headerFormValues: defaultHeaderFormValues
       };
     }
   }
 
-  persistSelections(fileType: FileType, toolId: string, fileName: string, description: string): void {
+  persistSelections(
+    fileType: FileType,
+    toolId: string,
+    fileName: string,
+    description: string,
+    headerFormValues: Record<string, string | string[]>
+  ): void {
     if (typeof window === "undefined") {
       return;
     }
 
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName, description }));
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ fileType, toolId, fileName, description, headerFormValues })
+      );
     } catch {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName, description }));
+      window.localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ fileType, toolId, fileName, description, headerFormValues })
+      );
     }
+  }
+
+  private normalizeHeaderFormValues(value: unknown): Record<string, string | string[]> {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return {};
+    }
+
+    const entries = Object.entries(value as Record<string, unknown>).map(([key, entryValue]) => {
+      if (typeof entryValue === "string") {
+        return [key, entryValue] as const;
+      }
+
+      if (Array.isArray(entryValue)) {
+        const validArray = entryValue.filter((item): item is string => typeof item === "string");
+        return [key, validArray] as const;
+      }
+
+      return [key, ""] as const;
+    });
+
+    return Object.fromEntries(entries);
   }
 
   clearSelections(): void {
@@ -105,6 +149,7 @@ export function readStoredSelections(
   defaultToolId: string,
   defaultFileName: string,
   defaultDescription: string,
+  defaultHeaderFormValues: Record<string, string | string[]>,
   aiTools: AiToolOption[]
 ): StoredSelections {
   return wizardStorageService.readStoredSelections(
@@ -112,12 +157,19 @@ export function readStoredSelections(
     defaultToolId,
     defaultFileName,
     defaultDescription,
+    defaultHeaderFormValues,
     aiTools
   );
 }
 
-export function persistSelections(fileType: FileType, toolId: string, fileName: string, description: string): void {
-  wizardStorageService.persistSelections(fileType, toolId, fileName, description);
+export function persistSelections(
+  fileType: FileType,
+  toolId: string,
+  fileName: string,
+  description: string,
+  headerFormValues: Record<string, string | string[]>
+): void {
+  wizardStorageService.persistSelections(fileType, toolId, fileName, description, headerFormValues);
 }
 
 export function clearSelections(): void {

@@ -9,6 +9,7 @@ import AiTypeStep from "./wizard/ai-type-step";
 import FileTypeStep from "./wizard/file-type-step";
 import EntityNameStep from "./wizard/entity-name-step";
 import EntityDescriptionStep from "./wizard/entity-description-step";
+import TemplateHeaderStep from "./wizard/template-header-step";
 import SummarySection from "./summary-wizard";
 
 import {
@@ -24,7 +25,7 @@ export default function StepsWizard({
   const defaultType = options[0]?.value ?? "agent-instructions";
 
   const tData = useTranslations("aiApps");
-  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
   const aiTools = Object.entries(aiToolsData).map(([id, tool]) => {
 
@@ -48,18 +49,29 @@ export default function StepsWizard({
   const defaultToolId = aiTools[0]?.id ?? "";
   const defaultFileName = "";
   const defaultDescription = "";
+  const defaultHeaderFormValues: Record<string, string | string[]> = {};
 
-  const storedSelections = readStoredSelections(defaultType, defaultToolId, defaultFileName, defaultDescription, aiTools);
+  const storedSelections = readStoredSelections(
+    defaultType,
+    defaultToolId,
+    defaultFileName,
+    defaultDescription,
+    defaultHeaderFormValues,
+    aiTools
+  );
 
   const [selectedType, setSelectedType] = useState<FileType>(storedSelections.fileType);
 
   const [selectedToolId, setSelectedToolId] = useState<string>(storedSelections.toolId);
   const [fileName, setFileName] = useState<string>(storedSelections.fileName);
   const [description, setDescription] = useState<string>(storedSelections.description);
+  const [headerFormValues, setHeaderFormValues] = useState<Record<string, string | string[]>>(
+    storedSelections.headerFormValues
+  );
 
   useEffect(() => {
-    persistSelections(selectedType, selectedToolId, fileName, description);
-  }, [selectedType, selectedToolId, fileName, description]);
+    persistSelections(selectedType, selectedToolId, fileName, description, headerFormValues);
+  }, [selectedType, selectedToolId, fileName, description, headerFormValues]);
 
   function handleBackToPhaseOne() {
     clearSelections();
@@ -67,6 +79,7 @@ export default function StepsWizard({
     setSelectedToolId(defaultToolId);
     setFileName(defaultFileName);
     setDescription(defaultDescription);
+    setHeaderFormValues(defaultHeaderFormValues);
     setStep(1);
   }
 
@@ -146,8 +159,37 @@ export default function StepsWizard({
           <NavbarWizard
             currentStep={4}
             selectedType={selectedType}
-            onForward={() => setStep(4)}
+            onForward={() => setStep(5)}
             onBack={() => setStep(3)}
+            onCancel={handleBackToPhaseOne}
+          />
+        </section>
+      );
+    case 5:
+      return (
+        <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
+          <SummarySection
+            currentStep={5}
+            aiTools={aiTools}
+            selectedToolId={selectedToolId}
+            selectedType={selectedType}
+            fileName={fileName}
+          />
+
+          <TemplateHeaderStep
+            selectedToolId={selectedToolId}
+            selectedType={selectedType}
+            entityName={fileName}
+            entityDescription={description}
+            values={headerFormValues}
+            onValuesChange={setHeaderFormValues}
+          />
+
+          <NavbarWizard
+            currentStep={5}
+            selectedType={selectedType}
+            onForward={() => setStep(5)}
+            onBack={() => setStep(4)}
             onCancel={handleBackToPhaseOne}
           />
         </section>

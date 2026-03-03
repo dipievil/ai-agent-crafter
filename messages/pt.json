@@ -111,6 +111,15 @@
       }
     }
   },
+  "Step5": {
+    "phaseTitle": "Fase 5",
+    "phaseDescription": "Preencha somente os campos de cabeçalho com base no template selecionado.",
+    "sectionTitle": "Cabeçalho",
+    "noHeader": "Esse formato de arquivo não precisa de cabeçalho.",
+    "itemPlaceholder": "Digite e adicione um item",
+    "addItem": "Adicionar",
+    "removeItem": "Remover item"
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "O GitHub Copilot é um assistente de código com IA que sugere trechos e autocompleta linhas enquanto você programa, ajudando a acelerar o desenvolvimento."

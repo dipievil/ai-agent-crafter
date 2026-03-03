@@ -111,6 +111,15 @@
       }
     }
   },
+  "Step5": {
+    "phaseTitle": "Step 5",
+    "phaseDescription": "Fill only the header fields based on the selected template.",
+    "sectionTitle": "Header",
+    "noHeader": "This format file does not need a header.",
+    "itemPlaceholder": "Type and add an item",
+    "addItem": "Add",
+    "removeItem": "Remove item"
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "GitHub Copilot is an AI coding assistant developed by GitHub and OpenAI that suggests code and autocompletions while you build software."

@@ -32,7 +32,7 @@ export default function SummarySection({
           </p>
         </>
       )}
-      {selectedType && selectedToolId != undefined && currentStep === 4 && (
+      {selectedType && selectedToolId != undefined && currentStep >= 4 && (
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingFor")}</p>
           <p className="mt-1 text-left text-2xl font-semibold text-foreground">
