@@ -1,21 +1,21 @@
-"use client";
-
 import { useEffect, useMemo, useState } from "react";
-import NavbarWizard from "./navbar-wizard";
-import AiTypeStep from "./ai-type-step";
-import FileTypeStep from "./file-type-step";
-import aiToolsData from "../../data/ai-tools.json";
 import { useTranslations } from "next-intl";
+import aiToolsData from "@/data/ai-tools.json";
+import type { AiToolData, AiToolOption } from "@/types/wizard/aiTools";
+import type { FileType } from "@/types/wizard/templateFiles";
+import NavbarWizard from "./navbar-wizard";
+
+import { StepsWizardProps } from "./steps-wizard.types";
+import AiTypeStep from "./wizard/ai-type-step";
+import FileTypeStep from "./wizard/file-type-step";
+import SummarySection from "./summary-wizard";
 
 import {
   clearSelections,
   persistSelections,
   readStoredSelections
-} from "./wizard.storage";
+} from "@/features/wizard/infra/wizard.storage.service";
 
-import type { AiToolData, AiToolOption } from "../components/wizard.types";
-import type { FileType, StepsWizardProps } from "./wizard.types";
-import SummarySection from "./summary";
 
 export default function StepsWizard({
   fileOptions: options
@@ -96,8 +96,7 @@ export default function StepsWizard({
           <AiTypeStep
             selectedToolId={selectedToolId}
             aiTools={aiTools}
-            selectedToolDescription={selectedTool?.description ?? ""}
-            selectedToolUrl={selectedTool?.url}
+            onBack={() => setStep(2)}
             onToolChange={setSelectedToolId}
           />
           <NavbarWizard 

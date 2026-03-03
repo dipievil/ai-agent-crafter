@@ -1,4 +1,4 @@
-import type { AiToolOption } from "./wizard.types";
+import { AiToolOption } from "@/types/wizard/aiTools";
 
 export type AiTypeStepProps = {
   selectedToolId: string;

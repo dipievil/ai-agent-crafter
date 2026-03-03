@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import type { AiTypeStepProps, FileType } from "./wizard.types";
 import { useTranslations } from "next-intl";
+import { AiTypeStepProps } from "./ai-type-step.types";
 
 export default function AiTypeStep({
   selectedToolId,

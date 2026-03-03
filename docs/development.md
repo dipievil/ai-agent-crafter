@@ -59,24 +59,21 @@ The state flow is controlled by a client orchestrator component:
   - Step 2: renders Back button (`onBack`) and Continue button.
   - Uses `selectedType` to pick step emoji.
 
-- `src/app/components/summary.tsx`
+- `src/app/components/summary-wizard.tsx`
   - Summary section shown in phase 2 before AI tool selector.
   - Displays selected file type (`currentStep > 1`).
   - Displays selected tool only when `currentStep > 2` (currently not reached in 2-step flow).
 
 ## Shared Types and Storage Contract
 
-- `src/app/components/wizard.types.ts`
-  - Centralized shared types:
-    - `FileType`
-    - `FileTypeOption`
-    - `AiToolOption`
-    - `FileTypeStepProps`
-    - `AiTypeStepProps`
-    - `StepsWizardProps`
+- `src/types/wizard/templateFiles.ts`
+  - Defines wizard file template domain types (`FileType`, `FileTypeOption`).
 
-- `src/app/components/wizard.storage.ts`
-  - Encapsulates localStorage persistence.
+- `src/types/wizard/aiTools.ts`
+  - Defines AI tool domain types (`AiToolData`, `AiToolOption`).
+
+- `src/features/wizard/infra/wizard.storage.service.ts`
+  - Implements localStorage persistence as an infrastructure service.
   - Storage key: `ai-agent-crafter-data`
   - Stored shape:
     - `fileType: FileType`
@@ -86,6 +83,9 @@ The state flow is controlled by a client orchestrator component:
     - `readStoredSelections(...)`
     - `persistSelections(...)`
     - `clearSelections()`
+
+- `src/features/wizard/infra/wizard.storage.types.ts`
+  - Defines the storage service contract (`WizardStorageService`) and return model (`StoredSelections`).
 
 - `src/app/components/navbar-wizard.types.ts`
   - Defines `NavbarWizardStepProps`:
@@ -129,8 +129,8 @@ The state flow is controlled by a client orchestrator component:
 
 - Keep phase components focused on UI only.
 - Keep orchestration/state transitions inside `steps-wizard.tsx`.
-- Keep browser persistence concerns inside `wizard.storage.ts`.
+- Keep browser persistence concerns inside `wizard.storage.service.ts`.
 - If a new phase is added, follow the same pattern:
   - `new-phase-step.tsx` for UI
   - wizard update for transitions and state wiring
-  - type updates in `wizard.types.ts` (and related `*.types.ts` files when needed)
+  - type updates in domain files under `src/types/wizard` and related `*.types.ts` files when needed

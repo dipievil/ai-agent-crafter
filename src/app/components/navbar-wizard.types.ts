@@ -1,4 +1,4 @@
-import type { FileType } from "./wizard.types";
+import type { FileType } from "@/types/wizard/templateFiles";
 
 export type NavbarWizardStepProps = {
   currentStep: number;

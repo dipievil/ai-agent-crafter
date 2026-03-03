@@ -1,4 +1,4 @@
-import { FileTypes } from "../app/components/wizard.types";
+import { FileTypes } from "../app/components/wizard/file-type-step.types";
 
 export const CONTINUE_EMOJI = "➡️";
 

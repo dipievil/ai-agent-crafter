@@ -77,11 +77,12 @@ bun run lint
 
 - `src/app/[locale]/page.tsx`: localized home page composition.
 - `src/app/components/steps-wizard.tsx`: client-side wizard orchestrator.
-- `src/app/components/file-type-step.tsx`: step 1 UI.
-- `src/app/components/ai-type-step.tsx`: step 2 UI.
+- `src/app/components/wizard/file-type-step.tsx`: step 1 UI.
+- `src/app/components/wizard/ai-type-step.tsx`: step 2 UI.
 - `src/app/components/navbar-wizard.tsx`: wizard navigation buttons.
-- `src/app/components/summary.tsx`: summary section between steps.
-- `src/app/components/wizard.storage.ts`: localStorage persistence contract.
+- `src/app/components/summary-wizard.tsx`: summary section between steps.
+- `src/features/wizard/infra/wizard.storage.service.ts`: localStorage persistence service.
+- `src/features/wizard/infra/wizard.storage.types.ts`: persistence service interface and types.
 - `src/data/ai-tools.json`: AI tools and file metadata source.
 - `src/templates/`: markdown templates by category.
 

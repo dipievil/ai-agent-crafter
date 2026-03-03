@@ -1,8 +1,8 @@
-import type { NavbarWizardStepProps} from "./navbar-wizard.types";
-import type { FileType } from "./wizard.types";
-import { useTranslations } from "next-intl";
-import { CONTINUE_EMOJI } from "../../utils/constants";
 import { useMemo } from "react";
+import { useTranslations } from "next-intl";
+import { FileType } from "@/types/wizard/templateFiles";
+import { CONTINUE_EMOJI } from "@/utils/constants";
+import { NavbarWizardStepProps} from "./navbar-wizard.types";
 
 const emojiByType: Record<FileType, string> = {
   "agent-instructions": "🤖",

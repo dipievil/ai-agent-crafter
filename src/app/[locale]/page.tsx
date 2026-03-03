@@ -1,9 +1,11 @@
+"use client";
+
 import { useTranslations } from "next-intl";
-import { FileTypeOption } from "../components/wizard.types";
-import { fileTypes } from "../../utils/constants";
+import { FileTypeOption } from "@/types/wizard/templateFiles";
+import { fileTypes } from "@/utils/constants";
 import {
   clearSelections
-} from "../components/wizard.storage";
+} from "@/features/wizard/infra/wizard.storage.service";
 
 import StepsWizard from "../components/steps-wizard";
 

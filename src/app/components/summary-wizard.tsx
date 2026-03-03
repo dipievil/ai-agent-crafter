@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import type { SummarySectionProps } from "./summary.types";
+import { useMemo } from "react";
+import type { SummarySectionProps } from "./summary-wizard.types";
 import { fileTypes } from "../../utils/constants";
 import { useTranslations } from "next-intl";
 
