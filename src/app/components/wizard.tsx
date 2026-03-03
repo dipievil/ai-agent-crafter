@@ -7,7 +7,7 @@ import NavbarWizard from "./navbar-wizard";
 import { StepsWizardProps } from "./wizard.types";
 import AiTypeStep from "./wizard/ai-type-step";
 import FileTypeStep from "./wizard/file-type-step";
-import FileNameStep from "./wizard/file-name-step";
+import EntityNameStep from "./wizard/entity-name-step";
 import SummarySection from "./summary-wizard";
 
 import {
@@ -23,7 +23,7 @@ export default function StepsWizard({
   const defaultType = options[0]?.value ?? "agent-instructions";
 
   const tData = useTranslations("aiApps");
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
   const aiTools = Object.entries(aiToolsData).map(([id, tool]) => {
 
@@ -110,7 +110,7 @@ export default function StepsWizard({
             aiTools={aiTools}
             selectedToolId={selectedToolId}
             selectedType={selectedType} />
-          <FileNameStep
+          <EntityNameStep
             selectedType={selectedType}
             fileName={fileName}
             onFileNameChange={setFileName}
@@ -118,6 +118,7 @@ export default function StepsWizard({
           <NavbarWizard
             currentStep={3}
             selectedType={selectedType}
+            onForward={() => setStep(4)}
             onBack={handleBackToPhaseOne}
           />
         </section>

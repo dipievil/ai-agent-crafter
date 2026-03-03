@@ -62,6 +62,24 @@
       }
     }
   },
+  "standard":{
+    "name": "Standards",
+    "description": "{standards.description}",
+    "files": {
+      "agent-instructions": {
+        "name": "Agent",
+        "template-file": "templates/agents/agent.md",
+        "output-file": ["AGENTS.md"],
+        "installation": "Check your tools documentation for installation instructions. Mostly is just put on the project root."
+      },
+      "skills":{
+        "name": "Skill",
+        "template-file": "templates/skills/skill.md",
+        "output-file": ["SKILL.md"],
+        "installation": "Check your tools documentation for installation instructions. Mostly is just put on the project root."
+      }
+    }
+  },
   "gemini": {
     "name": "Gemini",
     "description": "{gemini.description}",

@@ -25,7 +25,17 @@ export default function NavbarWizard({
   return (
     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
 
-      {(onBack && currentStep === 2) && (
+      {(onBack && currentStep > 2) && (
+        <button
+            type="button"
+            onClick={onBack}
+            className="inline-flex h-11 w-full bg-red-500 items-center justify-center rounded-full border border-black/20 px-4 text-base font-semibold text-foreground transition-opacity hover:opacity-80 dark:border-white/25"
+          >
+            {t("cancelButton")}
+          </button>
+      )}
+
+      {(onBack && currentStep > 1) && (
         <button
             type="button"
             onClick={onBack}
@@ -53,19 +63,9 @@ export default function NavbarWizard({
         <span>{t("continueButton")}</span>
         <span aria-hidden="true">{CONTINUE_EMOJI}</span>
       </button>
-      ) : null}
+      ) : null}      
 
-      
 
-      {(onBack && currentStep > 2) && (
-        <button
-            type="button"
-            onClick={onBack}
-            className="inline-flex h-11 w-full bg-red-500 items-center justify-center rounded-full border border-black/20 px-4 text-base font-semibold text-foreground transition-opacity hover:opacity-80 dark:border-white/25"
-          >
-            {t("cancelButton")}
-          </button>
-      )}
     </div>
   );    
 }

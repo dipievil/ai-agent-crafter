@@ -31,22 +31,55 @@
   },  
   "Step3":{
     "phaseTitle": "Step 3",
-    "phaseDescription": "Name your file",
-    "nameForType": "Name your {item}",
+    "phaseDescription": "Name your {item}",
+    "nameForType": "Name your {item}",    
+    "examplesLabel": "Examples:",
     "entities": {
-      "agentInstructions": "agent",
-      "specificInstructions": "instructions file",
-      "prompts": "prompt",
-      "skills": "skill"
-    },
-    "fileNamePlaceholder": "My file name",
-    "helperText": "Give your file a clear name so it is easy to understand what it does.",
-    "examplesTitle": "Examples:",
-    "examples": {
-      "one": "Email assistant",
-      "two": "Calendar assistant",
-      "three": "Text reviewer",
-      "four": "Unit test generator for C#"
+      "agentInstructions":
+      {
+        "name":"agent",
+        "helperText": "Give your agent a clear name so it is easy to understand what it does.",
+        "entityNamePlaceholder": "Agent name",
+        "examples": {
+          "one": "Email assistant",
+          "two": "Calendar assistant",
+          "three": "Code reviewer",
+          "four": "Unit test generator for C#"
+        }
+      },
+      "specificInstructions": {
+        "name": "instructions file",
+        "helperText": "Give your instructions a clear name to know what it is about.",
+        "entityNamePlaceholder": "Instructions name",
+        "examples": {
+          "one": "Email instructions",
+          "two": "Calendar instructions",
+          "three": "Text review instructions",
+          "four": "Unit test instructions for C#"
+        }
+      },
+      "prompts": {
+        "name": "prompt",
+        "helperText": "Give your prompt a clear name so it is easy to understand what it will be used for.",
+        "entityNamePlaceholder": "Prompt name",
+        "examples": {
+          "one": "Chat generator prompt",
+          "two": "Calendar prompt",
+          "three": "Text review prompt",
+          "four": "Unit test prompt for C#"
+        }
+      },
+      "skills": {
+        "name": "skill",
+        "helperText": "Give your skill a clear name so it is easy to understand what it will be used for.",
+        "entityNamePlaceholder": "Skill name",
+        "examples": {
+          "one": "Email skill",
+          "two": "Calendar skill",
+          "three": "Text review skill",
+          "four": "Unit test skill for C#"
+        }
+      }
     }
   },
   "aiApps": {
@@ -67,6 +100,9 @@
     },
     "warp": {
       "description": "Warp is a modern terminal focused on developer productivity, including AI-assisted command workflows."
+    },
+    "standards": {
+      "description": "Standard instructions file for AI agents (AGENTS.md, SKILLS.md, etc), containing guidelines and rules for agent behavior and interactions."
     }
   }
 }
