@@ -1,11 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import aiToolsData from "@/data/ai-tools.json";
-import type { AiToolData, AiToolOption } from "@/types/wizard/aiTools";
-import type { FileType } from "@/types/wizard/templateFiles";
+import type { AiToolData, AiToolOption, FileType } from "@/types/wizard/common";
 import NavbarWizard from "./navbar-wizard";
 
-import { StepsWizardProps } from "./steps-wizard.types";
+import { StepsWizardProps } from "./wizard.types";
 import AiTypeStep from "./wizard/ai-type-step";
 import FileTypeStep from "./wizard/file-type-step";
 import SummarySection from "./summary-wizard";

@@ -1,4 +1,4 @@
-import { FileType, FileTypeOption } from "@/types/wizard/templateFiles";
+import { FileType, FileTypeOption } from "@/types/wizard/common";
 
 export type FileTypeStepProps = {
   selectedType: FileType;

@@ -1,7 +1,7 @@
 import { 
     FileType, 
     FileTypeOption 
-} from "@/types/wizard/templateFiles";
+} from "@/types/wizard/common";
 
 export type StepsWizardProps = {
   fileOptions: FileTypeOption[];

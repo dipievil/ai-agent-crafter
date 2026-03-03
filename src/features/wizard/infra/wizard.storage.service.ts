@@ -1,5 +1,4 @@
-import type { AiToolOption } from "@/types/wizard/aiTools";
-import type { FileType } from "@/types/wizard/templateFiles";
+import type { AiToolOption, FileType } from "@/types/wizard/common";
 
 import type {
   StoredSelections,

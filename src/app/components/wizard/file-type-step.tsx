@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { FileTypeStepProps } from "./file-type-step.types";
-import { FileType } from "@/types/wizard/templateFiles";
+import { FileType } from "@/types/wizard/common";
 
 export default function FileTypeStep({
   selectedType,

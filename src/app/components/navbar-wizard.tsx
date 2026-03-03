@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { FileType } from "@/types/wizard/templateFiles";
+import { FileType } from "@/types/wizard/common";
 import { CONTINUE_EMOJI } from "@/utils/constants";
 import { NavbarWizardStepProps} from "./navbar-wizard.types";
 

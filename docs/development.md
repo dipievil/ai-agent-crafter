@@ -25,26 +25,12 @@ The home page uses a step wizard.
 
 The state flow is controlled by a client orchestrator component:
 
-- `src/app/components/steps-wizard.tsx`
+- `src/app/components/wizard.tsx`
 - Current flow implemented in UI: **2 steps** (`1 | 2`)
 
 ### Components and responsibilities
 
-- `src/app/components/file-type-step.tsx`
-  - Phase 1 UI only.
-  - Handles file type select.
-  - Uses `useTranslations("Step1")` for labels and copy.
-  - Receives state and callbacks from `StepsWizard`.
-
-- `src/app/components/ai-type-step.tsx`
-  - Phase 2 UI only.
-  - Handles AI tool select.
-  - Renders selected AI tool description and official site link.
-  - Uses `useTranslations("Step2")` for labels and copy.
-  - Navigation buttons are rendered by `NavbarWizard`.
-  - Receives state and callbacks from `StepsWizard`.
-
-- `src/app/components/steps-wizard.tsx`
+- `src/app/components/wizard.tsx`
   - Single client orchestration point.
   - Controls active phase (`1 | 2`).
   - Holds selected file type and selected AI tool state.
@@ -63,6 +49,23 @@ The state flow is controlled by a client orchestrator component:
   - Summary section shown in phase 2 before AI tool selector.
   - Displays selected file type (`currentStep > 1`).
   - Displays selected tool only when `currentStep > 2` (currently not reached in 2-step flow).
+
+- `src/app/components/wizard`
+  - Folder contains all form component split by steps.
+
+- `src/app/components/wizard/file-type-step.tsx`
+  - Phase 1 UI only.
+  - Handles file type select.
+  - Uses `useTranslations("Step1")` for labels and copy.
+  - Receives state and callbacks from `StepsWizard`.
+
+- `src/app/components/wizard/ai-type-step.tsx`
+  - Phase 2 UI only.
+  - Handles AI tool select.
+  - Renders selected AI tool description and official site link.
+  - Uses `useTranslations("Step2")` for labels and copy.
+  - Navigation buttons are rendered by `NavbarWizard`.
+  - Receives state and callbacks from `StepsWizard`.
 
 ## Shared Types and Storage Contract
 

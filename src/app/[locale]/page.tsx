@@ -1,13 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FileTypeOption } from "@/types/wizard/templateFiles";
+import { FileTypeOption } from "@/types/wizard/common";
 import { fileTypes } from "@/utils/constants";
 import {
   clearSelections
 } from "@/features/wizard/infra/wizard.storage.service";
 
-import StepsWizard from "../components/steps-wizard";
+import StepsWizard from "../components/wizard";
 
 export default function Home() {
   const t = useTranslations("HomePage");

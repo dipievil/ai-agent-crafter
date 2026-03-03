@@ -1,5 +1,4 @@
-import type { FileType} from  "@/types/wizard/templateFiles"
-import type { AiToolOption } from "@/types/wizard/aiTools";
+import type { AiToolOption, FileType} from  "@/types/wizard/common"
 
 export type SummarySectionProps = {
   currentStep: number;
