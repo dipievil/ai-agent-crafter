@@ -29,6 +29,26 @@
     "toolLabel": "Tool",
     "officialSite": "Official site"
   },  
+  "Step3":{
+    "phaseTitle": "Step 3",
+    "phaseDescription": "Name your file",
+    "nameForType": "Name your {item}",
+    "entities": {
+      "agentInstructions": "agent",
+      "specificInstructions": "instructions file",
+      "prompts": "prompt",
+      "skills": "skill"
+    },
+    "fileNamePlaceholder": "My file name",
+    "helperText": "Give your file a clear name so it is easy to understand what it does.",
+    "examplesTitle": "Examples:",
+    "examples": {
+      "one": "Email assistant",
+      "two": "Calendar assistant",
+      "three": "Text reviewer",
+      "four": "Unit test generator for C#"
+    }
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "GitHub Copilot is an AI coding assistant developed by GitHub and OpenAI that suggests code and autocompletions while you build software."

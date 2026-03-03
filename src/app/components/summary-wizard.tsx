@@ -8,7 +8,6 @@ export default function SummarySection({
   selectedType,
   selectedToolId,
   aiTools,
-  onToolChange,
 }: SummarySectionProps) {
     const t = useTranslations("HomePage");
 

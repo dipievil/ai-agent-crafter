@@ -5,5 +5,4 @@ export type SummarySectionProps = {
   selectedType?: FileType | null;
   selectedToolId?: string;
   aiTools: AiToolOption[];
-  onToolChange: (toolId: string) => void;
 };

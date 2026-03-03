@@ -29,6 +29,26 @@
     "toolLabel": "Ferramenta",
     "officialSite": "Site oficial"
   },
+  "Step3":{
+    "phaseTitle": "Fase 3",
+    "phaseDescription": "Nome do seu arquivo",
+    "nameForType": "Nome do seu {item}",
+    "entities": {
+      "agentInstructions": "agente",
+      "specificInstructions": "arquivo de instruções",
+      "prompts": "prompt",
+      "skills": "skill"
+    },
+    "fileNamePlaceholder": "Nome do meu arquivo",
+    "helperText": "Dê um nome para o seu arquivo de fácil entendimento do que ele fará.",
+    "examplesTitle": "Exemplos:",
+    "examples": {
+      "one": "Assistente de e-mails",
+      "two": "Assistente de agenda",
+      "three": "Revisor de textos",
+      "four": "Gerador de testes unitários para C#"
+    }
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "O GitHub Copilot é um assistente de código com IA que sugere trechos e autocompleta linhas enquanto você programa, ajudando a acelerar o desenvolvimento."

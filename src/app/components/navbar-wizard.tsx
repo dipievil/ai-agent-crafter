@@ -35,8 +35,7 @@ export default function NavbarWizard({
           </button>
       )}
 
-      {onForward && 
-        currentStep === 1 ? (
+      {onForward && currentStep === 1 ? (
         <button
           type="button"
           onClick={onForward}
@@ -45,7 +44,7 @@ export default function NavbarWizard({
             <span>{t("startButton")}</span>
             <span aria-hidden="true">{buttonEmoji}</span>
         </button>  
-      ): (
+      ) : onForward ? (
       <button
         type="button"
         onClick={onForward}
@@ -54,7 +53,7 @@ export default function NavbarWizard({
         <span>{t("continueButton")}</span>
         <span aria-hidden="true">{CONTINUE_EMOJI}</span>
       </button>
-      )}
+      ) : null}
 
       
 

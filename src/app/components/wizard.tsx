@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import aiToolsData from "@/data/ai-tools.json";
 import type { AiToolData, AiToolOption, FileType } from "@/types/wizard/common";
@@ -7,6 +7,7 @@ import NavbarWizard from "./navbar-wizard";
 import { StepsWizardProps } from "./wizard.types";
 import AiTypeStep from "./wizard/ai-type-step";
 import FileTypeStep from "./wizard/file-type-step";
+import FileNameStep from "./wizard/file-name-step";
 import SummarySection from "./summary-wizard";
 
 import {
@@ -22,7 +23,7 @@ export default function StepsWizard({
   const defaultType = options[0]?.value ?? "agent-instructions";
 
   const tData = useTranslations("aiApps");
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
 
   const aiTools = Object.entries(aiToolsData).map(([id, tool]) => {
 
@@ -44,26 +45,24 @@ export default function StepsWizard({
   });
 
   const defaultToolId = aiTools[0]?.id ?? "";
+  const defaultFileName = "";
 
-  const storedSelections = readStoredSelections(defaultType, defaultToolId, aiTools);
+  const storedSelections = readStoredSelections(defaultType, defaultToolId, defaultFileName, aiTools);
 
   const [selectedType, setSelectedType] = useState<FileType>(storedSelections.fileType);
 
   const [selectedToolId, setSelectedToolId] = useState<string>(storedSelections.toolId);
+  const [fileName, setFileName] = useState<string>(storedSelections.fileName);
 
   useEffect(() => {
-    persistSelections(selectedType, selectedToolId);
-  }, [selectedType, selectedToolId]);
-
-  const selectedTool = useMemo(
-    () => aiTools.find((tool) => tool.id === selectedToolId) ?? aiTools[0],
-    [aiTools, selectedToolId]
-  );
+    persistSelections(selectedType, selectedToolId, fileName);
+  }, [selectedType, selectedToolId, fileName]);
 
   function handleBackToPhaseOne() {
     clearSelections();
     setSelectedType(defaultType);
     setSelectedToolId(defaultToolId);
+    setFileName(defaultFileName);
     setStep(1);
   }
 
@@ -78,7 +77,7 @@ export default function StepsWizard({
             />      
           <NavbarWizard 
             currentStep={1} 
-            selectedType={selectedTool?.id as FileType} 
+            selectedType={selectedType}
             onForward={() => setStep(2)} 
             onBack={handleBackToPhaseOne} />
         </section>
@@ -90,18 +89,37 @@ export default function StepsWizard({
             currentStep={2}
             aiTools={aiTools}
             selectedToolId={selectedToolId}
-            selectedType={selectedType}
-            onToolChange={setSelectedToolId} />
+            selectedType={selectedType} />
           <AiTypeStep
             selectedToolId={selectedToolId}
             aiTools={aiTools}
-            onBack={() => setStep(2)}
             onToolChange={setSelectedToolId}
           />
           <NavbarWizard 
             currentStep={2} 
-            selectedType={selectedTool?.id as FileType} 
-            onBack={handleBackToPhaseOne} />
+            selectedType={selectedType}
+            onForward={() => setStep(3)}
+            onBack={() => setStep(1)} />
+        </section>
+      );
+    case 3:
+      return (
+        <section className="w-full max-w-xl items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
+          <SummarySection
+            currentStep={3}
+            aiTools={aiTools}
+            selectedToolId={selectedToolId}
+            selectedType={selectedType} />
+          <FileNameStep
+            selectedType={selectedType}
+            fileName={fileName}
+            onFileNameChange={setFileName}
+          />
+          <NavbarWizard
+            currentStep={3}
+            selectedType={selectedType}
+            onBack={handleBackToPhaseOne}
+          />
         </section>
       );
   }

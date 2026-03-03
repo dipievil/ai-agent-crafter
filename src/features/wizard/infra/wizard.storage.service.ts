@@ -24,20 +24,21 @@ class LocalStorageWizardService implements WizardStorageService {
   readStoredSelections(
     defaultFileType: FileType,
     defaultToolId: string,
+    defaultFileName: string,
     aiTools: AiToolOption[]
   ): StoredSelections {
     if (typeof window === "undefined") {
-      return { fileType: defaultFileType, toolId: defaultToolId };
+      return { fileType: defaultFileType, toolId: defaultToolId, fileName: defaultFileName };
     }
 
     try {
       const raw = window.localStorage.getItem(STORAGE_KEY);
 
       if (!raw) {
-        return { fileType: defaultFileType, toolId: defaultToolId };
+        return { fileType: defaultFileType, toolId: defaultToolId, fileName: defaultFileName };
       }
 
-      const parsed = JSON.parse(raw) as { fileType?: unknown; toolId?: unknown };
+      const parsed = JSON.parse(raw) as { fileType?: unknown; toolId?: unknown; fileName?: unknown };
       const fileType = isFileType(parsed.fileType) ? parsed.fileType : defaultFileType;
       const toolId =
         typeof parsed.toolId === "string" &&
@@ -45,23 +46,24 @@ class LocalStorageWizardService implements WizardStorageService {
         isToolId(parsed.toolId, aiTools)
           ? parsed.toolId
           : defaultToolId;
+      const fileName = typeof parsed.fileName === "string" ? parsed.fileName : defaultFileName;
 
-      return { fileType, toolId };
+      return { fileType, toolId, fileName };
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
-      return { fileType: defaultFileType, toolId: defaultToolId };
+      return { fileType: defaultFileType, toolId: defaultToolId, fileName: defaultFileName };
     }
   }
 
-  persistSelections(fileType: FileType, toolId: string): void {
+  persistSelections(fileType: FileType, toolId: string, fileName: string): void {
     if (typeof window === "undefined") {
       return;
     }
 
     try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId }));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName }));
     } catch {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId }));
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ fileType, toolId, fileName }));
     }
   }
 
@@ -79,13 +81,14 @@ const wizardStorageService: WizardStorageService = new LocalStorageWizardService
 export function readStoredSelections(
   defaultFileType: FileType,
   defaultToolId: string,
+  defaultFileName: string,
   aiTools: AiToolOption[]
 ): StoredSelections {
-  return wizardStorageService.readStoredSelections(defaultFileType, defaultToolId, aiTools);
+  return wizardStorageService.readStoredSelections(defaultFileType, defaultToolId, defaultFileName, aiTools);
 }
 
-export function persistSelections(fileType: FileType, toolId: string): void {
-  wizardStorageService.persistSelections(fileType, toolId);
+export function persistSelections(fileType: FileType, toolId: string, fileName: string): void {
+  wizardStorageService.persistSelections(fileType, toolId, fileName);
 }
 
 export function clearSelections(): void {
