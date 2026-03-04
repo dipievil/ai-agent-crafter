@@ -100,7 +100,7 @@ export default function StepsWizard({
     return aiToolOption;
   });
 
-  const defaultToolId = aiTools[0]?.id ?? "";
+  const defaultToolId = "";
   const defaultFileSubtypeIndex = 0;
   const defaultFileName = "";
   const defaultDescription = "";
@@ -140,12 +140,8 @@ export default function StepsWizard({
   );
 
   const effectiveSelectedToolId = useMemo(() => {
-    if (filteredAiTools.length === 0) {
-      return "";
-    }
-
     const hasSelectedTool = filteredAiTools.some((tool) => tool.id === selectedToolId);
-    return hasSelectedTool ? selectedToolId : filteredAiTools[0].id;
+    return hasSelectedTool ? selectedToolId : "";
   }, [filteredAiTools, selectedToolId]);
 
   const fileSubtypeOptions = useMemo(
@@ -258,7 +254,7 @@ export default function StepsWizard({
           <NavbarWizard 
             currentStep={2} 
             selectedType={selectedType}
-            onForward={() => setStep(3)}
+            onForward={effectiveSelectedToolId ? () => setStep(3) : undefined}
             onBack={() => setStep(1)} />
         </section>
       );

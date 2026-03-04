@@ -29,6 +29,7 @@
     "phaseTitle": "Fase 2",
     "phaseDescription": "Em qual ferramenta você usará seu agente?",
     "toolLabel": "Ferramenta",
+    "toolPlaceholder": "Selecione uma ferramenta",
     "fileSubtypeLabel": "Tipo de arquivo",
     "officialSite": "Site oficial"
   },

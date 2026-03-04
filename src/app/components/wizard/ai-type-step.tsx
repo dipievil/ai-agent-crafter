@@ -13,7 +13,7 @@ export default function AiTypeStep({
   const t = useTranslations("Step2");
 
   const selectedTool = useMemo(
-    () => aiTools.find((tool) => tool.id === selectedToolId) ?? aiTools[0],
+    () => aiTools.find((tool) => tool.id === selectedToolId),
     [aiTools, selectedToolId]
   );
 
@@ -24,7 +24,7 @@ export default function AiTypeStep({
 
       <div className="mt-6 flex flex-col gap-3">
         <label htmlFor="ai-tool" className="text-sm font-medium text-foreground">
-          {selectedTool?.name}
+          {t("toolLabel")}
         </label>
         <select
           id="ai-tool"
@@ -33,6 +33,9 @@ export default function AiTypeStep({
           onChange={(event) => onToolChange(event.target.value)}
           className="h-11 rounded-lg border border-black/20 bg-transparent px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 dark:border-white/25"
         >
+          <option value="" disabled>
+            {t("toolPlaceholder")}
+          </option>
           {aiTools.map((tool) => (
             <option key={tool.id} value={tool.id}>
               {tool.name}
@@ -41,7 +44,7 @@ export default function AiTypeStep({
         </select>
       </div>
 
-      {fileSubtypeOptions.length > 1 ? (
+      {selectedToolId && fileSubtypeOptions.length > 1 ? (
         <div className="mt-4 flex flex-col gap-3">
           <label htmlFor="file-subtype" className="text-sm font-medium text-foreground">
             {t("fileSubtypeLabel")}

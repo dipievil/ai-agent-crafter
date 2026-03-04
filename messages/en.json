@@ -29,6 +29,7 @@
     "phaseTitle": "Step 2",
     "phaseDescription": "Which tool will you use with your agent?",
     "toolLabel": "Tool",
+    "toolPlaceholder": "Select a tool",
     "fileSubtypeLabel": "File subtype",
     "officialSite": "Official site"
   },  
