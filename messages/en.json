@@ -9,6 +9,8 @@
       "prompts": "Prompts",
       "skills": "Skills"
     },
+    "creating": "Creating",
+    "for": "for",
     "creatingFor": "Creating a file for:",
     "creatingAType": "Creating a file of type:"
   },
@@ -16,7 +18,8 @@
     "backButton": "Back",
     "startButton": "Start",
     "cancelButton": "Cancel",
-    "continueButton": "Continue"  
+    "continueButton": "Continue",
+    "downloadButton": "Download file"
   },
   "Step1": {
     "phaseTitle": "Step 1",
@@ -27,8 +30,119 @@
     "phaseTitle": "Step 2",
     "phaseDescription": "Which tool will you use with your agent?",
     "toolLabel": "Tool",
+    "toolPlaceholder": "Select a tool",
+    "fileSubtypeLabel": "File subtype",
+    "tipsTitle": "Tips",
     "officialSite": "Official site"
   },  
+  "Step3":{
+    "phaseTitle": "Step 3",
+    "phaseDescription": "What will you name your {item}?",
+    "nameForType": "Name your {item}",    
+    "examplesLabel": "Examples:",
+    "entities": {
+      "agentInstructions":
+      {
+        "name":"agent",
+        "helperText": "Give your agent a clear name so it is easy to understand what it does.",
+        "entityNamePlaceholder": "Agent name",
+        "examples": {
+          "one": "Email assistant",
+          "two": "Calendar assistant",
+          "three": "Code reviewer",
+          "four": "Unit test generator for C#"
+        }
+      },
+      "specificInstructions": {
+        "name": "instructions file",
+        "helperText": "Give your instructions a clear title to know what it is about.",
+        "entityNamePlaceholder": "Instructions title",
+        "examples": {
+          "one": "Email instructions",
+          "two": "Calendar instructions",
+          "three": "Text review instructions",
+          "four": "Unit test instructions for C#"
+        }
+      },
+      "prompts": {
+        "name": "prompt",
+        "helperText": "Give your prompt a clear name so it is easy to understand what it will be used for.",
+        "entityNamePlaceholder": "Prompt name",
+        "examples": {
+          "one": "Chat generator prompt",
+          "two": "Calendar prompt",
+          "three": "Text review prompt",
+          "four": "Unit test prompt for C#"
+        }
+      },
+      "skills": {
+        "name": "skill",
+        "helperText": "Give your skill a clear name so it is easy to understand what it will be used for.",
+        "entityNamePlaceholder": "Skill name",
+        "examples": {
+          "one": "Email skill",
+          "two": "Calendar skill",
+          "three": "Text review skill",
+          "four": "Unit test skill for C#"
+        }
+      }
+    }
+  },
+  "Step4": {
+    "phaseTitle": "Step 4",
+    "phaseDescription": "Describe what your {item} does",
+    "descriptionForType": "Description of your {item}",
+    "entities": {
+      "agentInstructions": {
+        "name": "agent",
+        "descriptionPlaceholder": "You are an agent specialized in...",
+        "helperText": "Explain to your agent what it will do. Tip: use second person singular (you)."
+      },
+      "specificInstructions": {
+        "name": "instructions file",
+        "descriptionPlaceholder": "Instructions for...",
+        "helperText": "Describe what your instructions file will do. Tip: always use second person singular (you)."
+      },
+      "prompts": {
+        "name": "prompt",
+        "descriptionPlaceholder": "Use this prompt for...",
+        "helperText": "Describe what your prompt will do. Tip: always use second person singular (you)."
+      },
+      "skills": {
+        "name": "skill",
+        "descriptionPlaceholder": "This skill does...",
+        "helperText": "Describe what your skill will do. Tip: always use second person singular (you)."
+      }
+    }
+  },
+  "Step5": {
+    "phaseTitle": "Step 5",
+    "phaseDescription": "This kind of file uses a specific header format. Fill in the necessary fields based on the selected template.",
+    "sectionTitle": "Header",
+    "emptySection": "This file format does not have this section.",
+    "itemPlaceholder": "Type and add an item",
+    "addItem": "Add",
+    "removeItem": "Remove item"
+  },
+  "Step6": {
+    "phaseTitle": "Step 6",
+    "phaseDescription": "Fill the content fields based on the selected template.",
+    "sectionTitle": "Content",
+    "emptySection": "This file format does not have this section.",
+    "itemPlaceholder": "Type and add an item",
+    "addItem": "Add",
+    "removeItem": "Remove item"
+  },
+  "Step7": {
+    "phaseTitle": "Review",
+    "phaseDescription": "Your file will look like this:",
+    "markdownLabel": "Markdown file content",
+    "warningsTitle": "Detected inconsistencies"
+  },
+  "Footer": {
+    "ariaLabel": "Application version",
+    "version": "v{version} · {commit}"
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "GitHub Copilot is an AI coding assistant developed by GitHub and OpenAI that suggests code and autocompletions while you build software."
@@ -47,6 +161,89 @@
     },
     "warp": {
       "description": "Warp is a modern terminal focused on developer productivity, including AI-assisted command workflows."
+    },
+    "standards": {
+      "description": "Standard instructions file for AI agents (AGENTS.md, SKILLS.md, etc), containing guidelines and rules for agent behavior and interactions."
+    }
+  },
+  "templates": {
+    "github-copilot": {
+      "specific-instructions": {
+        "custom": {
+          "context": {
+            "label": "Context",
+            "hint": "Prefix of the file name that will contain the context instructions. Use this value instead of the default context instructions file."
+          }
+        },
+        "header": {
+          "description": {
+            "label": "Description",
+            "hint": "A short description of the project that will be used on the instructions template."
+          },
+          "applyto": {
+            "label": "Apply to",
+            "hint": "A list of extensions where these instructions will be applied. Leave blank for all files."
+          }
+        },
+        "body": {
+          "maininstructions": {
+            "label": "Main instructions",
+            "hint": "The main instructions for the project."
+          },
+          "repositoryname": {
+            "label": "Repository name",
+            "hint": "The name of the repository where the instructions will be used."
+          }
+        }
+      },
+      "agent-instructions": {
+        "custom": {
+          "context": {
+            "label": "Context",
+            "hint": "Prefix of the file name to replace the agent name. Use this value instead of the default agent name."
+          }
+        },
+        "header": {
+          "name": {
+            "label": "Name",
+            "hint": "Name of the agent"
+          },
+          "description": {
+            "label": "Description",
+            "hint": "A short description of the agent"
+          },
+          "argument-hint": {
+            "label": "Argument hint",
+            "hint": "The inputs this agent expects"
+          },
+          "tools": {
+            "label": "Tools",
+            "hint": "Specify tools this agent can use"
+          },
+          "mcp-servers": {
+            "label": "MCP servers",
+            "hint": "MCP servers this agent can access"
+          }
+        },
+        "body": {
+          "role": {
+            "label": "Role",
+            "hint": "Describe the role of the agent"
+          },
+          "repository-name": {
+            "label": "Repository name",
+            "hint": "Name of the repository"
+          }
+        }
+      },
+      "prompts": {
+        "custom": {
+          "context": {
+            "label": "Context",
+            "hint": "Prefix of the file name to replace the prompt name. Use this value instead of the default prompt name."
+          }
+        }
+      }
     }
   }
 }

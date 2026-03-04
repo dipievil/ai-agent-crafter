@@ -1,25 +1,117 @@
 # Development Guide
 
-## Templates folder structure
+## Main file informations for each tool
 
-The templates are structured on the folder `src/templates` as follows:
+Each tool use specific files formatting, naming and structure, so each file structure is set on the json main file. This is the needed items for each type of file:
 
-```text
-src/templates/
-├── agents/
-│   └── copilot-agent.md
-├── instructions/
-│   ├── copilot-instructions.md
-│   ├── copilot-context-instructions.md
-│   ├── chatgpt-instructions.md
-│   └── gemini-instructions.md
-├── prompts/
-│   └── copilot-prompt.md
-└── skills/
-  └── copilot-skill.md
+- **name**: The basic name type file
+- **output-file**: a list or a single value of name that the file can have to work with the tool
+- **hint**: a short explanation of how this file work
+- **installation**: how to use this file on your agent or project
+
+Example:
+
+```json
+"github-copilot": {
+    ...
+    "files": {
+      "specific-instructions": [
+        {
+          "name": "Project Instructions",
+          "output-file": ["copilot-instructions.md"],
+          "hint": "This file contains the main instructions for the project. It can be used to provide detailed guidance and context for the project. You can use variables on the template to customize the instructions based on the repository name or other values.",
+          "installation": "Create a subfolder on repository called \".github\" and put this instruction file.",
+          "template": {
+            ...
+          }
+        }
+    }
+}
 ```
 
-## Current Step Flow Architecture
+## Templates structure
+
+The app will generate the templates based on the json structure for each ai tool and format the user choose on the `src/data/ai-tools.json` file.
+
+The `template`  node has two main nodes 'header' and 'body'. Some projects has different header formart (Github Copilot) but others are markdown file formats exclusive, so the body is the markdown content file.
+
+Each item on header and body item will have all data required to create form fieds for user inputs and file format to the application know how to write down the markdown file.
+
+Example:
+
+```json
+{
+  "body": [
+    {
+      "name": "mainInstructions",
+      "sectionName": "Main instructions",
+      "sectionType": "main-section",
+      "formInput": "long",
+      "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
+      "required": true
+    }
+  ]
+}
+```
+
+### Template items
+
+- **name**: Is the main data key used for system interation and key
+- **formtHint**: The default hint for that field on the form.
+- **formLabel**: Default Label to be showed on the form. App will use _name_ in case of this is not defined.
+- **formInput**: Field type that will show to user. See [Valid formInput types](#valid-forminput-types)
+- **sectionName**: The section name on the markdown file. The app will use _name_ in case this is not defined
+- **sectionType**: This is how is the content is written on the markdown file .See [Valid sectionType Values](#valid-sectiontype-values)
+- **required**: if don't exist or is true it is not mandatory to build the file so it will be mandatory on save
+
+#### Valid formInput types
+
+- **short**: a short text value that will render a single input. This is the default in case of missing one.
+- **long"**: a paragraph or more that render a textarea
+- **comma-list**: a list of items that render a tag list that can be removed
+- **list**: a list of text values that can be dynamic
+
+#### Valid sectionType Values
+
+- **main-section**: The content has a title level 1 (single trailing #). This is the default text format in case of missing value.
+- **second-section**: The content has a title level 2 (two trailing #)
+- **list**: A list after a title level 2 (two trailing #)
+- **list-simple**: just a markdown list without no title
+- **value-key**: the name and the content split by ":"
+- **array-key**: the name with a list of the values in JSON array format
+- **objects-key**: the name with user typed values as a list of objects in JSON format
+- **title**: is just a main section title
+
+### Translated templates inputs
+
+For the form values translated values can be use the format `templates.{ai Tool}.{file type}.{content area}.{content type}`.
+
+Example:
+
+```json
+"templates": {
+    "github-copilot": {
+      "specific-instructions": {
+        "header": {
+          "description": {
+            "label": "Description",
+            "hint": "A short description of the project that will be used on the instructions template."
+          },
+          "applyto": {
+            "label": "Apply to",
+            "hint": "A short description of what the instructions apply to."
+          }
+        }
+      }
+    }
+}
+```
+
+## Notes
+
+A content itens with value _name_ or _description_ on item "name" will not generate a form input since it was previously inputed.
+
+## Step Flow Architecture
 
 The home page uses a step wizard.
 

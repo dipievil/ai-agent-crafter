@@ -1,12 +1,14 @@
 {
   "name": "ai-agent-crafter",
-  "version": "0.2.0",
+  "version": "0.6.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@vercel/analytics": "^1.6.1",
@@ -23,7 +25,8 @@
     "eslint": "^9",
     "eslint-config-next": "16.1.6",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "5.9.3",
+    "vitest": "^3.2.4"
   },
   "ignoreScripts": [
     "sharp",

@@ -4,6 +4,7 @@ export type SummarySectionProps = {
   currentStep: number;
   selectedType?: FileType | null;
   selectedToolId?: string;
+  selectedFileSubtypeLabel?: string;
+  entityName?: string;
   aiTools: AiToolOption[];
-  onToolChange: (toolId: string) => void;
 };

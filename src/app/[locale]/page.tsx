@@ -31,7 +31,7 @@ export default function Home() {
       <main
         id="main-content"
         tabIndex={-1}
-        className="mx-auto flex min-h-screen w-full max-w-4xl flex-col items-center justify-center px-4 py-10 text-center sm:px-6"
+        className="mx-auto flex min-h-screen w-full max-w-4xl flex-col items-center justify-center px-4 pb-10 pt-10 text-center sm:px-6"
       >
         <h1 className="text-balance text-shadow-sm text-3xl font-bold tracking-tight sm:text-4xl">
           {t("title")}

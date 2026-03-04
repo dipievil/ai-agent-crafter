@@ -9,6 +9,8 @@
       "prompts": "Prompts",
       "skills": "Skills"
     },
+    "creating": "Criando",
+    "for": "para",
     "creatingFor": "Criando um arquivo para:",
     "creatingAType": "Criando um arquivo do tipo:"
   },
@@ -16,7 +18,8 @@
     "backButton": "Voltar",
     "startButton": "Iniciar",
     "cancelButton": "Cancelar",
-    "continueButton": "Continuar"
+    "continueButton": "Continuar",
+    "downloadButton": "Baixar arquivo"
   },
   "Step1": {        
     "phaseTitle": "Fase 1",
@@ -27,7 +30,118 @@
     "phaseTitle": "Fase 2",
     "phaseDescription": "Em qual ferramenta você usará seu agente?",
     "toolLabel": "Ferramenta",
+    "toolPlaceholder": "Selecione uma ferramenta",
+    "fileSubtypeLabel": "Tipo de arquivo",
+    "tipsTitle": "Dicas",
     "officialSite": "Site oficial"
+  },
+  "Step3":{
+    "phaseTitle": "Fase 3",
+    "phaseDescription": "Como você chamará o seu {item}?",
+    "nameForType": "Nome do seu {item}",
+    "examplesLabel": "Exemplos:",
+    "entities": {
+      "agentInstructions":{
+        "name":"Agente",
+        "helperText": "Dê um nome claro para seu agente para que seja fácil entender o que ele faz.",
+        "entityNamePlaceholder": "Nome do agente",
+        "examples": {
+          "one": "Assistente de e-mails",
+          "two": "Assistente de agenda",
+          "three": "Revisor de código",
+          "four": "Gerador de testes unitários para C#"
+        }
+
+      },
+      "specificInstructions": {
+        "name": "Arquivo de instruções",
+        "helperText": "Dê um título claro para seu arquivo de instruções para que seja fácil entender o que ele faz.",
+        "entityNamePlaceholder": "Título das instruções",
+        "examples": {
+          "one": "Instruções criador de mensagens e-mails",
+          "two": "Instruções de genrenciador de agenda",
+          "three": "Instruções de revisão de textos",
+          "four": "Instruções de testes unitários para C#"
+        }
+      },
+      "prompts": {
+        "name": "prompt",
+        "helperText": "Dê um nome claro para seu prompt para que seja fácil entender o que ele fará.",
+        "entityNamePlaceholder": "Nome do prompt",
+        "examples": {
+          "one": "Gerador de mensagens para chat",
+          "two": "Gerador de código",
+          "three": "Revisão de textos",
+          "four": "Tradutor de inglês para português"
+        }
+      },
+      "skills": {
+        "name": "skill",
+        "helperText": "Dê um nome claro para sua skill para que seja fácil entender o que ela fará.",
+        "entityNamePlaceholder": "Nome da skill",
+        "examples": {
+          "one": "Skill de e-mails",
+          "two": "Skill de agenda",
+          "three": "Skill de revisão de textos",
+          "four": "Skill de testes unitários para C#"
+        }
+      }
+    }
+  },
+  "Step4": {
+    "phaseTitle": "Fase 4",
+    "phaseDescription": "Descreva o que o seu {item} faz",
+    "descriptionForType": "Descrição do seu {item}",
+    "entities": {
+      "agentInstructions": {
+        "name": "agente",
+        "descriptionPlaceholder": "Você é um agente especializado em...",
+        "helperText": "Explique para o seu agente o que ele fará. Dica: Use a segunda pessoa do singular (você)."
+      },
+      "specificInstructions": {
+        "name": "arquivo de instruções",
+        "descriptionPlaceholder": "Instruções para...",
+        "helperText": "Descreva para que servem essas instruções."
+      },
+      "prompts": {
+        "name": "prompt",
+        "descriptionPlaceholder": "Use esse Prompt para...",
+        "helperText": "Descreva para que server o prompt."
+      },
+      "skills": {
+        "name": "skill",
+        "descriptionPlaceholder": "Esta skill faz...",
+        "helperText": "Descreva para que serve a skill."
+      }
+    }
+  },
+  "Step5": {
+    "phaseTitle": "Fase 5",
+    "phaseDescription": "Este tipo de arquivo usa um formato específico de cabeçalho. Preencha os campos necessários.",
+    "sectionTitle": "Cabeçalho",
+    "emptySection": "Esse formato de arquivo não possui essa seção.",
+    "itemPlaceholder": "Digite e adicione um item",
+    "addItem": "Adicionar",
+    "removeItem": "Remover item"
+  },
+  "Step6": {
+    "phaseTitle": "Fase 6",
+    "phaseDescription": "Preencha os campos de conteúdo com base no template selecionado.",
+    "sectionTitle": "Conteúdo",
+    "emptySection": "Esse formato de arquivo não possui essa seção.",
+    "itemPlaceholder": "Digite e adicione um item",
+    "addItem": "Adicionar",
+    "removeItem": "Remover item"
+  },
+  "Step7": {
+    "phaseTitle": "Revisão",
+    "phaseDescription": "Seu arquivo ficará assim:",
+    "markdownLabel": "Conteúdo do arquivo markdown",
+    "warningsTitle": "Inconsistências detectadas"
+  },
+  "Footer": {
+    "ariaLabel": "Versão da aplicação",
+    "version": "v{version} · {commit}"
   },
   "aiApps": {
     "githubCopilot": {
@@ -47,6 +161,107 @@
     },
     "warp": {
       "description": "O Warp é um terminal moderno com recursos de produtividade e suporte de IA para agilizar comandos, scripts e fluxos no dia a dia de desenvolvimento."
+    },
+    "padrões": {
+      "description": "Arquivo de instruções padrão para agentes de IA (AGENTS.md, SKILLS.md, etc), contendo diretrizes e regras para o comportamento e interações dos agentes."
+    },
+    "standards": {
+      "description": "Arquivo de instruções padrão para agentes de IA (AGENTS.md, SKILLS.md, etc), contendo diretrizes e regras para o comportamento e interações dos agentes."
+    }
+  },
+  "templates": {
+    "agent-zero":{
+      "agent-instructions": {
+        "body": {
+          "description": {
+            "label": "Papel",
+            "hint": "Descreva para o seu agente o que ele é e a função dele"
+          },
+          "actions": {
+            "label": "Ações",
+            "hint": "Liste as ações que o agente deve realizar"
+          }
+        }
+      }
+    },
+    "github-copilot": {
+      "specific-instructions": {
+        "custom": {
+          "context": {
+            "label": "Contexto",
+            "hint": "Prefixo do nome do arquivo que vai conter as instruções de contexto. Use esse valor no lugar do nome padrão do arquivo de contexto."
+          }
+        },
+        "header": {
+          "description": {
+            "label": "Descrição",
+            "hint": "Uma descrição curta do projeto usada no template de instruções."
+          },
+          "applyto": {
+            "label": "Aplicar em",
+            "hint": "Uma lista de extensões onde essas instruções serão aplicadas. Deixe em branco para todos os arquivos."
+            
+          }
+        },
+        "body": {
+          "maininstructions": {
+            "label": "Instruções principais",
+            "hint": "Instruções principais do projeto."
+          },
+          "repositoryname": {
+            "label": "Nome do repositório",
+            "hint": "Nome do repositório onde as instruções serão usadas."
+          }
+        }
+      },
+      "agent-instructions": {
+        "custom": {
+          "context": {
+            "label": "Contexto",
+            "hint": "Prefixo do nome do arquivo para substituir o nome padrão do agente."
+          }
+        },
+        "header": {
+          "name": {
+            "label": "Nome",
+            "hint": "Nome do agente"
+          },
+          "description": {
+            "label": "Descrição",
+            "hint": "Descrição curta do agente"
+          },
+          "argument-hint": {
+            "label": "Dica de argumento",
+            "hint": "Entradas esperadas por este agente"
+          },
+          "tools": {
+            "label": "Ferramentas",
+            "hint": "Especifique as ferramentas permitidas"
+          },
+          "mcp-servers": {
+            "label": "Servidores MCP",
+            "hint": "Servidores MCP acessíveis por este agente"
+          }
+        },
+        "body": {
+          "role": {
+            "label": "Função",
+            "hint": "Descreva a função do agente"
+          },
+          "repository-name": {
+            "label": "Nome do repositório",
+            "hint": "Nome do repositório"
+          }
+        }
+      },
+      "prompts": {
+        "custom": {
+          "context": {
+            "label": "Contexto",
+            "hint": "Prefixo do nome do arquivo para substituir o nome padrão do prompt."
+          }
+        }
+      }
     }
   }
 }
