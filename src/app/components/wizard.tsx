@@ -469,7 +469,6 @@ export default function StepsWizard({
 
           <ReviewStep
             markdown={markdownBuildResult.output.markdown}
-            warnings={markdownBuildResult.warnings.map((warning) => warning.message)}
           />
 
           <NavbarWizard

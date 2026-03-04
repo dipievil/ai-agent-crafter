@@ -3,8 +3,7 @@ import { useTranslations } from "next-intl";
 import type { ReviewStepProps } from "./review-step.types";
 
 export default function ReviewStep({ 
-  markdown, 
-  warnings,
+  markdown,
   installHint
 }: ReviewStepProps) {
   const t = useTranslations("Step7");
@@ -35,16 +34,7 @@ export default function ReviewStep({
         </div>
       ) : null}        
 
-        {warnings.length > 0 ? (
-          <div className="rounded-lg border border-black/10 bg-gray-100 p-4 dark:border-white/15 dark:bg-background">
-            <p className="text-sm font-medium text-foreground">{t("warningsTitle")}</p>
-            <ul className="mt-2 list-disc pl-5 text-sm text-foreground/80">
-              {warnings.map((warning) => (
-                <li key={warning}>{warning}</li>
-              ))}
-            </ul>
-          </div>
-        ) : null}
+        
       </div>
     </>
   );
