@@ -4,8 +4,8 @@ import type { EntityNameStepProps as EntityNameStepProps } from "./entity-name-s
 
 export default function EntityNameStep({
   selectedType,
-  fileName,
-  onFileNameChange
+  entityName,
+  onEntityNameChange
 }: EntityNameStepProps) {
   const t = useTranslations("Step3");
 
@@ -24,11 +24,11 @@ export default function EntityNameStep({
         </label>
 
         <input
-          id="file-name"
-          name="fileName"
+          id="entity-name"
+          name="entityName"
           type="text"
-          value={fileName}
-          onChange={(event) => onFileNameChange(event.target.value)}
+          value={entityName}
+          onChange={(event) => onEntityNameChange(event.target.value)}
           placeholder={t(`entities.${fileTypes[selectedType]}.entityNamePlaceholder`)}
           className="h-11 rounded-lg border border-black/20 bg-transparent px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 dark:border-white/25"
         />

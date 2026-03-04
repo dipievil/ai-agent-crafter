@@ -4,7 +4,8 @@ export type StoredSelections = {
 	fileType: FileType;
 	toolId: string;
 	fileSubtypeIndex: number;
-	fileName: string;
+	entityName: string;
+	outputFileName: string;
 	description: string;
 	headerFormValues: Record<string, string | string[]>;
 	bodyFormValues: Record<string, string | string[]>;
@@ -15,7 +16,8 @@ export interface WizardStorageService {
 		defaultFileType: FileType,
 		defaultToolId: string,
 		defaultFileSubtypeIndex: number,
-		defaultFileName: string,
+		defaultEntityName: string,
+		defaultOutputFileName: string,
 		defaultDescription: string,
 		defaultHeaderFormValues: Record<string, string | string[]>,
 		defaultBodyFormValues: Record<string, string | string[]>,
@@ -25,7 +27,8 @@ export interface WizardStorageService {
 		fileType: FileType,
 		toolId: string,
 		fileSubtypeIndex: number,
-		fileName: string,
+		entityName: string,
+		outputFileName: string,
 		description: string,
 		headerFormValues: Record<string, string | string[]>,
 		bodyFormValues: Record<string, string | string[]>

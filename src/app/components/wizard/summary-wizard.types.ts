@@ -5,6 +5,6 @@ export type SummarySectionProps = {
   selectedType?: FileType | null;
   selectedToolId?: string;
   selectedFileSubtypeLabel?: string;
-  fileName?: string;
+  entityName?: string;
   aiTools: AiToolOption[];
 };

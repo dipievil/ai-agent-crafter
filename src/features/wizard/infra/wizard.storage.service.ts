@@ -29,7 +29,8 @@ class LocalStorageWizardService implements WizardStorageService {
     defaultFileType: FileType,
     defaultToolId: string,
     defaultFileSubtypeIndex: number,
-    defaultFileName: string,
+    defaultEntityName: string,
+    defaultOutputFileName: string,
     defaultDescription: string,
     defaultHeaderFormValues: Record<string, string | string[]>,
     defaultBodyFormValues: Record<string, string | string[]>,
@@ -41,7 +42,8 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType: defaultFileType,
         toolId: defaultToolId,
         fileSubtypeIndex: defaultFileSubtypeIndex,
-        fileName: defaultFileName,
+        entityName: defaultEntityName,
+        outputFileName: defaultOutputFileName,
         description: defaultDescription,
         headerFormValues: defaultHeaderFormValues,
         bodyFormValues: defaultBodyFormValues
@@ -56,7 +58,8 @@ class LocalStorageWizardService implements WizardStorageService {
           fileType: defaultFileType,
           toolId: defaultToolId,
           fileSubtypeIndex: defaultFileSubtypeIndex,
-          fileName: defaultFileName,
+          entityName: defaultEntityName,
+          outputFileName: defaultOutputFileName,
           description: defaultDescription,
           headerFormValues: defaultHeaderFormValues,
           bodyFormValues: defaultBodyFormValues
@@ -67,7 +70,8 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType?: unknown;
         toolId?: unknown;
         fileSubtypeIndex?: unknown;
-        fileName?: unknown;
+        entityName?: unknown;
+        outputFileName?: unknown;
         description?: unknown;
         headerFormValues?: unknown;
         bodyFormValues?: unknown;
@@ -82,7 +86,9 @@ class LocalStorageWizardService implements WizardStorageService {
           ? parsed.toolId
           : defaultToolId;
     
-      const fileName = typeof parsed.fileName === "string" ? parsed.fileName : defaultFileName;
+      const entityName = typeof parsed.entityName === "string" ? parsed.entityName : defaultEntityName;
+      const outputFileName =
+        typeof parsed.outputFileName === "string" ? parsed.outputFileName : defaultOutputFileName;
 
       const fileSubtypeIndex = isNonNegativeInteger(parsed.fileSubtypeIndex)
         ? parsed.fileSubtypeIndex
@@ -104,14 +110,24 @@ class LocalStorageWizardService implements WizardStorageService {
           ? this.normalizeFormValues(parsed.bodyFormValues)
           : defaultBodyFormValues;
 
-      return { fileType, toolId, fileSubtypeIndex, fileName, description, headerFormValues, bodyFormValues };
+      return {
+        fileType,
+        toolId,
+        fileSubtypeIndex,
+        entityName,
+        outputFileName,
+        description,
+        headerFormValues,
+        bodyFormValues
+      };
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
       return {
         fileType: defaultFileType,
         toolId: defaultToolId,
         fileSubtypeIndex: defaultFileSubtypeIndex,
-        fileName: defaultFileName,
+        entityName: defaultEntityName,
+        outputFileName: defaultOutputFileName,
         description: defaultDescription,
         headerFormValues: defaultHeaderFormValues,
         bodyFormValues: defaultBodyFormValues
@@ -123,7 +139,8 @@ class LocalStorageWizardService implements WizardStorageService {
     fileType: FileType,
     toolId: string,
     fileSubtypeIndex: number,
-    fileName: string,
+    entityName: string,
+    outputFileName: string,
     description: string,
     headerFormValues: Record<string, string | string[]>,
     bodyFormValues: Record<string, string | string[]>
@@ -135,12 +152,30 @@ class LocalStorageWizardService implements WizardStorageService {
     try {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ fileType, toolId, fileSubtypeIndex, fileName, description, headerFormValues, bodyFormValues })
+        JSON.stringify({
+          fileType,
+          toolId,
+          fileSubtypeIndex,
+          entityName,
+          outputFileName,
+          description,
+          headerFormValues,
+          bodyFormValues
+        })
       );
     } catch {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ fileType, toolId, fileSubtypeIndex, fileName, description, headerFormValues, bodyFormValues })
+        JSON.stringify({
+          fileType,
+          toolId,
+          fileSubtypeIndex,
+          entityName,
+          outputFileName,
+          description,
+          headerFormValues,
+          bodyFormValues
+        })
       );
     }
   }
@@ -181,7 +216,8 @@ export function readStoredSelections(
   defaultFileType: FileType,
   defaultToolId: string,
   defaultFileSubtypeIndex: number,
-  defaultFileName: string,
+  defaultEntityName: string,
+  defaultOutputFileName: string,
   defaultDescription: string,
   defaultHeaderFormValues: Record<string, string | string[]>,
   defaultBodyFormValues: Record<string, string | string[]>,
@@ -191,7 +227,8 @@ export function readStoredSelections(
     defaultFileType,
     defaultToolId,
     defaultFileSubtypeIndex,
-    defaultFileName,
+    defaultEntityName,
+    defaultOutputFileName,
     defaultDescription,
     defaultHeaderFormValues,
     defaultBodyFormValues,
@@ -203,7 +240,8 @@ export function persistSelections(
   fileType: FileType,
   toolId: string,
   fileSubtypeIndex: number,
-  fileName: string,
+  entityName: string,
+  outputFileName: string,
   description: string,
   headerFormValues: Record<string, string | string[]>,
   bodyFormValues: Record<string, string | string[]>
@@ -212,7 +250,8 @@ export function persistSelections(
     fileType,
     toolId,
     fileSubtypeIndex,
-    fileName,
+    entityName,
+    outputFileName,
     description,
     headerFormValues,
     bodyFormValues

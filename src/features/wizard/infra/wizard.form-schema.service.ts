@@ -133,6 +133,13 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
   ) {
     const template = this.getTemplateFromNode(node);
     if (!template) {
+      context.warnings.push(
+        withParseWarning(
+          `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template`,
+          "Template definition was not found for this file node",
+          "template-not-found"
+        )
+      );
       return [];
     }
 
@@ -163,6 +170,13 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
 
     const rawName = typeof field.name === "string" ? field.name : "";
     if (!rawName) {
+      context.warnings.push(
+        withParseWarning(
+          `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template.${context.filesection}[${fieldIndex}]`,
+          "Template field is missing a valid name",
+          "invalid-section-item"
+        )
+      );
       return undefined;
     }
 
@@ -170,6 +184,16 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     const rawFormat = field.format ?? field.formInput;
     const parsedFormat = parseFormat(rawFormat);
     const format: FieldFormat = parsedFormat ?? "short";
+
+    if (!parsedFormat && rawFormat !== undefined) {
+      context.warnings.push(
+        withParseWarning(
+          `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template.${context.filesection}[${fieldIndex}].format`,
+          `Unsupported format '${String(rawFormat)}'. Falling back to 'short'`,
+          "unsupported-format"
+        )
+      );
+    }
     
     const labelKey = this.createTranslationKey(context, normalizedName, "formLabel");
     const hintKey = this.createTranslationKey(context, normalizedName, "formHint");

@@ -85,6 +85,12 @@ export default function TemplateSectionStep({
 
     const [isVisible, setIsVisible] = useState(false);
 
+    console.log("Rendering field:", field.name, "with value:", fieldValue);
+
+    if (fieldValue != undefined){
+      return "";
+    }
+
     if (field.inputType === "input-single-line") {
       return (
         <div key={field.id} className="flex flex-col gap-2">

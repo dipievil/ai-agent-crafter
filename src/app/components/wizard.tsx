@@ -23,7 +23,9 @@ import {
 import { buildTemplateForm } from "@/features/wizard/infra/wizard.form-schema.service";
 import { buildTemplateMarkdown } from "@/features/wizard/infra/wizard.markdown-builder.service";
 
-function getFilesNode(toolId: string, fileType: FileType): Record<string, unknown> | undefined {
+type FileNodeRaw = Record<string, unknown>;
+
+function getFilesNode(toolId: string): Record<string, unknown> | undefined {
   const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
 
   if (!toolNode || typeof toolNode !== "object") {
@@ -39,7 +41,7 @@ function getFilesNode(toolId: string, fileType: FileType): Record<string, unknow
 }
 
 function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
-  const files = getFilesNode(toolId, fileType);
+  const files = getFilesNode(toolId);
 
   if (!files) {
     return false;
@@ -48,8 +50,8 @@ function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
   return Object.prototype.hasOwnProperty.call(files, fileType);
 }
 
-function getFilesArray(toolId: string, fileType: FileType): FileSubtypeOption[] {
-  const files = getFilesNode(toolId, fileType);
+function getFileNodes(toolId: string, fileType: FileType): FileNodeRaw[] {
+  const files = getFilesNode(toolId);
 
   if (!files) {
     return [];
@@ -58,13 +60,37 @@ function getFilesArray(toolId: string, fileType: FileType): FileSubtypeOption[] 
   const fileNode = files[fileType];
 
   const fileNodes = Array.isArray(fileNode) ? fileNode : typeof fileNode === "object" ? [fileNode] : [];
-  
-  return fileNodes;  
+
+  return fileNodes.filter((node): node is FileNodeRaw => Boolean(node) && typeof node === "object");
+}
+
+function getSelectedFileNode(toolId: string, fileType: FileType, fileSubtypeIndex: number): FileNodeRaw | undefined {
+  const fileNodes = getFileNodes(toolId, fileType);
+  return fileNodes[fileSubtypeIndex];
+}
+
+function getOutputFileName(toolId: string, fileType: FileType, fileSubtypeIndex: number): string {
+  const selectedNode = getSelectedFileNode(toolId, fileType, fileSubtypeIndex);
+  if (!selectedNode) {
+    return "";
+  }
+
+  const outputFile = selectedNode["output-file"];
+  if (typeof outputFile === "string") {
+    return outputFile;
+  }
+
+  if (Array.isArray(outputFile)) {
+    const firstOutputFile = outputFile.find((value): value is string => typeof value === "string");
+    return firstOutputFile ?? "";
+  }
+
+  return "";
 }
 
 
 function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeOption[] {
-  const fileNodes = getFilesArray(toolId, fileType);
+  const fileNodes = getFileNodes(toolId, fileType);
 
   return fileNodes
     .map((node, index) => {
@@ -85,10 +111,7 @@ function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeO
 }
 
 function getHint(toolId: string, fileType: FileType, fileSubtypeIndex: number): string | undefined {
-  
-  const fileNode = getFilesArray(toolId, fileType);  
-  
-  const subtypeNode = fileNode[fileSubtypeIndex];
+  const subtypeNode = getSelectedFileNode(toolId, fileType, fileSubtypeIndex);
   if (!subtypeNode || typeof subtypeNode !== "object") {
     return undefined;
   }
@@ -127,7 +150,8 @@ export default function StepsWizard({
 
   const defaultToolId = "";
   const defaultFileSubtypeIndex = 0;
-  const defaultFileName = "";
+  const defaultEntityName = "";
+  const defaultOutputFileName = "";
   const defaultDescription = "";
   const defaultHeaderFormValues: Record<string, string | string[]> = {};
   const defaultBodyFormValues: Record<string, string | string[]> = {};
@@ -136,7 +160,8 @@ export default function StepsWizard({
     defaultType,
     defaultToolId,
     defaultFileSubtypeIndex,
-    defaultFileName,
+    defaultEntityName,
+    defaultOutputFileName,
     defaultDescription,
     defaultHeaderFormValues,
     defaultBodyFormValues,
@@ -147,7 +172,7 @@ export default function StepsWizard({
 
   const [selectedToolId, setSelectedToolId] = useState<string>(storedSelections.toolId);
   const [selectedFileSubtypeIndex, setSelectedFileSubtypeIndex] = useState<number>(storedSelections.fileSubtypeIndex);
-  const [fileName, setFileName] = useState<string>(storedSelections.fileName);
+  const [entityName, setEntityName] = useState<string>(storedSelections.entityName);
   const [description, setDescription] = useState<string>(storedSelections.description);
   const [headerFormValues, setHeaderFormValues] = useState<Record<string, string | string[]>>(
     storedSelections.headerFormValues
@@ -191,6 +216,11 @@ export default function StepsWizard({
     return fileSubtypeOptions.find((option) => option.index === effectiveFileSubtypeIndex)?.label;
   }, [effectiveFileSubtypeIndex, fileSubtypeOptions]);
 
+  const outputFileName = useMemo(
+    () => getOutputFileName(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
+    [effectiveFileSubtypeIndex, effectiveSelectedToolId, selectedType]
+  );
+
   const fileHint = useMemo(
     () => getHint(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
     [effectiveFileSubtypeIndex, effectiveSelectedToolId, selectedType]
@@ -205,13 +235,13 @@ export default function StepsWizard({
       effectiveSelectedToolId,
       selectedType,
       "header",
-      fileName,
+      entityName,
       description,
       effectiveFileSubtypeIndex
     );
 
     return result.section.fields.length > 0;
-  }, [description, effectiveFileSubtypeIndex, effectiveSelectedToolId, fileName, selectedType]);
+  }, [description, effectiveFileSubtypeIndex, effectiveSelectedToolId, entityName, selectedType]);
 
   const markdownBuildResult = useMemo(() => {
     if (!effectiveSelectedToolId) {
@@ -228,7 +258,7 @@ export default function StepsWizard({
     return buildTemplateMarkdown({
       aitype: effectiveSelectedToolId,
       filetype: selectedType,
-      entityName: fileName,
+      entityName,
       entityDescription: description,
       headerFormValues,
       bodyFormValues,
@@ -239,18 +269,17 @@ export default function StepsWizard({
     description,
     effectiveFileSubtypeIndex,
     effectiveSelectedToolId,
-    fileName,
+    entityName,
     headerFormValues,
     selectedType
   ]);
 
-  function resolveDownloadFileName(): string {
-    const fallbackName = (fileName.trim() || "ai-agent-crafter-output").replace(/\s+/g, "-").toLowerCase();
-    return `${fallbackName}.md`;
-  }
-
   function handleDownloadFile() {
     if (typeof window === "undefined") {
+      return;
+    }
+
+    if (!outputFileName) {
       return;
     }
 
@@ -259,7 +288,7 @@ export default function StepsWizard({
     const url = window.URL.createObjectURL(blob);
     const anchor = window.document.createElement("a");
     anchor.href = url;
-    anchor.download = resolveDownloadFileName();
+    anchor.download = outputFileName;
     window.document.body.appendChild(anchor);
     anchor.click();
     window.document.body.removeChild(anchor);
@@ -271,7 +300,8 @@ export default function StepsWizard({
       selectedType,
       effectiveSelectedToolId,
       effectiveFileSubtypeIndex,
-      fileName,
+      entityName,
+      outputFileName,
       description,
       headerFormValues,
       bodyFormValues
@@ -280,7 +310,8 @@ export default function StepsWizard({
     selectedType,
     effectiveSelectedToolId,
     effectiveFileSubtypeIndex,
-    fileName,
+    entityName,
+    outputFileName,
     description,
     headerFormValues,
     bodyFormValues
@@ -291,7 +322,7 @@ export default function StepsWizard({
     setSelectedType(defaultType);
     setSelectedToolId(defaultToolId);
     setSelectedFileSubtypeIndex(defaultFileSubtypeIndex);
-    setFileName(defaultFileName);
+    setEntityName(defaultEntityName);
     setDescription(defaultDescription);
     setHeaderFormValues(defaultHeaderFormValues);
     setBodyFormValues(defaultBodyFormValues);
@@ -353,8 +384,8 @@ export default function StepsWizard({
             selectedType={selectedType} />
           <EntityNameStep
             selectedType={selectedType}
-            fileName={fileName}
-            onFileNameChange={setFileName}
+            entityName={entityName}
+            onEntityNameChange={setEntityName}
           />
           <NavbarWizard
             currentStep={3}
@@ -374,7 +405,7 @@ export default function StepsWizard({
             selectedToolId={effectiveSelectedToolId}
             selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType}
-            fileName={fileName}
+            entityName={entityName}
           />
           <EntityDescriptionStep
             selectedType={selectedType}
@@ -399,14 +430,14 @@ export default function StepsWizard({
             selectedToolId={effectiveSelectedToolId}
             selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType}
-            fileName={fileName}
+            entityName={entityName}
           />
 
           <TemplateHeaderStep
             selectedToolId={effectiveSelectedToolId}
             selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
             selectedType={selectedType}
-            entityName={fileName}
+            entityName={entityName}
             entityDescription={description}
             values={headerFormValues}
             onValuesChange={setHeaderFormValues}
@@ -430,14 +461,14 @@ export default function StepsWizard({
             selectedToolId={effectiveSelectedToolId}
             selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType}
-            fileName={fileName}
+            entityName={entityName}
           />
 
           <TemplateBodyStep
             selectedToolId={effectiveSelectedToolId}
             selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
             selectedType={selectedType}
-            entityName={fileName}
+            entityName={entityName}
             entityDescription={description}
             values={bodyFormValues}
             onValuesChange={setBodyFormValues}
@@ -461,7 +492,7 @@ export default function StepsWizard({
             selectedToolId={effectiveSelectedToolId}
             selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType}
-            fileName={fileName}
+            entityName={entityName}
           />
 
           <ReviewStep

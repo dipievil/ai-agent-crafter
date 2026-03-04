@@ -117,7 +117,7 @@
   },
   "Step5": {
     "phaseTitle": "Fase 5",
-    "phaseDescription": "Preencha somente os campos de cabeçalho com base no template selecionado.",
+    "phaseDescription": "Este tipo de arquivo usa um formato específico de cabeçalho. Preencha os campos necessários.",
     "sectionTitle": "Cabeçalho",
     "emptySection": "Esse formato de arquivo não possui essa seção.",
     "itemPlaceholder": "Digite e adicione um item",

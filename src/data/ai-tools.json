@@ -35,15 +35,15 @@
               {
                 "name": "agentBehavior",
                 "sectionType": "title"
-              },
-              {
-
               }
             ]
           }
         },
         {
           "name": "Context Instructions",
+          "output-file": "context.instructions.md",
+          "hint":"This is a specific context instructions file. Use this if you want to separate the context instructions from the main instructions. If you use this, you need to set the \"Context\" custom field with the prefix of the file name, e.g., \"context\".",
+          "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions. You need a main file with the name \"copilot-instructions.md\".",          
           "template-file": "templates/instructions/copilot-context-instructions.md",
           "custom": [
             {
@@ -53,8 +53,6 @@
               "hint": "Prefix of the file name that will contain the context instructions. Use this value instead of the default context instructions file."
             }
           ],
-          "output-file": "context.instructions.md",
-          "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions. You need a main file with the name \"copilot-instructions.md\".",
           "template": {
             "header" :[
               {

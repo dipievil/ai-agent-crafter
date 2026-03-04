@@ -8,7 +8,7 @@ export default function SummarySection({
   selectedType,
   selectedToolId,
   selectedFileSubtypeLabel,
-  fileName,
+  entityName,
   aiTools,
 }: SummarySectionProps) {
     const t = useTranslations("HomePage");
@@ -27,13 +27,12 @@ export default function SummarySection({
     <>
       {selectedType && currentStep === 2 && (
         <>
-          <p className="text-sm text-left text-foreground/80">{t("creatingAType")}</p>
-          <p className="mt-1 text-left text-1xl font-semibold text-foreground">{selectedTypeWithSubtype}</p>
+          <p className="text-sm text-left text-foreground/80">{t("creatingAType")} <b>{selectedTypeWithSubtype}</b></p>
         </>
       )}
       {selectedType && selectedToolId != undefined && currentStep > 2 && currentStep < 4 && (
         <>
-          <p className="text-2xl text-left  text-foreground/80">
+          <p className="text-sm text-left  text-foreground/80">
             {t("creating")} <b>{selectedTypeWithSubtype}</b> {t("for")} <b>{selectedTool?.name}</b>
           </p>
         </>
@@ -42,7 +41,7 @@ export default function SummarySection({
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingFor")}</p>
           <p className="mt-1 text-left text-2xl font-semibold text-foreground">
-            <b>{selectedTypeWithSubtype}</b> {fileName ?? ""} {t("for")} <b>{selectedTool?.name}</b>
+            <b>{selectedTypeWithSubtype}</b> {entityName ?? ""} {t("for")} <b>{selectedTool?.name}</b>
           </p>
         </>
       )}

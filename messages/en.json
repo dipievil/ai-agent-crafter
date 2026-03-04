@@ -117,7 +117,7 @@
   },
   "Step5": {
     "phaseTitle": "Step 5",
-    "phaseDescription": "Fill only the header fields based on the selected template.",
+    "phaseDescription": "This kind of file uses a specific header format. Fill in the necessary fields based on the selected template.",
     "sectionTitle": "Header",
     "emptySection": "This file format does not have this section.",
     "itemPlaceholder": "Type and add an item",
