@@ -39,6 +39,7 @@ export type BuildFormInput = {
 export type FormField = {
   id: string;
   name: string;
+  sourceName?: string;
   section: TemplateSection;
   label: string;
   labelKey: string;

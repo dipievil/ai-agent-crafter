@@ -352,6 +352,7 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     return {
       id: `${context.filetype}-${context.filesection}-${context.nodeIndex}-${fieldIndex}-${normalizedName}`,
       name: normalizedName,
+      sourceName: rawName,
       section: context.filesection,
       label,
       labelKey,
