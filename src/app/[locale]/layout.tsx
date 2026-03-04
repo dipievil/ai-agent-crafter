@@ -6,6 +6,7 @@ import { getMessages } from "next-intl/server";
 
 import "../globals.css";
 import Footer from "../components/footer";
+import TopLinksBar from "../components/top-links-bar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <TopLinksBar />
         <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
         <Footer />
         <Analytics />

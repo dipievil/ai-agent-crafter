@@ -144,6 +144,25 @@
     "ariaLabel": "Versão da aplicação",
     "version": "v{version} · {commit}"
   },
+  "TopBar": {
+    "ariaLabel": "Links rápidos",
+    "repo": {
+      "label": "Repo",
+      "hint": "Contribua"
+    },
+    "issues": {
+      "label": "Issues",
+      "hint": "Envie sugestões ou reclamações"
+    },
+    "linkedin": {
+      "label": "LinkedIn",
+      "hint": "Meu linkedin"
+    },
+    "github": {
+      "label": "GitHub",
+      "hint": "Meu Github"
+    }
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "O GitHub Copilot é um assistente de código com IA que sugere trechos e autocompleta linhas enquanto você programa, ajudando a acelerar o desenvolvimento."
