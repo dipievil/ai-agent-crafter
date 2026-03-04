@@ -120,6 +120,10 @@
     "addItem": "Add",
     "removeItem": "Remove item"
   },
+  "Footer": {
+    "ariaLabel": "Application version",
+    "version": "v{version} · {commit}"
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "GitHub Copilot is an AI coding assistant developed by GitHub and OpenAI that suggests code and autocompletions while you build software."
