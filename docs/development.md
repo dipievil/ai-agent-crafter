@@ -2,11 +2,86 @@
 
 ## Templates structure
 
-The app will generate the templates based on the json structure for each ai tool and format the user choose.
+The app will generate the templates based on the json structure for each ai tool and format the user choose on the `src/data/ai-tools.json` file.
 
-The template node has two nodes 'header' and 'body'. Some projects has different header formart (Github Copilot) but others are markdown file formats exclusive.
+The `template`  node has two main nodes 'header' and 'body'. Some projects has different header formart (Github Copilot) but others are markdown file formats exclusive, so the body is the markdown content file.
 
-## Current Step Flow Architecture
+Each item on header and body item will have all data required to create form fieds for user inputs and file format to the application know how to write down the markdown file.
+
+Example:
+
+```json
+{
+  "body": [
+    {
+      "name": "mainInstructions",
+      "sectionName": "Main instructions",
+      "sectionType": "mainSection",
+      "formInput": "long",
+      "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
+      "required": true
+    }
+  ]
+}
+```
+
+### Template items
+
+- **name**: Is the main data key used for system interation and key
+- **formtHint**: The default hint for that field on the form.
+- **formLabel**: Default Label to be showed on the form. App will use _name_ in case of this is not defined.
+- **formInput**: Field type that will show to user. See [Valid formInput types](#valid-forminput-types)
+- **sectionName**: The section name on the markdown file. The app will use _name_ in case this is not defined
+- **type**: This is how is the content is written on the markdown file .See [Valid types](#valid-types)
+- **required**: if don't exist or is true it is not mandatory to build the file so it will be mandatory on save
+
+#### Valid formInput types
+
+- **short**: a short text value that will render a single input. This is the default in case of missing one.
+- **long"**: a paragraph or more that render a textarea
+- **comma-list**: a list of items that render a tag list that can be removed
+- **list**: a list of text values that can be dynamic
+
+#### Valid types
+
+- **mainSection**: The content has a title level 1 (single trailing #). This is the default text format in case of missing value.
+- **secondSection**: The content has a title level 2 (two trailing #)
+- **list**: A list after a title level 2 (two trailing #)
+- **listParagraph**: just a markdown list without no title
+- **valueKey**: the name and the content split by ":"
+- **arrayKey**: the name with a list of the values in JSON array format
+- **objectsKey**: the name with user typed values as a list of objects in JSON format
+
+### Translated templates inputs
+
+For the form values translated values can be use the format `templates.{ai Tool}.{file type}.{content area}.{content type}`.
+
+Example:
+
+```json
+"templates": {
+    "github-copilot": {
+      "specific-instructions": {
+        "header": {
+          "description": {
+            "label": "Description",
+            "hint": "A short description of the project that will be used on the instructions template."
+          },
+          "applyto": {
+            "label": "Apply to",
+            "hint": "A short description of what the instructions apply to."
+          }
+        }
+      }
+    }
+}
+```
+
+## Notes
+
+A content itens with value _name_ or _description_ on item "name" will not generate a form input since it was previously inputed.
+
+## Step Flow Architecture
 
 The home page uses a step wizard.
 
