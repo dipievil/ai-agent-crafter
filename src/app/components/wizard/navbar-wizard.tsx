@@ -24,6 +24,10 @@ export default function NavbarWizard({
   const startButtonEmoji = useMemo(() => emojiByType[selectedType], [selectedType]); 
   const forwardLabel = currentStep === 7 ?t("downloadButton"): t("continueButton");
   const forwardEmoji = currentStep === 7 ? DOWNLOAD_EMOJI : CONTINUE_EMOJI;
+  const cancelLabel = currentStep === 7 ? t("finishButton") : t("cancelButton");
+  const cancelButtonClassName = currentStep === 7
+    ? "inline-flex h-11 w-full items-center justify-center rounded-full border border-black/20 px-4 text-base font-semibold opacity-100 transition-opacity hover:opacity-80 dark:border-white/25 bg-emerald-600 text-white"
+    : "inline-flex h-11 w-full items-center justify-center rounded-full border border-black/20 px-4 text-base font-semibold opacity-100 transition-opacity hover:opacity-80 dark:border-white/25 bg-pink-500 text-white";
 
   return (
     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
@@ -32,9 +36,9 @@ export default function NavbarWizard({
         <button
             type="button"
             onClick={onCancel}
-            className="inline-flex h-11 w-full items-center justify-center rounded-full border border-black/20 px-4 text-base font-semibold opacity-100 transition-opacity hover:opacity-80 dark:border-white/25 bg-pink-500 text-white "
+            className={cancelButtonClassName}
           >
-            {t("cancelButton")}
+            {cancelLabel}
           </button>
       )}
 

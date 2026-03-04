@@ -18,6 +18,7 @@
     "backButton": "Back",
     "startButton": "Start",
     "cancelButton": "Cancel",
+    "finishButton": "Finish",
     "continueButton": "Continue",
     "downloadButton": "Download file"
   },
