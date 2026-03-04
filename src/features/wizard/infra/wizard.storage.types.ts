@@ -4,6 +4,7 @@ export type StoredSelections = {
 	fileType: FileType;
 	toolId: string;
 	fileSubtypeIndex: number;
+	dynamicFileNameValue: string;
 	entityName: string;
 	outputFileName: string;
 	description: string;
@@ -16,6 +17,7 @@ export interface WizardStorageService {
 		defaultFileType: FileType,
 		defaultToolId: string,
 		defaultFileSubtypeIndex: number,
+		defaultDynamicFileNameValue: string,
 		defaultEntityName: string,
 		defaultOutputFileName: string,
 		defaultDescription: string,
@@ -27,6 +29,7 @@ export interface WizardStorageService {
 		fileType: FileType,
 		toolId: string,
 		fileSubtypeIndex: number,
+		dynamicFileNameValue: string,
 		entityName: string,
 		outputFileName: string,
 		description: string,

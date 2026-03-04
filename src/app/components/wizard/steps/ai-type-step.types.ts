@@ -5,6 +5,14 @@ export type FileSubtypeOption = {
   label: string;
 };
 
+export type FileNameCustomField = {
+  label: string;
+  hint?: string;
+  required: boolean;
+  type?: string;
+  defaultName: string;
+};
+
 export type AiTypeStepProps = {
   selectedToolId: string;
   aiTools: AiToolOption[];

@@ -36,6 +36,7 @@ export default function TemplateSectionStep({
   const t = useTranslations(translationNamespace);
   const tAll = useTranslations();
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [focusedFieldId, setFocusedFieldId] = useState<string | null>(null);
 
   const schema = useMemo(() => {
     const service = createTemplateFormSchemaService((key) => (tAll.has(key) ? tAll(key) : undefined));
@@ -82,14 +83,7 @@ export default function TemplateSectionStep({
     const baseClass = field.required
       ? "w-full rounded-lg border border-black/30 bg-transparent px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground dark:border-white/35"
       : "w-full rounded-lg border border-black/20 bg-transparent px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 dark:border-white/25";
-
-    const [isVisible, setIsVisible] = useState(false);
-
-    console.log("Rendering field:", field.name, "with value:", fieldValue);
-
-    if (fieldValue != undefined){
-      return "";
-    }
+    const isHintVisible = focusedFieldId === field.id;
 
     if (field.inputType === "input-single-line") {
       return (
@@ -105,14 +99,14 @@ export default function TemplateSectionStep({
             placeholder={field.label}
             className={baseClass}
             aria-required={field.required}
-            onFocus={() => setIsVisible(true)}
-            onBlur={() => setIsVisible(false)}
+            onFocus={() => setFocusedFieldId(field.id)}
+            onBlur={() => setFocusedFieldId(null)}
           />
           <div
             className={`mt-4 overflow-hidden transition-all duration-300 ease-out ${
-              isVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
+              isHintVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
             }`}
-            aria-hidden={!isVisible}
+            aria-hidden={!isHintVisible}
           >
             <div className="mt-2 rounded-lg border border-black/10 bg-gray-100 p-2 text-left dark:border-white/15 dark:bg-background">
               <p className="text-sm text-foreground/80">{field.hint}</p>
@@ -136,14 +130,14 @@ export default function TemplateSectionStep({
             rows={3}
             className={baseClass}
             aria-required={field.required}
-            onFocus={() => setIsVisible(true)}
-            onBlur={() => setIsVisible(false)}
+            onFocus={() => setFocusedFieldId(field.id)}
+            onBlur={() => setFocusedFieldId(null)}
           />
           <div
             className={`mt-4 overflow-hidden transition-all duration-300 ease-out ${
-              isVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
+              isHintVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
             }`}
-            aria-hidden={!isVisible}
+            aria-hidden={!isHintVisible}
           >
             <div className="mt-2 rounded-lg border border-black/10 bg-gray-100 p-2 text-left dark:border-white/15 dark:bg-background">
               <p className="text-sm text-foreground/80">{field.hint}</p>
@@ -175,8 +169,8 @@ export default function TemplateSectionStep({
                 addListItem(field);
               }
             }}
-            onFocus={() => setIsVisible(true)}
-            onBlur={() => setIsVisible(false)}
+            onFocus={() => setFocusedFieldId(field.id)}
+            onBlur={() => setFocusedFieldId(null)}
           />
           <button
             type="button"
@@ -188,30 +182,51 @@ export default function TemplateSectionStep({
         </div>
 
         {listItems.length > 0 ? (
-          <div className="flex flex-wrap gap-2">
-            {listItems.map((item, index) => (
-              <span
-                key={`${field.id}-${item}-${index}`}
-                className="inline-flex items-center gap-2 rounded-full border border-black/20 px-3 py-1 text-sm text-foreground dark:border-white/25"
-              >
-                {item}
-                <button
-                  type="button"
-                  onClick={() => removeListItem(field, index)}
-                  aria-label={t("removeItem")}
-                  className="font-bold leading-none"
+          field.inputType === "dynamic-list-add-remove" ? (
+            <ul className="mt-1 flex flex-col gap-2">
+              {listItems.map((item, index) => (
+                <li
+                  key={`${field.id}-${item}-${index}`}
+                  className="group flex items-center justify-between rounded-lg border border-black/20 px-3 py-2 text-sm text-foreground dark:border-white/25"
                 >
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
+                  <span>{item}</span>
+                  <button
+                    type="button"
+                    onClick={() => removeListItem(field, index)}
+                    aria-label={`${t("removeItem")}: ${item}`}
+                    className="ml-3 rounded px-2 py-1 text-xs font-medium text-foreground opacity-0 transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+                  >
+                    {t("removeItem")}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="flex flex-wrap gap-2">
+              {listItems.map((item, index) => (
+                <span
+                  key={`${field.id}-${item}-${index}`}
+                  className="inline-flex items-center gap-2 rounded-full border border-black/20 px-3 py-1 text-sm text-foreground dark:border-white/25"
+                >
+                  {item}
+                  <button
+                    type="button"
+                    onClick={() => removeListItem(field, index)}
+                    aria-label={`${t("removeItem")}: ${item}`}
+                    className="font-bold leading-none"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+            </div>
+          )
         ) : null}
           <div
             className={`mt-4 overflow-hidden transition-all duration-300 ease-out ${
-              isVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
+              isHintVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
             }`}
-            aria-hidden={!isVisible}
+            aria-hidden={!isHintVisible}
           >
             <div className="mt-2 rounded-lg border border-black/10 bg-gray-100 p-2 text-left dark:border-white/15 dark:bg-background">
               <p className="text-sm text-foreground/80">{field.hint}</p>

@@ -169,6 +169,12 @@
   "templates": {
     "github-copilot": {
       "specific-instructions": {
+        "custom": {
+          "context": {
+            "label": "Context",
+            "hint": "Prefix of the file name that will contain the context instructions. Use this value instead of the default context instructions file."
+          }
+        },
         "header": {
           "description": {
             "label": "Description",
@@ -191,6 +197,12 @@
         }
       },
       "agent-instructions": {
+        "custom": {
+          "context": {
+            "label": "Context",
+            "hint": "Prefix of the file name to replace the agent name. Use this value instead of the default agent name."
+          }
+        },
         "header": {
           "name": {
             "label": "Name",
@@ -221,6 +233,14 @@
           "repository-name": {
             "label": "Repository name",
             "hint": "Name of the repository"
+          }
+        }
+      },
+      "prompts": {
+        "custom": {
+          "context": {
+            "label": "Context",
+            "hint": "Prefix of the file name to replace the prompt name. Use this value instead of the default prompt name."
           }
         }
       }

@@ -186,6 +186,12 @@
     },
     "github-copilot": {
       "specific-instructions": {
+        "custom": {
+          "context": {
+            "label": "Contexto",
+            "hint": "Prefixo do nome do arquivo que vai conter as instruções de contexto. Use esse valor no lugar do nome padrão do arquivo de contexto."
+          }
+        },
         "header": {
           "description": {
             "label": "Descrição",
@@ -209,6 +215,12 @@
         }
       },
       "agent-instructions": {
+        "custom": {
+          "context": {
+            "label": "Contexto",
+            "hint": "Prefixo do nome do arquivo para substituir o nome padrão do agente."
+          }
+        },
         "header": {
           "name": {
             "label": "Nome",
@@ -239,6 +251,14 @@
           "repository-name": {
             "label": "Nome do repositório",
             "hint": "Nome do repositório"
+          }
+        }
+      },
+      "prompts": {
+        "custom": {
+          "context": {
+            "label": "Contexto",
+            "hint": "Prefixo do nome do arquivo para substituir o nome padrão do prompt."
           }
         }
       }

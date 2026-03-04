@@ -20,7 +20,7 @@
               {
                 "name": "applyTo",
                 "formHint": "List the extensions files where to apply these instructions.",
-                "formInput": "short"
+                "formInput": "comma-list"
               }
             ],
             "body": [
@@ -41,7 +41,7 @@
         },
         {
           "name": "Context Instructions",
-          "output-file": "context.instructions.md",
+          "output-file": "{filenameprefix}.instructions.md",
           "hint":"This is a specific context instructions file. Use this if you want to separate the context instructions from the main instructions. If you use this, you need to set the \"Context\" custom field with the prefix of the file name, e.g., \"context\".",
           "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions. You need a main file with the name \"copilot-instructions.md\".",          
           "template-file": "templates/instructions/copilot-context-instructions.md",
@@ -50,6 +50,7 @@
               "name": "Context",
               "required": false,
               "type": "filenameprefix",
+              "defaultName": "entityName",
               "hint": "Prefix of the file name that will contain the context instructions. Use this value instead of the default context instructions file."
             }
           ],
@@ -63,7 +64,7 @@
               {
                 "name": "applyTo",
                 "formHint": "List the extensions files where to apply these instructions.",
-                "formInput": "short"
+                "formInput": "comma-list"
               }
             ],
             "body": [
@@ -93,11 +94,12 @@
             "name": "Context",
             "required": false,
             "type": "filenameprefix",
+            "defaultName": "entityName",
             "hint": "Prefix of the file name to replace the agent name. Use this value instead of the default agent name."
           }
         ],
         "template-file": "templates/agents/copilot-agent.md",
-        "output-file": ["context.agent.md"],
+        "output-file": ["{filenameprefix}.agent.md"],
         "installation": "Create a subfolder on repository called \".github/agents\" and put the agent file.",
         "template": {
           "header" :[
@@ -121,7 +123,7 @@
             {
               "name": "tools",
               "formHint": "Specify the tools this agent can use. If not set, all enabled tools are allowed.",
-              "formInput": "comma-list",
+              "formInput": "list",
               "type":"array-key",
               "required": false
             },
@@ -159,7 +161,7 @@
           }
         ],
         "template-file": "templates/prompts/copilot-prompt.md",
-        "output-file": ["{name}.prompt.md", "{context}.prompt.md"],
+        "output-file": ["{name}.prompt.md", "{filenameprefix}.prompt.md"],
         "installation": "Create a subfolder on repository called \".github/prompts/[prompt_name]/PROMPT.md\" and put the prompt file."
       }
     }

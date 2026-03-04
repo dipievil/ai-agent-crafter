@@ -13,7 +13,7 @@ import TemplateHeaderStep from "./wizard/steps/template-header-step";
 import TemplateBodyStep from "./wizard/steps/template-body-step";
 import ReviewStep from "./wizard/steps/review-step";
 import SummarySection from "./wizard/summary-wizard";
-import type { FileSubtypeOption } from "./wizard/steps/ai-type-step.types";
+import type { FileNameCustomField, FileSubtypeOption } from "./wizard/steps/ai-type-step.types";
 
 import {
   clearSelections,
@@ -22,8 +22,17 @@ import {
 } from "@/features/wizard/infra/wizard.storage.service";
 import { buildTemplateForm } from "@/features/wizard/infra/wizard.form-schema.service";
 import { buildTemplateMarkdown } from "@/features/wizard/infra/wizard.markdown-builder.service";
+import { normalizeFieldName } from "@/features/template-data.shared";
 
 type FileNodeRaw = Record<string, unknown>;
+
+type FileNameCustomRaw = {
+  name?: unknown;
+  hint?: unknown;
+  type?: unknown;
+  required?: unknown;
+  defaultName?: unknown;
+};
 
 function getFilesNode(toolId: string): Record<string, unknown> | undefined {
   const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
@@ -69,7 +78,7 @@ function getSelectedFileNode(toolId: string, fileType: FileType, fileSubtypeInde
   return fileNodes[fileSubtypeIndex];
 }
 
-function getOutputFileName(toolId: string, fileType: FileType, fileSubtypeIndex: number): string {
+function getOutputFileTemplate(toolId: string, fileType: FileType, fileSubtypeIndex: number): string {
   const selectedNode = getSelectedFileNode(toolId, fileType, fileSubtypeIndex);
   if (!selectedNode) {
     return "";
@@ -86,6 +95,156 @@ function getOutputFileName(toolId: string, fileType: FileType, fileSubtypeIndex:
   }
 
   return "";
+}
+
+function normalizeCustomToken(value: string): string {
+  return value
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/[^a-z0-9_-]/g, "");
+}
+
+function getFileNameCustomField(toolId: string, fileType: FileType, fileSubtypeIndex: number): FileNameCustomField | undefined {
+  const selectedNode = getSelectedFileNode(toolId, fileType, fileSubtypeIndex);
+  if (!selectedNode) {
+    return undefined;
+  }
+
+  const customNode = selectedNode["custom"];
+  const customFields = Array.isArray(customNode)
+    ? customNode
+    : typeof customNode === "object" && customNode
+      ? [customNode]
+      : [];
+
+  const firstCustom = customFields.find((field): field is FileNameCustomRaw => Boolean(field) && typeof field === "object");
+
+  if (!firstCustom || typeof firstCustom.name !== "string" || firstCustom.name.trim().length === 0) {
+    return undefined;
+  }
+
+  return {
+    label: firstCustom.name.trim(),
+    hint: typeof firstCustom.hint === "string" ? firstCustom.hint : undefined,
+    required: firstCustom.required !== false,
+    type: typeof firstCustom.type === "string" ? firstCustom.type : undefined,
+    defaultName: typeof firstCustom.defaultName === "string" ? firstCustom.defaultName : ""
+  };
+}
+
+function getFileNameCustomFieldTranslationKey(
+  toolId: string,
+  fileType: FileType,
+  rawFieldName: string,
+  leaf: "label" | "hint"
+): string {
+  return `templates.${toolId}.${fileType}.custom.${normalizeFieldName(rawFieldName)}.${leaf}`;
+}
+
+function getTranslatedFileNameCustomField(
+  toolId: string,
+  fileType: FileType,
+  fileSubtypeIndex: number,
+  resolveTranslation?: (key: string) => string | undefined
+): FileNameCustomField | undefined {
+  const customField = getFileNameCustomField(toolId, fileType, fileSubtypeIndex);
+
+  if (!customField || !resolveTranslation) {
+    return customField;
+  }
+
+  const labelKey = getFileNameCustomFieldTranslationKey(toolId, fileType, customField.label, "label");
+  const hintKey = getFileNameCustomFieldTranslationKey(toolId, fileType, customField.label, "hint");
+
+  const translatedLabel = resolveTranslation(labelKey);
+  const translatedHint = resolveTranslation(hintKey);
+
+  return {
+    ...customField,
+    label: translatedLabel ?? customField.label,
+    hint: translatedHint ?? customField.hint
+  };
+}
+
+function resolveOutputFileName(
+  outputFileTemplate: string,
+  customField: FileNameCustomField | undefined,
+  customValue: string,
+  entityName: string
+): string {
+  if (!outputFileTemplate) {
+    return "";
+  }
+
+  if (!customField) {
+    return outputFileTemplate;
+  }
+
+  const value = resolveDynamicFileNameValue(customValue, customField, entityName);
+  const customToken = normalizeCustomToken(customField.label);
+  const customTypeToken = customField.type ? normalizeCustomToken(customField.type) : "";
+  let isTokenReplaced = false;
+
+  const resolvedFileName = outputFileTemplate.replace(/\{([^}]+)\}/g, (rawValue, tokenValue: string) => {
+    const normalizedToken = normalizeCustomToken(tokenValue);
+    if (normalizedToken === customToken || (customTypeToken && normalizedToken === customTypeToken)) {
+      isTokenReplaced = true;
+      return value;
+    }
+
+    return rawValue;
+  });
+
+  if (customField.type === "filenameprefix" && value && !isTokenReplaced) {
+    return `${value}.${resolvedFileName}`;
+  }
+
+  return resolvedFileName;
+}
+
+function resolveDefaultDynamicFileName(defaultName: string, entityName: string): string {
+  const normalizedDefaultName = normalizeCustomToken(defaultName);
+
+  if (normalizedDefaultName === "entityname") {
+    return entityName.trim();
+  }
+
+  return defaultName.trim();
+}
+
+function resolveDynamicFileNameValue(
+  customValue: string,
+  customField: FileNameCustomField | undefined,
+  entityName: string
+): string {
+  if (!customField) {
+    return customValue.trim();
+  }
+
+  const trimmedValue = customValue.trim();
+  if (!trimmedValue) {
+    return resolveDefaultDynamicFileName(customField.defaultName, entityName);
+  }
+
+  const normalizedDefaultName = normalizeCustomToken(customField.defaultName);
+  const normalizedCustomValue = normalizeCustomToken(trimmedValue);
+
+  if (normalizedDefaultName === "entityname" && normalizedCustomValue === "entityname") {
+    return entityName.trim();
+  }
+
+  return trimmedValue;
+}
+
+function getDefaultDynamicFileNameValue(
+  toolId: string,
+  fileType: FileType,
+  fileSubtypeIndex: number,
+  entityName: string
+): string {
+  const defaultName = getFileNameCustomField(toolId, fileType, fileSubtypeIndex)?.defaultName ?? "";
+  return resolveDefaultDynamicFileName(defaultName, entityName);
 }
 
 
@@ -127,6 +286,7 @@ export default function StepsWizard({
   const defaultType = options[0]?.value ?? "agent-instructions";
 
   const tData = useTranslations("aiApps");
+  const tAll = useTranslations();
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1);
 
   const aiTools = Object.entries(aiToolsData).map(([id, tool]) => {
@@ -150,6 +310,7 @@ export default function StepsWizard({
 
   const defaultToolId = "";
   const defaultFileSubtypeIndex = 0;
+  const defaultDynamicFileNameValue = "";
   const defaultEntityName = "";
   const defaultOutputFileName = "";
   const defaultDescription = "";
@@ -160,6 +321,7 @@ export default function StepsWizard({
     defaultType,
     defaultToolId,
     defaultFileSubtypeIndex,
+    defaultDynamicFileNameValue,
     defaultEntityName,
     defaultOutputFileName,
     defaultDescription,
@@ -172,6 +334,7 @@ export default function StepsWizard({
 
   const [selectedToolId, setSelectedToolId] = useState<string>(storedSelections.toolId);
   const [selectedFileSubtypeIndex, setSelectedFileSubtypeIndex] = useState<number>(storedSelections.fileSubtypeIndex);
+  const [dynamicFileNameValue, setDynamicFileNameValue] = useState<string>(storedSelections.dynamicFileNameValue);
   const [entityName, setEntityName] = useState<string>(storedSelections.entityName);
   const [description, setDescription] = useState<string>(storedSelections.description);
   const [headerFormValues, setHeaderFormValues] = useState<Record<string, string | string[]>>(
@@ -216,10 +379,43 @@ export default function StepsWizard({
     return fileSubtypeOptions.find((option) => option.index === effectiveFileSubtypeIndex)?.label;
   }, [effectiveFileSubtypeIndex, fileSubtypeOptions]);
 
-  const outputFileName = useMemo(
-    () => getOutputFileName(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
+  const customFileNameField = useMemo(
+    () =>
+      getTranslatedFileNameCustomField(
+        effectiveSelectedToolId,
+        selectedType,
+        effectiveFileSubtypeIndex,
+        (key) => (tAll.has(key) ? tAll(key) : undefined)
+      ),
+    [effectiveFileSubtypeIndex, effectiveSelectedToolId, selectedType, tAll]
+  );
+
+  const outputFileTemplate = useMemo(
+    () => getOutputFileTemplate(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
     [effectiveFileSubtypeIndex, effectiveSelectedToolId, selectedType]
   );
+
+  const resolvedCustomFileNameValue = useMemo(
+    () => resolveDynamicFileNameValue(dynamicFileNameValue, customFileNameField, entityName),
+    [customFileNameField, dynamicFileNameValue, entityName]
+  );
+
+  const outputFileName = useMemo(
+    () => resolveOutputFileName(outputFileTemplate, customFileNameField, dynamicFileNameValue, entityName),
+    [customFileNameField, dynamicFileNameValue, entityName, outputFileTemplate]
+  );
+
+  const isDownloadReady = useMemo(() => {
+    if (!outputFileName) {
+      return false;
+    }
+
+    if (!customFileNameField || !customFileNameField.required) {
+      return true;
+    }
+
+    return resolvedCustomFileNameValue.length > 0;
+  }, [customFileNameField, outputFileName, resolvedCustomFileNameValue]);
 
   const fileHint = useMemo(
     () => getHint(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
@@ -274,6 +470,26 @@ export default function StepsWizard({
     selectedType
   ]);
 
+  function handleTypeChange(fileType: FileType) {
+    setSelectedType(fileType);
+    setSelectedToolId(defaultToolId);
+    setSelectedFileSubtypeIndex(defaultFileSubtypeIndex);
+    setDynamicFileNameValue(defaultDynamicFileNameValue);
+  }
+
+  function handleToolChange(toolId: string) {
+    const nextSubtypeIndex = 0;
+
+    setSelectedToolId(toolId);
+    setSelectedFileSubtypeIndex(nextSubtypeIndex);
+    setDynamicFileNameValue(getDefaultDynamicFileNameValue(toolId, selectedType, nextSubtypeIndex, entityName));
+  }
+
+  function handleFileSubtypeChange(subtypeIndex: number) {
+    setSelectedFileSubtypeIndex(subtypeIndex);
+    setDynamicFileNameValue(getDefaultDynamicFileNameValue(effectiveSelectedToolId, selectedType, subtypeIndex, entityName));
+  }
+
   function handleDownloadFile() {
     if (typeof window === "undefined") {
       return;
@@ -300,6 +516,7 @@ export default function StepsWizard({
       selectedType,
       effectiveSelectedToolId,
       effectiveFileSubtypeIndex,
+      dynamicFileNameValue,
       entityName,
       outputFileName,
       description,
@@ -310,6 +527,7 @@ export default function StepsWizard({
     selectedType,
     effectiveSelectedToolId,
     effectiveFileSubtypeIndex,
+    dynamicFileNameValue,
     entityName,
     outputFileName,
     description,
@@ -322,6 +540,7 @@ export default function StepsWizard({
     setSelectedType(defaultType);
     setSelectedToolId(defaultToolId);
     setSelectedFileSubtypeIndex(defaultFileSubtypeIndex);
+    setDynamicFileNameValue(defaultDynamicFileNameValue);
     setEntityName(defaultEntityName);
     setDescription(defaultDescription);
     setHeaderFormValues(defaultHeaderFormValues);
@@ -336,7 +555,7 @@ export default function StepsWizard({
           <FileTypeStep
             selectedType={selectedType}
             fileOptions={options}
-            onTypeChange={setSelectedType}
+            onTypeChange={handleTypeChange}
           />
           <NavbarWizard
             currentStep={1}
@@ -360,11 +579,8 @@ export default function StepsWizard({
             selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
             fileSubtypeOptions={fileSubtypeOptions}
             fileHint={fileHint}
-            onToolChange={(toolId) => {
-              setSelectedToolId(toolId);
-              setSelectedFileSubtypeIndex(0);
-            }}
-            onFileSubtypeChange={setSelectedFileSubtypeIndex}
+            onToolChange={handleToolChange}
+            onFileSubtypeChange={handleFileSubtypeChange}
           />
           <NavbarWizard
             currentStep={2}
@@ -497,12 +713,16 @@ export default function StepsWizard({
 
           <ReviewStep
             markdown={markdownBuildResult.output.markdown}
+            customFileNameField={customFileNameField}
+            customFileNameValue={resolvedCustomFileNameValue}
+            outputFileNamePreview={outputFileName}
+            onCustomFileNameValueChange={setDynamicFileNameValue}
           />
 
           <NavbarWizard
             currentStep={7}
             selectedType={selectedType}
-            onForward={handleDownloadFile}
+            onForward={isDownloadReady ? handleDownloadFile : undefined}
             onBack={() => setStep(6)}
             onCancel={handleBackToPhaseOne}
           />

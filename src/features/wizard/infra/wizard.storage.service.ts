@@ -26,27 +26,29 @@ function isNonNegativeInteger(value: unknown): value is number {
 
 class LocalStorageWizardService implements WizardStorageService {
   readStoredSelections(
-    defaultFileType: FileType,
-    defaultToolId: string,
-    defaultFileSubtypeIndex: number,
-    defaultEntityName: string,
-    defaultOutputFileName: string,
-    defaultDescription: string,
-    defaultHeaderFormValues: Record<string, string | string[]>,
-    defaultBodyFormValues: Record<string, string | string[]>,
+    storedFileType: FileType,
+    storedToolId: string,
+    storedFileSubtypeIndex: number,
+    storedDynamicFileNameValue: string,
+    storedEntityName: string,
+    storedOutputFileName: string,
+    storedDescription: string,
+    storedHeaderFormValues: Record<string, string | string[]>,
+    storedBodyFormValues: Record<string, string | string[]>,
     aiTools: AiToolOption[]
   ): StoredSelections {
     
     if (typeof window === "undefined") {
       return {
-        fileType: defaultFileType,
-        toolId: defaultToolId,
-        fileSubtypeIndex: defaultFileSubtypeIndex,
-        entityName: defaultEntityName,
-        outputFileName: defaultOutputFileName,
-        description: defaultDescription,
-        headerFormValues: defaultHeaderFormValues,
-        bodyFormValues: defaultBodyFormValues
+        fileType: storedFileType,
+        toolId: storedToolId,
+        fileSubtypeIndex: storedFileSubtypeIndex,
+        dynamicFileNameValue: storedDynamicFileNameValue,
+        entityName: storedEntityName,
+        outputFileName: storedOutputFileName,
+        description: storedDescription,
+        headerFormValues: storedHeaderFormValues,
+        bodyFormValues: storedBodyFormValues
       };
     }
 
@@ -55,14 +57,15 @@ class LocalStorageWizardService implements WizardStorageService {
 
       if (!raw) {
         return {
-          fileType: defaultFileType,
-          toolId: defaultToolId,
-          fileSubtypeIndex: defaultFileSubtypeIndex,
-          entityName: defaultEntityName,
-          outputFileName: defaultOutputFileName,
-          description: defaultDescription,
-          headerFormValues: defaultHeaderFormValues,
-          bodyFormValues: defaultBodyFormValues
+          fileType: storedFileType,
+          toolId: storedToolId,
+          fileSubtypeIndex: storedFileSubtypeIndex,
+          dynamicFileNameValue: storedDynamicFileNameValue,
+          entityName: storedEntityName,
+          outputFileName: storedOutputFileName,
+          description: storedDescription,
+          headerFormValues: storedHeaderFormValues,
+          bodyFormValues: storedBodyFormValues
         };
       }
 
@@ -70,6 +73,7 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType?: unknown;
         toolId?: unknown;
         fileSubtypeIndex?: unknown;
+        dynamicFileNameValue?: unknown;
         entityName?: unknown;
         outputFileName?: unknown;
         description?: unknown;
@@ -77,43 +81,49 @@ class LocalStorageWizardService implements WizardStorageService {
         bodyFormValues?: unknown;
       };
     
-      const fileType = isFileType(parsed.fileType) ? parsed.fileType : defaultFileType;
+      const fileType = isFileType(parsed.fileType) ? parsed.fileType : storedFileType;
     
       const toolId =
         typeof parsed.toolId === "string" &&
         parsed.toolId.length > 0 &&
         isToolId(parsed.toolId, aiTools)
           ? parsed.toolId
-          : defaultToolId;
+          : storedToolId;
     
-      const entityName = typeof parsed.entityName === "string" ? parsed.entityName : defaultEntityName;
+      const entityName = typeof parsed.entityName === "string" ? parsed.entityName : storedEntityName;
       const outputFileName =
-        typeof parsed.outputFileName === "string" ? parsed.outputFileName : defaultOutputFileName;
+        typeof parsed.outputFileName === "string" ? parsed.outputFileName : storedOutputFileName;
 
       const fileSubtypeIndex = isNonNegativeInteger(parsed.fileSubtypeIndex)
         ? parsed.fileSubtypeIndex
-        : defaultFileSubtypeIndex;
+        : storedFileSubtypeIndex;
 
-      const description = typeof parsed.description === "string" ? parsed.description : defaultDescription;
+      const dynamicFileNameValue =
+        typeof parsed.dynamicFileNameValue === "string"
+          ? parsed.dynamicFileNameValue
+          : storedDynamicFileNameValue;
+
+      const description = typeof parsed.description === "string" ? parsed.description : storedDescription;
 
       const headerFormValues =
         parsed.headerFormValues &&
         typeof parsed.headerFormValues === "object" &&
         !Array.isArray(parsed.headerFormValues)
           ? this.normalizeFormValues(parsed.headerFormValues)
-          : defaultHeaderFormValues;
+          : storedHeaderFormValues;
       
       const bodyFormValues =
         parsed.bodyFormValues &&
         typeof parsed.bodyFormValues === "object" &&
         !Array.isArray(parsed.bodyFormValues)
           ? this.normalizeFormValues(parsed.bodyFormValues)
-          : defaultBodyFormValues;
+          : storedBodyFormValues;
 
       return {
         fileType,
         toolId,
         fileSubtypeIndex,
+        dynamicFileNameValue,
         entityName,
         outputFileName,
         description,
@@ -123,14 +133,15 @@ class LocalStorageWizardService implements WizardStorageService {
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
       return {
-        fileType: defaultFileType,
-        toolId: defaultToolId,
-        fileSubtypeIndex: defaultFileSubtypeIndex,
-        entityName: defaultEntityName,
-        outputFileName: defaultOutputFileName,
-        description: defaultDescription,
-        headerFormValues: defaultHeaderFormValues,
-        bodyFormValues: defaultBodyFormValues
+        fileType: storedFileType,
+        toolId: storedToolId,
+        fileSubtypeIndex: storedFileSubtypeIndex,
+        dynamicFileNameValue: storedDynamicFileNameValue,
+        entityName: storedEntityName,
+        outputFileName: storedOutputFileName,
+        description: storedDescription,
+        headerFormValues: storedHeaderFormValues,
+        bodyFormValues: storedBodyFormValues
       };
     }
   }
@@ -139,6 +150,7 @@ class LocalStorageWizardService implements WizardStorageService {
     fileType: FileType,
     toolId: string,
     fileSubtypeIndex: number,
+    dynamicFileNameValue: string,
     entityName: string,
     outputFileName: string,
     description: string,
@@ -156,6 +168,7 @@ class LocalStorageWizardService implements WizardStorageService {
           fileType,
           toolId,
           fileSubtypeIndex,
+          dynamicFileNameValue,
           entityName,
           outputFileName,
           description,
@@ -170,6 +183,7 @@ class LocalStorageWizardService implements WizardStorageService {
           fileType,
           toolId,
           fileSubtypeIndex,
+          dynamicFileNameValue,
           entityName,
           outputFileName,
           description,
@@ -216,6 +230,7 @@ export function readStoredSelections(
   defaultFileType: FileType,
   defaultToolId: string,
   defaultFileSubtypeIndex: number,
+  defaultDynamicFileNameValue: string,
   defaultEntityName: string,
   defaultOutputFileName: string,
   defaultDescription: string,
@@ -227,6 +242,7 @@ export function readStoredSelections(
     defaultFileType,
     defaultToolId,
     defaultFileSubtypeIndex,
+    defaultDynamicFileNameValue,
     defaultEntityName,
     defaultOutputFileName,
     defaultDescription,
@@ -240,6 +256,7 @@ export function persistSelections(
   fileType: FileType,
   toolId: string,
   fileSubtypeIndex: number,
+  dynamicFileNameValue: string,
   entityName: string,
   outputFileName: string,
   description: string,
@@ -250,6 +267,7 @@ export function persistSelections(
     fileType,
     toolId,
     fileSubtypeIndex,
+    dynamicFileNameValue,
     entityName,
     outputFileName,
     description,
