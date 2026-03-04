@@ -101,7 +101,10 @@ export default function TemplateHeaderStep({
                     placeholder={field.label}
                     className={baseClass}
                   />
-                  {field.hint ? <p className="text-sm text-foreground/80">{field.hint}</p> : null}
+                  {field.hint ?
+                    <div className="mt-4 rounded-lg border border-black/10 bg-gray-100 p-4 text-left dark:border-white/15 dark:bg-background">
+                      <p className="text-sm text-foreground/80">{field.hint}</p>
+                    </div> : null}
                 </div>
               );
             }
@@ -120,7 +123,11 @@ export default function TemplateHeaderStep({
                     rows={3}
                     className={baseClass}
                   />
-                  {field.hint ? <p className="text-sm text-foreground/80">{field.hint}</p> : null}
+
+                  {field.hint ?
+                    <div className="mt-4 rounded-lg border border-black/10 bg-gray-100 p-4 text-left dark:border-white/15 dark:bg-background">
+                      <p className="text-sm text-foreground/80">{field.hint}</p>
+                    </div> : null}
                 </div>
               );
             }
@@ -177,8 +184,10 @@ export default function TemplateHeaderStep({
                     ))}
                   </div>
                 ) : null}
-
-                {field.hint ? <p className="text-sm text-foreground/80">{field.hint}</p> : null}
+                {field.hint ?
+                  <div className="mt-4 rounded-lg border border-black/10 bg-gray-100 p-4 text-left dark:border-white/15 dark:bg-background">
+                    <p className="text-sm text-foreground/80">{field.hint}</p>
+                  </div> : null}
               </div>
             );
           })

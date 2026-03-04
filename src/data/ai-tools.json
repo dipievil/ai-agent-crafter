@@ -7,37 +7,36 @@
       "specific-instructions": [
         {
           "name": "Project Instructions",
-          "template-file": "templates/instructions/copilot-instructions.md",
           "output-file": ["copilot.instructions.md"],
           "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions.",
           "template": {
             "header" :[
               {
                 "name": "description",
-                "hint": "A short description of the project that will be used on the instructions template.",
-                "format": "short"
+                "formHint": "A short description of the project that will be used on the instructions template.",
+                "formInput": "short"
               },
               {
                 "name": "applyTo",
-                "hint": "A short description of what the instructions apply to.",
-                "format": "short"
+                "formHint": "A short description of what the instructions apply to.",
+                "formInput": "short"
               }
             ],
             "body": [
               {
                 "name": "mainInstructions",
                 "sectionName": "Main instructions",
-                "type": "mainSection",
-                "format": "long",
-                "description": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
+                "sectionType": "mainSection",
+                "formInput": "long",
+                "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
                 "required": true
               },
               {
                 "name": "repositoryName",
                 "sectionName": "Repository Name",
-                "type": "mainSection",
+                "sectionType": "mainSection",
                 "variable": "{repository_name}",
-                "description": "The name of the repository where the instructions will be used. This variable can be used on the instructions template to customize the instructions based on the repository name."
+                "formHint": "The name of the repository where the instructions will be used. This variable can be used on the instructions template to customize the instructions based on the repository name."
               }
             ]
           }
@@ -50,7 +49,7 @@
               "name": "Context",
               "required": false,
               "type": "filenameprefix",
-              "description": "Prefix of the file name that will contain the context instructions. Use this value instead of the default context instructions file."
+              "hint": "Prefix of the file name that will contain the context instructions. Use this value instead of the default context instructions file."
             }
           ],
           "output-file": "context.instructions.md",
@@ -64,7 +63,7 @@
             "name": "Context",
             "required": false,
             "type": "filenameprefix",
-            "description": "Prefix of the file name to replace the agent name. Use this value instead of the default agent name."
+            "hint": "Prefix of the file name to replace the agent name. Use this value instead of the default agent name."
           }
         ],
         "template-file": "templates/agents/copilot-agent.md",
@@ -74,36 +73,38 @@
           "header" :[
             {
               "name": "name",              
-              "format": "short"
+              "formInput": "short",
+              "type":"valueKey"
             },
             {
               "name": "description",
-              "hint": "A short description of the agent that will be used on the agent template.",
-              "format": "short"
+              "formHint": "A short description of the agent that will be used on the agent template.",
+              "formInput": "short",
+              "type":"valueKey"
             },
             {
               "name": "argument-hint:",
-              "hint": "The inputs this agent expects, e.g., \"a task to implement\" or \"a question to answer\".",
-              "format": "comma-list"
+              "formHint": "The inputs this agent expects, e.g., \"a task to implement\" or \"a question to answer\".",
+              "formInput": "comma-list"
             },
             {
               "name": "tools",
-              "hint": "specify the tools this agent can use. If not set, all enabled tools are allowed.",
-              "format": "comma-list",
+              "formHint": "Specify the tools this agent can use. If not set, all enabled tools are allowed.",
+              "formInput": "comma-list",
               "required": false
             },
             {
               "name": "mcp-servers",
-              "hint": "The MCPs online or local that only this agent will have access to. Must be in yml format.",
-              "format": "long"
+              "formHint": "The MCPs online or local that only this agent will have access to. Must be in yml format.",
+              "formInput": "long"
             }
           ],
           "body": [
             {
               "name": "role",
-              "type": "mainSection",
-              "hint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
-              "format": "long"
+              "sectionType": "mainSection",
+              "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
+              "formInput": "long"
             },
             {
               "name": "Repository Name",
@@ -126,7 +127,7 @@
             "name": "Context",
             "required": false,
             "type": "filenameprefix",
-            "description": "Prefix of the file name to replace the prompt name. Use this value instead of the default prompt name."
+            "hint": "Prefix of the file name to replace the prompt name. Use this value instead of the default prompt name."
           }
         ],
         "template-file": "templates/prompts/copilot-prompt.md",
@@ -197,12 +198,50 @@
     "description": "{agentZero.description}",
     "url": "https://www.agent-zero.ai/",
     "files": {
-      "agent-instructions": {
-        "name": "Agent",
-        "template-file": "templates/agents/a0-agent.md",
+      "agent-instructions": [
+      {
+        "name": "Context",
         "output-file": ["_context.md"],
-        "installation": "On your Agent Zero instance, create a folder with your agent name and paste this file inside."
-      }
+        "installation": "On your Agent Zero instance, create a folder with your agent name and paste this file inside.",
+        "template":{
+          "body":[
+            {
+              "name": "role",
+              "sectionType": "mainSection",
+              "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
+              "formInput": "long"
+            },
+            {
+              "name": "actions",
+              "sectionType": "listParagraph",
+              "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
+              "required": false,
+              "formInput": "comma-list"
+            }
+          ]
+        }
+      },{
+        "name": "Main Role",
+        "output-file": ["agent.system.main.role.md"],
+        "installation": "On your Agent Zero instance, create a subfolder \"prompts\" on your agent folder with your agent name and paste this file inside.",
+        "template":{
+          "body":[
+            {
+              "name": "role",
+              "sectionType": "mainSection",
+              "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
+              "formInput": "long"
+            },
+            {
+              "name": "actions",
+              "sectionType": "listParagraph",
+              "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
+              "required": false,
+              "formInput": "comma-list"
+            }
+          ]
+        }
+      }]
     }
   },
   "warp": {

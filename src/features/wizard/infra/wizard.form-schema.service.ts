@@ -302,8 +302,8 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
       );
     }
 
-    const labelKey = this.createTranslationKey(context, normalizedName, "label");
-    const hintKey = this.createTranslationKey(context, normalizedName, "hint");
+    const labelKey = this.createTranslationKey(context, normalizedName, "formLabel");
+    const hintKey = this.createTranslationKey(context, normalizedName, "formHint");
 
     const translatedLabel = this.resolveTranslation?.(labelKey);
     const translatedHint = this.resolveTranslation?.(hintKey);
@@ -347,9 +347,10 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
       filesection: TemplateSection;
     },
     fieldName: string,
-    leaf: "label" | "hint"
+    leaf: "formLabel" | "formHint"
   ): string {
-    return `templates.${context.aitype}.${context.filetype}.${context.filesection}.${fieldName}.${leaf}`;
+    const leafItem = leaf === "formLabel" ? "label" : "hint";
+    return `templates.${context.aitype}.${context.filetype}.${context.filesection}.${fieldName}.${leafItem}`;
   }
 
   private resolveFieldValue(name: string, entityName: string, entityDescription: string): string | undefined {
