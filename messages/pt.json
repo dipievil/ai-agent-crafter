@@ -96,7 +96,7 @@
       "agentInstructions": {
         "name": "agente",
         "descriptionPlaceholder": "Você é um agente especializado em...",
-        "helperText": "Descreva o que o seu agente fará. Dica: Use sempre a segunda pessoa do singular (você)."
+        "helperText": "Explique para o seu agente o que ele fará. Dica: Use a segunda pessoa do singular (você)."
       },
       "specificInstructions": {
         "name": "arquivo de instruções",
@@ -193,7 +193,8 @@
           },
           "applyto": {
             "label": "Aplicar em",
-            "hint": "Descrição curta do escopo de aplicação das instruções."
+            "hint": "Uma lista de extensões onde essas instruções serão aplicadas. Deixe em branco para todos os arquivos."
+            
           }
         },
         "body": {

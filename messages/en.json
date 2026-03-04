@@ -96,7 +96,7 @@
       "agentInstructions": {
         "name": "agent",
         "descriptionPlaceholder": "You are an agent specialized in...",
-        "helperText": "Describe what your agent will do. Tip: always use second person singular (you)."
+        "helperText": "Explain to your agent what it will do. Tip: use second person singular (you)."
       },
       "specificInstructions": {
         "name": "instructions file",
@@ -176,7 +176,7 @@
           },
           "applyto": {
             "label": "Apply to",
-            "hint": "A short description of what the instructions apply to."
+            "hint": "A list of extensions where these instructions will be applied. Leave blank for all files."
           }
         },
         "body": {
