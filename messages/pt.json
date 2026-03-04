@@ -37,7 +37,7 @@
   },
   "Step3":{
     "phaseTitle": "Fase 3",
-    "phaseDescription": "Nome do seu arquivo",
+    "phaseDescription": "Como você chamará o seu {item}?",
     "nameForType": "Nome do seu {item}",
     "examplesLabel": "Exemplos:",
     "entities": {
@@ -55,8 +55,8 @@
       },
       "specificInstructions": {
         "name": "Arquivo de instruções",
-        "helperText": "Dê um nome claro para seu arquivo de instruções para que seja fácil entender o que ele faz.",
-        "entityNamePlaceholder": "Nome das instruções",
+        "helperText": "Dê um título claro para seu arquivo de instruções para que seja fácil entender o que ele faz.",
+        "entityNamePlaceholder": "Título das instruções",
         "examples": {
           "one": "Instruções criador de mensagens e-mails",
           "two": "Instruções de genrenciador de agenda",
@@ -90,7 +90,7 @@
   },
   "Step4": {
     "phaseTitle": "Fase 4",
-    "phaseDescription": "Descrição",
+    "phaseDescription": "Descreva o que o seu {item} faz",
     "descriptionForType": "Descrição do seu {item}",
     "entities": {
       "agentInstructions": {

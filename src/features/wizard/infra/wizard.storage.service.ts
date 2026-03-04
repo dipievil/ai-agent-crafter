@@ -35,6 +35,7 @@ class LocalStorageWizardService implements WizardStorageService {
     defaultBodyFormValues: Record<string, string | string[]>,
     aiTools: AiToolOption[]
   ): StoredSelections {
+    
     if (typeof window === "undefined") {
       return {
         fileType: defaultFileType,
@@ -71,24 +72,31 @@ class LocalStorageWizardService implements WizardStorageService {
         headerFormValues?: unknown;
         bodyFormValues?: unknown;
       };
+    
       const fileType = isFileType(parsed.fileType) ? parsed.fileType : defaultFileType;
+    
       const toolId =
         typeof parsed.toolId === "string" &&
         parsed.toolId.length > 0 &&
         isToolId(parsed.toolId, aiTools)
           ? parsed.toolId
           : defaultToolId;
+    
       const fileName = typeof parsed.fileName === "string" ? parsed.fileName : defaultFileName;
+
       const fileSubtypeIndex = isNonNegativeInteger(parsed.fileSubtypeIndex)
         ? parsed.fileSubtypeIndex
         : defaultFileSubtypeIndex;
+
       const description = typeof parsed.description === "string" ? parsed.description : defaultDescription;
+
       const headerFormValues =
         parsed.headerFormValues &&
         typeof parsed.headerFormValues === "object" &&
         !Array.isArray(parsed.headerFormValues)
           ? this.normalizeFormValues(parsed.headerFormValues)
           : defaultHeaderFormValues;
+      
       const bodyFormValues =
         parsed.bodyFormValues &&
         typeof parsed.bodyFormValues === "object" &&

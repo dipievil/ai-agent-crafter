@@ -15,7 +15,7 @@ export default function FileTypeStep({
       <h2 className="text-2xl font-semibold text-foreground">{t("phaseTitle")}</h2>
       <p className="mt-2 text-base text-foreground/80">{t("phaseDescription")}</p>
 
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="mt-6 flex flex-col gap-3 text-left">
         <label htmlFor="file-type" className="text-sm font-medium text-foreground">
           {t("fileTypeLabel")}
         </label>

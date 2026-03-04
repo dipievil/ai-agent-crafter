@@ -74,7 +74,7 @@ function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeO
     .filter((item): item is FileSubtypeOption => Boolean(item));
 }
 
-function getInstallationTip(toolId: string, fileType: FileType, fileSubtypeIndex: number): string | undefined {
+function getHint(toolId: string, fileType: FileType, fileSubtypeIndex: number): string | undefined {
   const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
 
   if (!toolNode || typeof toolNode !== "object") {
@@ -93,16 +93,16 @@ function getInstallationTip(toolId: string, fileType: FileType, fileSubtypeIndex
       return undefined;
     }
 
-    const installation = (subtypeNode as { installation?: unknown }).installation;
-    return typeof installation === "string" ? installation : undefined;
+    const hint = (subtypeNode as { hint?: unknown }).hint;
+    return typeof hint === "string" ? hint : undefined;
   }
 
   if (!fileNode || typeof fileNode !== "object") {
     return undefined;
   }
 
-  const installation = (fileNode as { installation?: unknown }).installation;
-  return typeof installation === "string" ? installation : undefined;
+  const hint = (fileNode as { hint?: unknown }).hint;
+  return typeof hint === "string" ? hint : undefined;
 }
 
 
@@ -199,8 +199,8 @@ export default function StepsWizard({
     return fileSubtypeOptions.find((option) => option.index === effectiveFileSubtypeIndex)?.label;
   }, [effectiveFileSubtypeIndex, fileSubtypeOptions]);
 
-  const installationTip = useMemo(
-    () => getInstallationTip(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
+  const fileHint = useMemo(
+    () => getHint(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
     [effectiveFileSubtypeIndex, effectiveSelectedToolId, selectedType]
   );
 
@@ -317,11 +317,11 @@ export default function StepsWizard({
             selectedType={selectedType}
             fileOptions={options}
             onTypeChange={setSelectedType}
-            />      
-          <NavbarWizard 
-            currentStep={1} 
+          />
+          <NavbarWizard
+            currentStep={1}
             selectedType={selectedType}
-            onForward={() => setStep(2)} 
+            onForward={() => setStep(2)}
             onBack={handleBackToPhaseOne} />
         </section>
       );
@@ -339,15 +339,15 @@ export default function StepsWizard({
             aiTools={filteredAiTools}
             selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
             fileSubtypeOptions={fileSubtypeOptions}
-            installationTip={installationTip}
+            fileHint={fileHint}
             onToolChange={(toolId) => {
               setSelectedToolId(toolId);
               setSelectedFileSubtypeIndex(0);
             }}
             onFileSubtypeChange={setSelectedFileSubtypeIndex}
           />
-          <NavbarWizard 
-            currentStep={2} 
+          <NavbarWizard
+            currentStep={2}
             selectedType={selectedType}
             onForward={effectiveSelectedToolId ? () => setStep(3) : undefined}
             onBack={() => setStep(1)} />

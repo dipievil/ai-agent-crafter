@@ -9,7 +9,7 @@ export default function AiTypeStep({
   selectedFileSubtypeIndex,
   fileSubtypeOptions,
   onFileSubtypeChange,
-  installationTip
+  fileHint
 }: AiTypeStepProps) {
   const t = useTranslations("Step2");
 
@@ -25,7 +25,7 @@ export default function AiTypeStep({
       <h2 className="text-2xl font-semibold text-foreground">{t("phaseTitle")}</h2>
       <p className="mt-2 text-base text-foreground/80">{t("phaseDescription")}</p>
 
-      <div className="mt-6 flex flex-col gap-3">
+      <div className="mt-6 flex flex-col gap-3 text-left">
         <label htmlFor="ai-tool" className="text-sm font-medium text-foreground">
           {t("toolLabel")}
         </label>
@@ -89,10 +89,10 @@ export default function AiTypeStep({
         </div>
       </div>
 
-      {installationTip ? (
+      {fileHint ? (
         <div className="mt-4 rounded-lg border border-black/10 bg-gray-100 p-4 text-left dark:border-white/15 dark:bg-background">
           <p className="text-sm font-medium text-foreground">{t("tipsTitle")}</p>
-          <p className="mt-2 text-sm text-foreground/80">{installationTip}</p>
+          <p className="mt-2 text-sm text-foreground/80">{fileHint}</p>
         </div>
       ) : null}
 

@@ -37,7 +37,7 @@
   },  
   "Step3":{
     "phaseTitle": "Step 3",
-    "phaseDescription": "Name your {item}",
+    "phaseDescription": "What will you name your {item}?",
     "nameForType": "Name your {item}",    
     "examplesLabel": "Examples:",
     "entities": {
@@ -55,8 +55,8 @@
       },
       "specificInstructions": {
         "name": "instructions file",
-        "helperText": "Give your instructions a clear name to know what it is about.",
-        "entityNamePlaceholder": "Instructions name",
+        "helperText": "Give your instructions a clear title to know what it is about.",
+        "entityNamePlaceholder": "Instructions title",
         "examples": {
           "one": "Email instructions",
           "two": "Calendar instructions",
@@ -90,8 +90,8 @@
   },
   "Step4": {
     "phaseTitle": "Step 4",
-    "phaseDescription": "Description",
-    "descriptionForType": "Describe your {item}",
+    "phaseDescription": "Describe what your {item} does",
+    "descriptionForType": "Description of your {item}",
     "entities": {
       "agentInstructions": {
         "name": "agent",
