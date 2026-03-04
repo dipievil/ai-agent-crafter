@@ -206,7 +206,8 @@
         "template":{
           "body":[
             {
-              "name": "role",
+              "name": "description",
+              "sectionName": "Role",
               "sectionType": "mainSection",
               "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
               "formInput": "long"
@@ -216,7 +217,7 @@
               "sectionType": "listParagraph",
               "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
               "required": false,
-              "formInput": "comma-list"
+              "formInput": "list"
             }
           ]
         }

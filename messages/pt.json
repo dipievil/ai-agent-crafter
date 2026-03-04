@@ -31,6 +31,7 @@
     "toolLabel": "Ferramenta",
     "toolPlaceholder": "Selecione uma ferramenta",
     "fileSubtypeLabel": "Tipo de arquivo",
+    "tipsTitle": "Dicas",
     "officialSite": "Site oficial"
   },
   "Step3":{
@@ -52,7 +53,7 @@
 
       },
       "specificInstructions": {
-        "name": "arquivo de instruções",
+        "name": "Arquivo de instruções",
         "helperText": "Dê um nome claro para seu arquivo de instruções para que seja fácil entender o que ele faz.",
         "entityNamePlaceholder": "Nome das instruções",
         "examples": {
@@ -162,6 +163,20 @@
     }
   },
   "templates": {
+    "agent-zero":{
+      "agent-instructions": {
+        "body": {
+          "description": {
+            "label": "Papel",
+            "hint": "Descreva para o seu agente o que ele é e a função dele"
+          },
+          "actions": {
+            "label": "Ações",
+            "hint": "Liste as ações que o agente deve realizar"
+          }
+        }
+      }
+    },
     "github-copilot": {
       "specific-instructions": {
         "header": {

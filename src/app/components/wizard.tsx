@@ -72,6 +72,37 @@ function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeO
     .filter((item): item is FileSubtypeOption => Boolean(item));
 }
 
+function getInstallationTip(toolId: string, fileType: FileType, fileSubtypeIndex: number): string | undefined {
+  const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
+
+  if (!toolNode || typeof toolNode !== "object") {
+    return undefined;
+  }
+
+  const files = (toolNode as { files?: Record<string, unknown> }).files;
+  if (!files || typeof files !== "object") {
+    return undefined;
+  }
+
+  const fileNode = files[fileType];
+  if (Array.isArray(fileNode)) {
+    const subtypeNode = fileNode[fileSubtypeIndex];
+    if (!subtypeNode || typeof subtypeNode !== "object") {
+      return undefined;
+    }
+
+    const installation = (subtypeNode as { installation?: unknown }).installation;
+    return typeof installation === "string" ? installation : undefined;
+  }
+
+  if (!fileNode || typeof fileNode !== "object") {
+    return undefined;
+  }
+
+  const installation = (fileNode as { installation?: unknown }).installation;
+  return typeof installation === "string" ? installation : undefined;
+}
+
 
 export default function StepsWizard({
   fileOptions: options
@@ -166,6 +197,11 @@ export default function StepsWizard({
     return fileSubtypeOptions.find((option) => option.index === effectiveFileSubtypeIndex)?.label;
   }, [effectiveFileSubtypeIndex, fileSubtypeOptions]);
 
+  const installationTip = useMemo(
+    () => getInstallationTip(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
+    [effectiveFileSubtypeIndex, effectiveSelectedToolId, selectedType]
+  );
+
   const hasHeaderFields = useMemo(() => {
     if (!effectiveSelectedToolId) {
       return false;
@@ -245,6 +281,7 @@ export default function StepsWizard({
             aiTools={filteredAiTools}
             selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
             fileSubtypeOptions={fileSubtypeOptions}
+            installationTip={installationTip}
             onToolChange={(toolId) => {
               setSelectedToolId(toolId);
               setSelectedFileSubtypeIndex(0);

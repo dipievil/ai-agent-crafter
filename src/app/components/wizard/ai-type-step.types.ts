@@ -12,4 +12,5 @@ export type AiTypeStepProps = {
   selectedFileSubtypeIndex: number;
   fileSubtypeOptions: FileSubtypeOption[];
   onFileSubtypeChange: (subtypeIndex: number) => void;
+  installationTip?: string;
 };
