@@ -41,6 +41,10 @@ function getFilesNode(toolId: string, fileType: FileType): Record<string, unknow
 function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
   const files = getFilesNode(toolId, fileType);
 
+  if (!files) {
+    return false;
+  }
+
   return Object.prototype.hasOwnProperty.call(files, fileType);
 }
 

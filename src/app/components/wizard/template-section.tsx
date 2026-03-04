@@ -77,23 +77,13 @@ export default function TemplateSectionStep({
     onFieldChange(field, nextItems);
   };
 
-  const renderHint = (field: FormField) => {
-    if (!field.hint) {
-      return null;
-    }
-
-    return (
-      <div className="mt-4 rounded-lg border border-black/10 bg-gray-100 p-4 text-left dark:border-white/15 dark:bg-background">
-        <p className="text-sm text-foreground/80">{field.hint}</p>
-      </div>
-    );
-  };
-
   const renderField = (field: FormField) => {
     const fieldValue = values[field.name] ?? field.value;
     const baseClass = field.required
       ? "w-full rounded-lg border border-black/30 bg-transparent px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground dark:border-white/35"
       : "w-full rounded-lg border border-black/20 bg-transparent px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 dark:border-white/25";
+
+    const [isVisible, setIsVisible] = useState(false);
 
     if (field.inputType === "input-single-line") {
       return (
@@ -109,8 +99,19 @@ export default function TemplateSectionStep({
             placeholder={field.label}
             className={baseClass}
             aria-required={field.required}
+            onFocus={() => setIsVisible(true)}
+            onBlur={() => setIsVisible(false)}
           />
-          {renderHint(field)}
+          <div
+            className={`mt-4 overflow-hidden transition-all duration-300 ease-out ${
+              isVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
+            }`}
+            aria-hidden={!isVisible}
+          >
+            <div className="mt-2 rounded-lg border border-black/10 bg-gray-100 p-2 text-left dark:border-white/15 dark:bg-background">
+              <p className="text-sm text-foreground/80">{field.hint}</p>
+            </div>
+          </div>
         </div>
       );
     }
@@ -129,8 +130,19 @@ export default function TemplateSectionStep({
             rows={3}
             className={baseClass}
             aria-required={field.required}
+            onFocus={() => setIsVisible(true)}
+            onBlur={() => setIsVisible(false)}
           />
-          {renderHint(field)}
+          <div
+            className={`mt-4 overflow-hidden transition-all duration-300 ease-out ${
+              isVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
+            }`}
+            aria-hidden={!isVisible}
+          >
+            <div className="mt-2 rounded-lg border border-black/10 bg-gray-100 p-2 text-left dark:border-white/15 dark:bg-background">
+              <p className="text-sm text-foreground/80">{field.hint}</p>
+            </div>
+          </div>
         </div>
       );
     }
@@ -157,6 +169,8 @@ export default function TemplateSectionStep({
                 addListItem(field);
               }
             }}
+            onFocus={() => setIsVisible(true)}
+            onBlur={() => setIsVisible(false)}
           />
           <button
             type="button"
@@ -187,7 +201,16 @@ export default function TemplateSectionStep({
             ))}
           </div>
         ) : null}
-        {renderHint(field)}
+          <div
+            className={`mt-4 overflow-hidden transition-all duration-300 ease-out ${
+              isVisible ? "max-h-40 translate-y-0 opacity-100" : "max-h-0 -translate-y-1 opacity-0"
+            }`}
+            aria-hidden={!isVisible}
+          >
+            <div className="mt-2 rounded-lg border border-black/10 bg-gray-100 p-2 text-left dark:border-white/15 dark:bg-background">
+              <p className="text-sm text-foreground/80">{field.hint}</p>
+            </div>
+          </div>
       </div>
     );
   };
