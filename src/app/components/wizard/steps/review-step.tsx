@@ -33,8 +33,6 @@ export default function ReviewStep({
           <p className="mt-2 text-sm text-foreground/80">{installHint}</p>
         </div>
       ) : null}        
-
-        
       </div>
     </>
   );

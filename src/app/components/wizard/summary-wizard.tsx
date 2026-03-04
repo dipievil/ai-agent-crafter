@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import type { SummarySectionProps } from "./summary-wizard.types";
-import { fileTypes } from "../../utils/constants";
+import { fileTypes } from "../../../utils/constants";
 import { useTranslations } from "next-intl";
 
 export default function SummarySection({

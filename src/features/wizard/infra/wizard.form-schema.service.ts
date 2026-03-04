@@ -170,9 +170,7 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     const rawFormat = field.format ?? field.formInput;
     const parsedFormat = parseFormat(rawFormat);
     const format: FieldFormat = parsedFormat ?? "short";
-
-
-
+    
     const labelKey = this.createTranslationKey(context, normalizedName, "formLabel");
     const hintKey = this.createTranslationKey(context, normalizedName, "formHint");
 

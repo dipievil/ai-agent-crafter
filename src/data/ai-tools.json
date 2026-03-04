@@ -268,7 +268,7 @@
               "sectionType": "list-simple",
               "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
               "required": false,
-              "formInput": "comma-list"
+              "formInput": "list"
             }
           ]
         }

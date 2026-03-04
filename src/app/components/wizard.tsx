@@ -2,18 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import aiToolsData from "@/data/ai-tools.json";
 import type { AiToolData, AiToolOption, FileType } from "@/types/wizard/common";
-import NavbarWizard from "./navbar-wizard";
+import NavbarWizard from "./wizard/navbar-wizard";
 
 import { StepsWizardProps } from "./wizard.types";
-import AiTypeStep from "./wizard/ai-type-step";
-import FileTypeStep from "./wizard/file-type-step";
-import EntityNameStep from "./wizard/entity-name-step";
-import EntityDescriptionStep from "./wizard/entity-description-step";
-import TemplateHeaderStep from "./wizard/template-header-step";
-import TemplateBodyStep from "./wizard/template-body-step";
-import ReviewStep from "./wizard/review-step";
-import SummarySection from "./summary-wizard";
-import type { FileSubtypeOption } from "./wizard/ai-type-step.types";
+import AiTypeStep from "./wizard/steps/ai-type-step";
+import FileTypeStep from "./wizard/steps/file-type-step";
+import EntityNameStep from "./wizard/steps/entity-name-step";
+import EntityDescriptionStep from "./wizard/steps/entity-description-step";
+import TemplateHeaderStep from "./wizard/steps/template-header-step";
+import TemplateBodyStep from "./wizard/steps/template-body-step";
+import ReviewStep from "./wizard/steps/review-step";
+import SummarySection from "./wizard/summary-wizard";
+import type { FileSubtypeOption } from "./wizard/steps/ai-type-step.types";
 
 import {
   clearSelections,
@@ -255,7 +255,6 @@ export default function StepsWizard({
     }
 
     const markdown = markdownBuildResult.output.markdown;
-
     const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
     const url = window.URL.createObjectURL(blob);
     const anchor = window.document.createElement("a");
@@ -265,8 +264,6 @@ export default function StepsWizard({
     anchor.click();
     window.document.body.removeChild(anchor);
     window.URL.revokeObjectURL(url);
-
-    handleBackToPhaseOne();
   }
 
   useEffect(() => {
