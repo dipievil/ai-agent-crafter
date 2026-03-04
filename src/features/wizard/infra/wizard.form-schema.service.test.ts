@@ -110,4 +110,17 @@ describe("wizard.form-schema.service", () => {
     expect(allSubtypes.section.fields.length).toBe(4);
     expect(secondSubtypeOnly.section.fields.length).toBe(2);
   });
+
+  it("skips fields marked as title section", () => {
+    const result = buildTemplateForm(
+      "github-copilot",
+      "specific-instructions",
+      "body",
+      "Entity Name",
+      "Entity Description",
+      0
+    );
+
+    expect(result.section.fields.some((field) => field.name === "agentbehavior")).toBe(false);
+  });
 });

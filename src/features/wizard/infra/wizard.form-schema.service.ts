@@ -298,6 +298,10 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     },
     fieldIndex: number
   ): FormField | undefined {
+    if (field.sectionType === "title") {
+      return undefined;
+    }
+
     const rawName = typeof field.name === "string" ? field.name : "";
     if (!rawName) {
       context.warnings.push(
