@@ -1,5 +1,3 @@
-import { buildTemplateForm } from "./wizard.form-schema.service";
-import type { FormField, ParseWarning } from "./wizard.form-schema.types";
 import type {
   MarkdownBuildResult,
   MarkdownBuildWarning,
@@ -7,6 +5,13 @@ import type {
   MarkdownBuilderInput,
   WizardMarkdownBuilderService
 } from "./wizard.markdown-builder.types";
+import {
+  getTemplateFromNode,
+  getTemplateSectionFields,
+  normalizeFieldName,
+  resolveTemplateFileNodes,
+  type TemplateFieldRaw
+} from "../../template-data.shared";
 
 import type { FileType } from "@/types/wizard/common";
 
@@ -19,6 +24,15 @@ type MarkdownSectionType =
   | "array-key"
   | "objects-key"
   | "title";
+
+type MarkdownField = {
+  name: string;
+  sourceName: string;
+  sectionName?: string;
+  type?: string;
+  variable?: string;
+  value?: string;
+};
 
 const MARKDOWN_SECTION_TYPES: ReadonlySet<string> = new Set([
   "main-section",
@@ -39,14 +53,6 @@ function withWarning(
   return { code, message, path };
 }
 
-function mapParseWarning(warning: ParseWarning): MarkdownBuildWarning {
-  return {
-    code: warning.code,
-    message: warning.message,
-    path: warning.path
-  };
-}
-
 function sanitizeKeyName(value: string | undefined): string {
   if (!value) {
     return "";
@@ -61,7 +67,10 @@ function normalizeTextValue(value: string | string[] | undefined): string {
   }
 
   if (Array.isArray(value)) {
-    return value.map((item) => item.trim()).filter(Boolean).join(", ");
+    return value
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .join(", ");
   }
 
   return value.trim();
@@ -86,30 +95,12 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
   buildMarkdown(input: MarkdownBuilderInput): MarkdownBuildResult {
     const fileSubtypeIndex = input.fileSubtypeIndex ?? 0;
 
-    const headerSchema = buildTemplateForm(
-      input.aitype,
-      input.filetype,
-      "header",
-      input.entityName,
-      input.entityDescription,
-      fileSubtypeIndex
-    );
-    const bodySchema = buildTemplateForm(
-      input.aitype,
-      input.filetype,
-      "body",
-      input.entityName,
-      input.entityDescription,
-      fileSubtypeIndex
-    );
-
-    const warnings: MarkdownBuildWarning[] = [
-      ...headerSchema.warnings.map(mapParseWarning),
-      ...bodySchema.warnings.map(mapParseWarning)
-    ];
+    const warnings: MarkdownBuildWarning[] = [];
+    const headerFields = this.buildFieldsBySection(input, "header", warnings, fileSubtypeIndex);
+    const bodyFields = this.buildFieldsBySection(input, "body", warnings, fileSubtypeIndex);
 
     const headerLines = this.renderFields(
-      headerSchema.section.fields,
+      headerFields,
       input.headerFormValues,
       "header",
       warnings,
@@ -117,7 +108,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
       input.filetype
     );
     const bodyBlocks = this.renderFields(
-      bodySchema.section.fields,
+      bodyFields,
       input.bodyFormValues,
       "body",
       warnings,
@@ -144,8 +135,117 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
     };
   }
 
+  private buildFieldsBySection(
+    input: MarkdownBuilderInput,
+    section: "header" | "body",
+    warnings: MarkdownBuildWarning[],
+    fileSubtypeIndex: number
+  ): MarkdownField[] {
+    const parseWarnings = [] as Parameters<typeof resolveTemplateFileNodes>[2];
+    const fileNodes = resolveTemplateFileNodes(
+      input.aitype,
+      input.filetype,
+      parseWarnings,
+      fileSubtypeIndex
+    );
+
+    warnings.push(
+      ...parseWarnings.map((warning) =>
+        withWarning(warning.code, warning.message, warning.path)
+      )
+    );
+
+    if (fileNodes.length === 0) {
+      return [];
+    }
+
+    return fileNodes.flatMap((node, nodeIndex) => {
+      const template = getTemplateFromNode(node);
+      if (!template) {
+        warnings.push(
+          withWarning(
+            "template-not-found",
+            "Template definition was not found for this file node",
+            `${input.aitype}.files.${input.filetype}[${nodeIndex}].template`
+          )
+        );
+        return [];
+      }
+
+      const sectionWarnings = [] as Parameters<typeof getTemplateSectionFields>[2];
+      const sectionPath = `${input.aitype}.files.${input.filetype}[${nodeIndex}].template.${section}`;
+      const fields = getTemplateSectionFields(template, section, sectionWarnings, sectionPath);
+
+      warnings.push(
+        ...sectionWarnings.map((warning) =>
+          withWarning(warning.code, warning.message, warning.path)
+        )
+      );
+
+      return fields
+        .map((field, fieldIndex) =>
+          this.mapRawFieldToMarkdownField(field, input, section, nodeIndex, fieldIndex, warnings)
+        )
+        .filter((field): field is MarkdownField => Boolean(field));
+    });
+  }
+
+  private mapRawFieldToMarkdownField(
+    field: TemplateFieldRaw,
+    input: MarkdownBuilderInput,
+    section: "header" | "body",
+    nodeIndex: number,
+    fieldIndex: number,
+    warnings: MarkdownBuildWarning[]
+  ): MarkdownField | undefined {
+    if (field.sectionType === "title") {
+      return undefined;
+    }
+
+    const rawName = typeof field.name === "string" ? field.name : "";
+    if (!rawName) {
+      warnings.push(
+        withWarning(
+          "invalid-section-item",
+          "Template field is missing a valid name",
+          `${input.aitype}.files.${input.filetype}[${nodeIndex}].template.${section}[${fieldIndex}]`
+        )
+      );
+      return undefined;
+    }
+
+    const normalizedName = normalizeFieldName(rawName);
+    const rawType = typeof field.type === "string" ? field.type : undefined;
+    const rawSectionType = typeof field.sectionType === "string" ? field.sectionType : undefined;
+
+    return {
+      name: normalizedName,
+      sourceName: rawName,
+      sectionName: typeof field.sectionName === "string" ? field.sectionName : undefined,
+      type: rawType ?? rawSectionType,
+      variable: typeof field.variable === "string" ? field.variable : undefined,
+      value: this.resolveFieldValue(normalizedName, input.entityName, input.entityDescription)
+    };
+  }
+
+  private resolveFieldValue(
+    name: string,
+    entityName: string,
+    entityDescription: string
+  ): string | undefined {
+    if (name === "name") {
+      return entityName;
+    }
+
+    if (name === "description") {
+      return entityDescription;
+    }
+
+    return undefined;
+  }
+
   private resolveSectionType(
-    field: FormField,
+    field: MarkdownField,
     section: "header" | "body",
     warnings: MarkdownBuildWarning[],
     path: string
@@ -190,7 +290,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
   }
 
   private getFieldValue(
-    field: FormField,
+    field: MarkdownField,
     values: Record<string, string | string[]>
   ): string | string[] | undefined {
     const providedValue = values[field.name];
@@ -203,7 +303,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
   }
 
   private renderFields(
-    fields: FormField[],
+    fields: MarkdownField[],
     values: Record<string, string | string[]>,
     section: "header" | "body",
     warnings: MarkdownBuildWarning[],
@@ -222,20 +322,26 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
   }
 
   private renderField(
-    field: FormField,
+    field: MarkdownField,
     sectionType: MarkdownSectionType,
     value: string | string[] | undefined,
     warnings: MarkdownBuildWarning[],
     path: string
   ): string | undefined {
-    const sectionName = sanitizeKeyName(field.sectionName) || sanitizeKeyName(field.sourceName) || field.label;
+    const sectionName =
+      sanitizeKeyName(field.sectionName) || sanitizeKeyName(field.sourceName) || field.name;
     const keyName = sanitizeKeyName(field.sourceName) || field.name;
 
     if (sectionType === "title") {
       return `# ${sectionName}`;
     }
 
-    if (sectionType === "list" || sectionType === "list-simple" || sectionType === "array-key" || sectionType === "objects-key") {
+    if (
+      sectionType === "list" ||
+      sectionType === "list-simple" ||
+      sectionType === "array-key" ||
+      sectionType === "objects-key"
+    ) {
       const items = normalizeListValue(value);
 
       if (items.length === 0) {
@@ -265,7 +371,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
       }
 
       const objectValueKey = sanitizeKeyName(field.variable) || "value";
-      return `${keyName}: ${JSON.stringify(items.map((item) => ({ [objectValueKey]: item })))}`;
+      return `${keyName}: ${JSON.stringify(items.map((item) => ({ [objectValueKey]: item })) )}`;
     }
 
     const text = normalizeTextValue(value);
@@ -274,11 +380,11 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
     }
 
     if (sectionType === "main-section") {
-      return `# ${sectionName}\n${text}`;
+      return `# ${sectionName}\n\n${text}`;
     }
 
     if (sectionType === "second-section") {
-      return `## ${sectionName}\n${text}`;
+      return `## ${sectionName}\n\n${text}`;
     }
 
     return `${keyName}: ${text}`;
@@ -289,7 +395,8 @@ export function createWizardMarkdownBuilderService(): WizardMarkdownBuilderServi
   return new JsonWizardMarkdownBuilderService();
 }
 
-const wizardMarkdownBuilderService: WizardMarkdownBuilderService = createWizardMarkdownBuilderService();
+const wizardMarkdownBuilderService: WizardMarkdownBuilderService =
+  createWizardMarkdownBuilderService();
 
 export function buildTemplateMarkdown(input: MarkdownBuilderInput): MarkdownBuildResult {
   return wizardMarkdownBuilderService.buildMarkdown(input);
