@@ -162,6 +162,14 @@ export default function StepsWizard({
     return isValidSelection ? selectedFileSubtypeIndex : fileSubtypeOptions[0].index;
   }, [fileSubtypeOptions, selectedFileSubtypeIndex]);
 
+  const selectedFileSubtypeLabel = useMemo(() => {
+    if (fileSubtypeOptions.length <= 1) {
+      return undefined;
+    }
+
+    return fileSubtypeOptions.find((option) => option.index === effectiveFileSubtypeIndex)?.label;
+  }, [effectiveFileSubtypeIndex, fileSubtypeOptions]);
+
   const hasHeaderFields = useMemo(() => {
     if (!effectiveSelectedToolId) {
       return false;
@@ -234,6 +242,7 @@ export default function StepsWizard({
             currentStep={2}
             aiTools={filteredAiTools}
             selectedToolId={effectiveSelectedToolId}
+            selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType} />
           <AiTypeStep
             selectedToolId={effectiveSelectedToolId}
@@ -260,6 +269,7 @@ export default function StepsWizard({
             currentStep={3}
             aiTools={filteredAiTools}
             selectedToolId={selectedToolId}
+            selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType} />
           <EntityNameStep
             selectedType={selectedType}
@@ -282,6 +292,7 @@ export default function StepsWizard({
             currentStep={4}
             aiTools={filteredAiTools}
             selectedToolId={effectiveSelectedToolId}
+            selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType}
             fileName={fileName}
           />
@@ -306,6 +317,7 @@ export default function StepsWizard({
             currentStep={5}
             aiTools={filteredAiTools}
             selectedToolId={effectiveSelectedToolId}
+            selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType}
             fileName={fileName}
           />
@@ -336,6 +348,7 @@ export default function StepsWizard({
             currentStep={6}
             aiTools={filteredAiTools}
             selectedToolId={effectiveSelectedToolId}
+            selectedFileSubtypeLabel={selectedFileSubtypeLabel}
             selectedType={selectedType}
             fileName={fileName}
           />

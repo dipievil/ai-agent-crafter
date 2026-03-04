@@ -7,10 +7,16 @@ export default function SummarySection({
   currentStep = 1,
   selectedType,
   selectedToolId,
+  selectedFileSubtypeLabel,
   fileName,
   aiTools,
 }: SummarySectionProps) {
     const t = useTranslations("HomePage");
+
+  const selectedTypeLabel = selectedType ? t(`options.${fileTypes[selectedType]}`) : "";
+  const selectedTypeWithSubtype = selectedFileSubtypeLabel
+    ? `${selectedTypeLabel} (${selectedFileSubtypeLabel})`
+    : selectedTypeLabel;
 
   const selectedTool = useMemo(
     () => aiTools.find((tool) => tool.id === selectedToolId) ?? aiTools[0],
@@ -22,13 +28,13 @@ export default function SummarySection({
       {selectedType && currentStep === 2 && (
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingAType")}</p>
-          <p className="mt-1 text-left text-1xl font-semibold text-foreground">{t(`options.${fileTypes[selectedType]}`)}</p>
+          <p className="mt-1 text-left text-1xl font-semibold text-foreground">{selectedTypeWithSubtype}</p>
         </>
       )}
       {selectedType && selectedToolId != undefined && currentStep > 2 && currentStep < 4 && (
         <>
           <p className="text-2xl text-left  text-foreground/80">
-            {t("creating")} <b>{t(`options.${fileTypes[selectedType]}`)}</b> {t("for")} <b>{selectedTool?.name}</b>
+            {t("creating")} <b>{selectedTypeWithSubtype}</b> {t("for")} <b>{selectedTool?.name}</b>
           </p>
         </>
       )}
@@ -36,7 +42,7 @@ export default function SummarySection({
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingFor")}</p>
           <p className="mt-1 text-left text-2xl font-semibold text-foreground">
-            <b>{t(`options.${fileTypes[selectedType]}`)}</b> {fileName ?? ""} {t("for")} <b>{selectedTool?.name}</b>
+            <b>{selectedTypeWithSubtype}</b> {fileName ?? ""} {t("for")} <b>{selectedTool?.name}</b>
           </p>
         </>
       )}
