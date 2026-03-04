@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import aiToolsData from "@/data/ai-tools.json";
 import type { AiToolData, AiToolOption, FileType } from "@/types/wizard/common";
@@ -46,6 +46,21 @@ export default function StepsWizard({
     return aiToolOption;
   });
 
+  function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
+    const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
+
+    if (!toolNode || typeof toolNode !== "object") {
+      return false;
+    }
+
+    const files = (toolNode as { files?: Record<string, unknown> }).files;
+    if (!files || typeof files !== "object") {
+      return false;
+    }
+
+    return Object.prototype.hasOwnProperty.call(files, fileType);
+  }
+
   const defaultToolId = aiTools[0]?.id ?? "";
   const defaultFileName = "";
   const defaultDescription = "";
@@ -68,6 +83,26 @@ export default function StepsWizard({
   const [headerFormValues, setHeaderFormValues] = useState<Record<string, string | string[]>>(
     storedSelections.headerFormValues
   );
+
+  const filteredAiTools = useMemo(
+    () =>
+      aiTools
+        .filter((tool) => toolSupportsFileType(tool.id, selectedType))
+        .sort((left, right) => left.name.localeCompare(right.name, "pt-BR", { sensitivity: "base" })),
+    [aiTools, selectedType]
+  );
+
+  useEffect(() => {
+    if (filteredAiTools.length === 0) {
+      setSelectedToolId("");
+      return;
+    }
+
+    const hasSelectedTool = filteredAiTools.some((tool) => tool.id === selectedToolId);
+    if (!hasSelectedTool) {
+      setSelectedToolId(filteredAiTools[0].id);
+    }
+  }, [filteredAiTools, selectedToolId]);
 
   useEffect(() => {
     persistSelections(selectedType, selectedToolId, fileName, description, headerFormValues);
@@ -104,12 +139,12 @@ export default function StepsWizard({
         <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
           <SummarySection
             currentStep={2}
-            aiTools={aiTools}
+            aiTools={filteredAiTools}
             selectedToolId={selectedToolId}
             selectedType={selectedType} />
           <AiTypeStep
             selectedToolId={selectedToolId}
-            aiTools={aiTools}
+            aiTools={filteredAiTools}
             onToolChange={setSelectedToolId}
           />
           <NavbarWizard 
@@ -124,7 +159,7 @@ export default function StepsWizard({
         <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
           <SummarySection
             currentStep={3}
-            aiTools={aiTools}
+            aiTools={filteredAiTools}
             selectedToolId={selectedToolId}
             selectedType={selectedType} />
           <EntityNameStep
@@ -146,7 +181,7 @@ export default function StepsWizard({
         <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
           <SummarySection
             currentStep={4}
-            aiTools={aiTools}
+            aiTools={filteredAiTools}
             selectedToolId={selectedToolId}
             selectedType={selectedType}
             fileName={fileName}
@@ -170,7 +205,7 @@ export default function StepsWizard({
         <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
           <SummarySection
             currentStep={5}
-            aiTools={aiTools}
+            aiTools={filteredAiTools}
             selectedToolId={selectedToolId}
             selectedType={selectedType}
             fileName={fileName}

@@ -19,7 +19,7 @@ export default function SummarySection({
   
   return (
     <>
-      {selectedType && currentStep === 1 && (
+      {selectedType && currentStep === 2 && (
         <>
           <p className="text-sm text-left text-foreground/80">{t("creatingAType")}</p>
           <p className="mt-1 text-left text-1xl font-semibold text-foreground">{t(`options.${fileTypes[selectedType]}`)}</p>

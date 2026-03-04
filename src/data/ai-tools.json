@@ -89,7 +89,7 @@
             {
               "name": "tools",
               "hint": "specify the tools this agent can use. If not set, all enabled tools are allowed.",
-              "format": "short",
+              "format": "comma-list",
               "required": false
             },
             {
