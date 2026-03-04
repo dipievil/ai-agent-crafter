@@ -144,6 +144,25 @@
     "ariaLabel": "Application version",
     "version": "v{version} · {commit}"
   },
+  "TopBar": {
+    "ariaLabel": "Quick links",
+    "repo": {
+      "label": "Repo",
+      "hint": "Contribute"
+    },
+    "issues": {
+      "label": "Issues",
+      "hint": "Send suggestions or complaints"
+    },
+    "linkedin": {
+      "label": "LinkedIn",
+      "hint": "My LinkedIn"
+    },
+    "github": {
+      "label": "GitHub",
+      "hint": "My GitHub"
+    }
+  },
   "aiApps": {
     "githubCopilot": {
       "description": "GitHub Copilot is an AI coding assistant developed by GitHub and OpenAI that suggests code and autocompletions while you build software."
