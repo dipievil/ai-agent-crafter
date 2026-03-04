@@ -1,6 +1,6 @@
-import type { FileType } from "@/types/wizard/common";
+import type { FileType, TemplateSection, ParseWarning } from "@/types/wizard/common";
 
-export type TemplateSection = "header" | "body";
+export type FieldVariant = "default" | "required";
 
 export type FieldFormat = "short" | "long" | "comma-list" | "list";
 
@@ -9,23 +9,6 @@ export type FieldInputType =
   | "textarea"
   | "tag-list-removable"
   | "dynamic-list-add-remove";
-
-export type FieldVariant = "default" | "required";
-
-export type ParseWarningCode =
-  | "tool-not-found"
-  | "filetype-not-found"
-  | "template-not-found"
-  | "section-not-found"
-  | "invalid-section-item"
-  | "unsupported-format"
-  | "translation-missing";
-
-export type ParseWarning = {
-  code: ParseWarningCode;
-  message: string;
-  path?: string;
-};
 
 export type BuildFormInput = {
   aitype: string;

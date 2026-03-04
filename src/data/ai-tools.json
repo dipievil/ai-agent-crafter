@@ -118,7 +118,7 @@
               "name": "argument-hint:",
               "formHint": "The inputs this agent expects, e.g., \"a task to implement\" or \"a question to answer\".",
               "formInput": "comma-list",
-              "type":"object-key"
+              "type":"objects-key"
             },
             {
               "name": "tools",

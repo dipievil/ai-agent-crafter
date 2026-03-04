@@ -1,22 +1,18 @@
-import type { FileType } from "@/types/wizard/common";
+import type { ParseWarning, FileNodeRaw, FileType, TemplateSection, TemplateFieldRaw } from "@/types/wizard/common";
 
 import type {
   BuildFormResult,
   FieldFormat,
   FieldInputType,
   FormField,
-  ParseWarning,
-  TemplateFormSchemaService,
-  TemplateSection
+  TemplateFormSchemaService
 } from "./wizard.form-schema.types";
-import {
-  type FileNodeRaw,
+import { 
   getTemplateFromNode,
   getTemplateSectionFields,
   normalizeFieldName,
   resolveTemplateFileNodes,
-  withParseWarning,
-  type TemplateFieldRaw
+  withParseWarning
 } from "../../template-data.shared";
 
 type TranslationResolver = (key: string) => string | undefined;
@@ -137,13 +133,6 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
   ) {
     const template = this.getTemplateFromNode(node);
     if (!template) {
-      context.warnings.push(
-        withParseWarning(
-          `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template`,
-          "Template definition was not found for this file node",
-          "template-not-found"
-        )
-      );
       return [];
     }
 
@@ -174,13 +163,6 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
 
     const rawName = typeof field.name === "string" ? field.name : "";
     if (!rawName) {
-      context.warnings.push(
-        withParseWarning(
-          `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template.${context.filesection}[${fieldIndex}]`,
-          "Template field is missing a valid name",
-          "invalid-section-item"
-        )
-      );
       return undefined;
     }
 
@@ -189,15 +171,7 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     const parsedFormat = parseFormat(rawFormat);
     const format: FieldFormat = parsedFormat ?? "short";
 
-    if (!parsedFormat && rawFormat !== undefined) {
-      context.warnings.push(
-        withParseWarning(
-          `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template.${context.filesection}[${fieldIndex}].format`,
-          `Unsupported format '${String(rawFormat)}'. Falling back to 'short'`,
-          "unsupported-format"
-        )
-      );
-    }
+
 
     const labelKey = this.createTranslationKey(context, normalizedName, "formLabel");
     const hintKey = this.createTranslationKey(context, normalizedName, "formHint");

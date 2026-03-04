@@ -1,5 +1,4 @@
-import type { TemplateSection } from "@/features/wizard/infra/wizard.form-schema.types";
-import type { FileType } from "@/types/wizard/common";
+import type { TemplateSection, FileType } from "@/types/wizard/common";
 
 export type TemplateSectionValues = Record<string, string | string[]>;
 

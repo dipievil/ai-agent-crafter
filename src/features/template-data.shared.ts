@@ -1,32 +1,12 @@
 import aiToolsData from "@/data/ai-tools.json";
-import type { FileType } from "@/types/wizard/common";
-
-import type { ParseWarning, ParseWarningCode, TemplateSection } from "./wizard/infra/wizard.form-schema.types";
-
-export type TemplateFieldRaw = {
-  name?: unknown;
-  hint?: unknown;
-  formHint?: unknown;
-  format?: unknown;
-  formInput?: unknown;
-  required?: unknown;
-  variable?: unknown;
-  description?: unknown;
-  sectionName?: unknown;
-  type?: unknown;
-  sectionType?: unknown;
-};
-
-export type TemplateRaw = {
-  header?: unknown;
-  body?: unknown;
-};
-
-export type FileNodeRaw = {
-  name?: unknown;
-  title?: unknown;
-  template?: unknown;
-};
+import type { 
+  TemplateSection,
+  TemplateFieldRaw,
+  TemplateRaw,
+  FileNodeRaw,
+  FileType,
+  ParseWarningCode,
+  ParseWarning, ParseErrorCode } from "@/types/wizard/common";
 
 type ToolNodeRaw = {
   files?: unknown;

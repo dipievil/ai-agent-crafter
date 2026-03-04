@@ -41,23 +41,6 @@ describe("wizard.markdown-builder.service", () => {
     expect(result.warnings.some((warning) => warning.code === "section-type-inferred")).toBe(true);
   });
 
-  it("supports object-key alias as objects-key and warns about inconsistency", () => {
-    const result = buildTemplateMarkdown({
-      aitype: "github-copilot",
-      filetype: "agent-instructions",
-      entityName: "Agente X",
-      entityDescription: "Descrição X",
-      headerFormValues: {
-        "argument-hint": ["Primeiro item", "Segundo item"]
-      },
-      bodyFormValues: {}
-    });
-
-    expect(result.output.header).toContain(
-      'argument-hint: [{"value":"Primeiro item"},{"value":"Segundo item"}]'
-    );
-    expect(result.warnings.some((warning) => warning.code === "section-type-alias")).toBe(true);
-  });
 
   it("keeps list-simple body sections as markdown bullets", () => {
     const result = buildTemplateMarkdown({

@@ -1,4 +1,4 @@
-import type { ParseWarningCode } from "./wizard.form-schema.types";
+import type { MarkdownBuildWarning, MarkdownBuildError } from "@/types/wizard/common";
 
 import type { FileType } from "@/types/wizard/common";
 
@@ -10,19 +10,6 @@ export type MarkdownBuilderInput = {
   headerFormValues: Record<string, string | string[]>;
   bodyFormValues: Record<string, string | string[]>;
   fileSubtypeIndex?: number;
-};
-
-export type MarkdownBuildWarningCode =
-  | ParseWarningCode
-  | "section-type-inferred"
-  | "section-type-alias"
-  | "section-type-unsupported"
-  | "value-shape-mismatch";
-
-export type MarkdownBuildWarning = {
-  code: MarkdownBuildWarningCode;
-  message: string;
-  path?: string;
 };
 
 export type MarkdownBuildResult = {

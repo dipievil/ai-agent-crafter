@@ -1,19 +1,24 @@
 import type {
   MarkdownBuildResult,
-  MarkdownBuildWarning,
-  MarkdownBuildWarningCode,
   MarkdownBuilderInput,
   WizardMarkdownBuilderService
 } from "./wizard.markdown-builder.types";
+
 import {
   getTemplateFromNode,
   getTemplateSectionFields,
   normalizeFieldName,
-  resolveTemplateFileNodes,
-  type TemplateFieldRaw
+  resolveTemplateFileNodes
 } from "../../template-data.shared";
 
-import type { FileType } from "@/types/wizard/common";
+import type {   
+  MarkdownBuildWarning,
+  MarkdownBuildWarningCode,
+  FileType,
+  TemplateFieldRaw, 
+  TemplateSection,
+  MarkdownBuildErrorCode
+} from "@/types/wizard/common";
 
 type MarkdownSectionType =
   | "main-section"
@@ -46,7 +51,7 @@ const MARKDOWN_SECTION_TYPES: ReadonlySet<string> = new Set([
 ]);
 
 function withWarning(
-  code: MarkdownBuildWarningCode,
+  code: MarkdownBuildWarningCode | MarkdownBuildErrorCode,
   message: string,
   path?: string
 ): MarkdownBuildWarning {
@@ -137,7 +142,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
 
   private buildFieldsBySection(
     input: MarkdownBuilderInput,
-    section: "header" | "body",
+    section: TemplateSection,
     warnings: MarkdownBuildWarning[],
     fileSubtypeIndex: number
   ): MarkdownField[] {
@@ -193,7 +198,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
   private mapRawFieldToMarkdownField(
     field: TemplateFieldRaw,
     input: MarkdownBuilderInput,
-    section: "header" | "body",
+    section: TemplateSection,
     nodeIndex: number,
     fieldIndex: number,
     warnings: MarkdownBuildWarning[]
@@ -246,7 +251,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
 
   private resolveSectionType(
     field: MarkdownField,
-    section: "header" | "body",
+    section: TemplateSection,
     warnings: MarkdownBuildWarning[],
     path: string
   ): MarkdownSectionType {
@@ -261,29 +266,6 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
         )
       );
       return inferredType;
-    }
-
-    if (rawType === "object-key") {
-      warnings.push(
-        withWarning(
-          "section-type-alias",
-          `Field '${field.name}' uses 'object-key'. Using 'objects-key' alias`,
-          path
-        )
-      );
-      return "objects-key";
-    }
-
-    if (!MARKDOWN_SECTION_TYPES.has(rawType)) {
-      const fallbackType: MarkdownSectionType = section === "header" ? "value-key" : "main-section";
-      warnings.push(
-        withWarning(
-          "section-type-unsupported",
-          `Field '${field.name}' has unsupported section type '${rawType}'. Using '${fallbackType}'`,
-          path
-        )
-      );
-      return fallbackType;
     }
 
     return rawType as MarkdownSectionType;
@@ -305,7 +287,7 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
   private renderFields(
     fields: MarkdownField[],
     values: Record<string, string | string[]>,
-    section: "header" | "body",
+    section: TemplateSection,
     warnings: MarkdownBuildWarning[],
     aitype: string,
     filetype: FileType
@@ -316,7 +298,10 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
         const sectionType = this.resolveSectionType(field, section, warnings, path);
         const value = this.getFieldValue(field, values);
 
-        return this.renderField(field, sectionType, value, warnings, path);
+        const renderedField = (sectionType!= undefined) ? 
+        this.renderField(field, sectionType, value, warnings, path) : undefined;
+
+        return (renderedField || "").trim();
       })
       .filter((part): part is string => Boolean(part));
   }
