@@ -18,7 +18,8 @@
     "backButton": "Back",
     "startButton": "Start",
     "cancelButton": "Cancel",
-    "continueButton": "Continue"  
+    "continueButton": "Continue",
+    "downloadButton": "Download file"
   },
   "Step1": {
     "phaseTitle": "Step 1",
@@ -131,6 +132,12 @@
     "itemPlaceholder": "Type and add an item",
     "addItem": "Add",
     "removeItem": "Remove item"
+  },
+  "Step7": {
+    "phaseTitle": "Review",
+    "phaseDescription": "Your file will look like this:",
+    "markdownLabel": "Markdown file content",
+    "warningsTitle": "Detected inconsistencies"
   },
   "Footer": {
     "ariaLabel": "Application version",

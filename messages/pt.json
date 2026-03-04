@@ -18,7 +18,8 @@
     "backButton": "Voltar",
     "startButton": "Iniciar",
     "cancelButton": "Cancelar",
-    "continueButton": "Continuar"
+    "continueButton": "Continuar",
+    "downloadButton": "Baixar arquivo"
   },
   "Step1": {        
     "phaseTitle": "Fase 1",
@@ -131,6 +132,12 @@
     "itemPlaceholder": "Digite e adicione um item",
     "addItem": "Adicionar",
     "removeItem": "Remover item"
+  },
+  "Step7": {
+    "phaseTitle": "Revisão",
+    "phaseDescription": "Seu arquivo ficará assim:",
+    "markdownLabel": "Conteúdo do arquivo markdown",
+    "warningsTitle": "Inconsistências detectadas"
   },
   "Footer": {
     "ariaLabel": "Versão da aplicação",

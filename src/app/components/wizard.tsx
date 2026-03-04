@@ -11,6 +11,7 @@ import EntityNameStep from "./wizard/entity-name-step";
 import EntityDescriptionStep from "./wizard/entity-description-step";
 import TemplateHeaderStep from "./wizard/template-header-step";
 import TemplateBodyStep from "./wizard/template-body-step";
+import ReviewStep from "./wizard/review-step";
 import SummarySection from "./summary-wizard";
 import type { FileSubtypeOption } from "./wizard/ai-type-step.types";
 
@@ -20,6 +21,7 @@ import {
   readStoredSelections
 } from "@/features/wizard/infra/wizard.storage.service";
 import { buildTemplateForm } from "@/features/wizard/infra/wizard.form-schema.service";
+import { buildTemplateMarkdown } from "@/features/wizard/infra/wizard.markdown-builder.service";
 
 function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
   const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
@@ -110,7 +112,7 @@ export default function StepsWizard({
   const defaultType = options[0]?.value ?? "agent-instructions";
 
   const tData = useTranslations("aiApps");
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6 | 7>(1);
 
   const aiTools = Object.entries(aiToolsData).map(([id, tool]) => {
 
@@ -218,6 +220,62 @@ export default function StepsWizard({
 
     return result.section.fields.length > 0;
   }, [description, effectiveFileSubtypeIndex, effectiveSelectedToolId, fileName, selectedType]);
+
+  const markdownBuildResult = useMemo(() => {
+    if (!effectiveSelectedToolId) {
+      return {
+        output: {
+          markdown: "",
+          header: "",
+          body: ""
+        },
+        warnings: []
+      };
+    }
+
+    return buildTemplateMarkdown({
+      aitype: effectiveSelectedToolId,
+      filetype: selectedType,
+      entityName: fileName,
+      entityDescription: description,
+      headerFormValues,
+      bodyFormValues,
+      fileSubtypeIndex: effectiveFileSubtypeIndex
+    });
+  }, [
+    bodyFormValues,
+    description,
+    effectiveFileSubtypeIndex,
+    effectiveSelectedToolId,
+    fileName,
+    headerFormValues,
+    selectedType
+  ]);
+
+  function resolveDownloadFileName(): string {
+    const fallbackName = (fileName.trim() || "ai-agent-crafter-output").replace(/\s+/g, "-").toLowerCase();
+    return `${fallbackName}.md`;
+  }
+
+  function handleDownloadFile() {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const markdown = markdownBuildResult.output.markdown;
+
+    const blob = new Blob([markdown], { type: "text/markdown;charset=utf-8" });
+    const url = window.URL.createObjectURL(blob);
+    const anchor = window.document.createElement("a");
+    anchor.href = url;
+    anchor.download = resolveDownloadFileName();
+    window.document.body.appendChild(anchor);
+    anchor.click();
+    window.document.body.removeChild(anchor);
+    window.URL.revokeObjectURL(url);
+
+    handleBackToPhaseOne();
+  }
 
   useEffect(() => {
     persistSelections(
@@ -399,8 +457,34 @@ export default function StepsWizard({
           <NavbarWizard
             currentStep={6}
             selectedType={selectedType}
-            onForward={() => setStep(6)}
+            onForward={() => setStep(7)}
             onBack={() => setStep(5)}
+            onCancel={handleBackToPhaseOne}
+          />
+        </section>
+      );
+    case 7:
+      return (
+        <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
+          <SummarySection
+            currentStep={7}
+            aiTools={filteredAiTools}
+            selectedToolId={effectiveSelectedToolId}
+            selectedFileSubtypeLabel={selectedFileSubtypeLabel}
+            selectedType={selectedType}
+            fileName={fileName}
+          />
+
+          <ReviewStep
+            markdown={markdownBuildResult.output.markdown}
+            warnings={markdownBuildResult.warnings.map((warning) => warning.message)}
+          />
+
+          <NavbarWizard
+            currentStep={7}
+            selectedType={selectedType}
+            onForward={handleDownloadFile}
+            onBack={() => setStep(6)}
             onCancel={handleBackToPhaseOne}
           />
         </section>
