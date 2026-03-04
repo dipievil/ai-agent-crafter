@@ -5,7 +5,10 @@ import { AiTypeStepProps } from "./ai-type-step.types";
 export default function AiTypeStep({
   selectedToolId,
   aiTools,
-  onToolChange
+  onToolChange,
+  selectedFileSubtypeIndex,
+  fileSubtypeOptions,
+  onFileSubtypeChange
 }: AiTypeStepProps) {
   const t = useTranslations("Step2");
 
@@ -37,6 +40,27 @@ export default function AiTypeStep({
           ))}
         </select>
       </div>
+
+      {fileSubtypeOptions.length > 1 ? (
+        <div className="mt-4 flex flex-col gap-3">
+          <label htmlFor="file-subtype" className="text-sm font-medium text-foreground">
+            {t("fileSubtypeLabel")}
+          </label>
+          <select
+            id="file-subtype"
+            name="fileSubtype"
+            value={String(selectedFileSubtypeIndex)}
+            onChange={(event) => onFileSubtypeChange(Number(event.target.value))}
+            className="h-11 rounded-lg border border-black/20 bg-transparent px-3 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 dark:border-white/25"
+          >
+            {fileSubtypeOptions.map((subtype) => (
+              <option key={subtype.index} value={subtype.index}>
+                {subtype.label}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
 
       {selectedTool?.url ? (
         <div className="mt-4 rounded-lg border border-black/10 bg-gray-100 p-4 text-left dark:border-white/15 dark:bg-background">

@@ -1,7 +1,7 @@
-import type { FileType } from "@/types/wizard/common";
 import type { TemplateSectionValues } from "./template-section.types";
+import type { FileType } from "@/types/wizard/common";
 
-export type TemplateHeaderStepProps = {
+export type TemplateBodyStepProps = {
   selectedToolId: string;
   selectedFileSubtypeIndex: number;
   selectedType: FileType;

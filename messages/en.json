@@ -29,6 +29,7 @@
     "phaseTitle": "Step 2",
     "phaseDescription": "Which tool will you use with your agent?",
     "toolLabel": "Tool",
+    "fileSubtypeLabel": "File subtype",
     "officialSite": "Official site"
   },  
   "Step3":{
@@ -115,7 +116,16 @@
     "phaseTitle": "Step 5",
     "phaseDescription": "Fill only the header fields based on the selected template.",
     "sectionTitle": "Header",
-    "noHeader": "This format file does not need a header.",
+    "emptySection": "This file format does not have this section.",
+    "itemPlaceholder": "Type and add an item",
+    "addItem": "Add",
+    "removeItem": "Remove item"
+  },
+  "Step6": {
+    "phaseTitle": "Step 6",
+    "phaseDescription": "Fill the content fields based on the selected template.",
+    "sectionTitle": "Content",
+    "emptySection": "This file format does not have this section.",
     "itemPlaceholder": "Type and add an item",
     "addItem": "Add",
     "removeItem": "Remove item"

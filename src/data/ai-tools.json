@@ -200,7 +200,7 @@
     "files": {
       "agent-instructions": [
       {
-        "name": "Context",
+        "name": "Agent main Context",
         "output-file": ["_context.md"],
         "installation": "On your Agent Zero instance, create a folder with your agent name and paste this file inside.",
         "template":{
@@ -221,7 +221,7 @@
           ]
         }
       },{
-        "name": "Main Role",
+        "name": "Agent Main Role",
         "output-file": ["agent.system.main.role.md"],
         "installation": "On your Agent Zero instance, create a subfolder \"prompts\" on your agent folder with your agent name and paste this file inside.",
         "template":{

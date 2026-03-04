@@ -29,6 +29,7 @@
     "phaseTitle": "Fase 2",
     "phaseDescription": "Em qual ferramenta você usará seu agente?",
     "toolLabel": "Ferramenta",
+    "fileSubtypeLabel": "Tipo de arquivo",
     "officialSite": "Site oficial"
   },
   "Step3":{
@@ -115,7 +116,16 @@
     "phaseTitle": "Fase 5",
     "phaseDescription": "Preencha somente os campos de cabeçalho com base no template selecionado.",
     "sectionTitle": "Cabeçalho",
-    "noHeader": "Esse formato de arquivo não precisa de cabeçalho.",
+    "emptySection": "Esse formato de arquivo não possui essa seção.",
+    "itemPlaceholder": "Digite e adicione um item",
+    "addItem": "Adicionar",
+    "removeItem": "Remover item"
+  },
+  "Step6": {
+    "phaseTitle": "Fase 6",
+    "phaseDescription": "Preencha os campos de conteúdo com base no template selecionado.",
+    "sectionTitle": "Conteúdo",
+    "emptySection": "Esse formato de arquivo não possui essa seção.",
     "itemPlaceholder": "Digite e adicione um item",
     "addItem": "Adicionar",
     "removeItem": "Remover item"

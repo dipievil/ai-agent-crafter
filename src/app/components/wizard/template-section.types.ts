@@ -1,7 +1,9 @@
+import type { TemplateSection } from "@/features/wizard/infra/wizard.form-schema.types";
 import type { FileType } from "@/types/wizard/common";
-import type { TemplateSectionValues } from "./template-section.types";
 
-export type TemplateHeaderStepProps = {
+export type TemplateSectionValues = Record<string, string | string[]>;
+
+export type TemplateSectionStepProps = {
   selectedToolId: string;
   selectedFileSubtypeIndex: number;
   selectedType: FileType;
@@ -9,4 +11,6 @@ export type TemplateHeaderStepProps = {
   entityDescription: string;
   values: TemplateSectionValues;
   onValuesChange: (values: TemplateSectionValues) => void;
+  section: TemplateSection;
+  translationNamespace: "Step5" | "Step6";
 };

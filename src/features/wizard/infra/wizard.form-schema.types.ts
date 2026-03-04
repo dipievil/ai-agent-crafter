@@ -33,6 +33,7 @@ export type BuildFormInput = {
   filesection: TemplateSection;
   entityName: string;
   entityDescription: string;
+  fileSubtypeIndex?: number;
 };
 
 export type FormField = {
@@ -76,6 +77,7 @@ export interface TemplateFormSchemaService {
     filetype: FileType,
     filesection: TemplateSection,
     entityName: string,
-    entityDescription: string
+    entityDescription: string,
+    fileSubtypeIndex?: number
   ): BuildFormResult;
 }

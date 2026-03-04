@@ -16,12 +16,15 @@ type TranslationResolver = (key: string) => string | undefined;
 type TemplateFieldRaw = {
   name?: unknown;
   hint?: unknown;
+  formHint?: unknown;
   format?: unknown;
+  formInput?: unknown;
   required?: unknown;
   variable?: unknown;
   description?: unknown;
   sectionName?: unknown;
   type?: unknown;
+  sectionType?: unknown;
 };
 
 type TemplateRaw = {
@@ -95,7 +98,8 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     filetype: FileType,
     filesection: TemplateSection,
     entityName: string,
-    entityDescription: string
+    entityDescription: string,
+    fileSubtypeIndex?: number
   ): BuildFormResult {
     const warnings: ParseWarning[] = [];
     const toolNode = this.getToolNode(aitype, warnings);
@@ -104,7 +108,7 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
       return this.emptyResult(aitype, filetype, filesection, warnings);
     }
 
-    const fileNodes = this.getFileNodes(toolNode, filetype, warnings, aitype);
+    const fileNodes = this.getFileNodes(toolNode, filetype, warnings, aitype, fileSubtypeIndex);
     if (fileNodes.length === 0) {
       return this.emptyResult(aitype, filetype, filesection, warnings);
     }
@@ -178,7 +182,8 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     toolNode: ToolNodeRaw,
     filetype: FileType,
     warnings: ParseWarning[],
-    aitype: string
+    aitype: string,
+    fileSubtypeIndex?: number
   ): FileNodeRaw[] {
     if (!isRecord(toolNode.files)) {
       warnings.push(withPath(`${aitype}.files`, "Tool does not contain files configuration", "filetype-not-found"));
@@ -192,7 +197,24 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     }
 
     if (Array.isArray(node)) {
-      return node.filter(isRecord) as FileNodeRaw[];
+      const validNodes = node.filter(isRecord) as FileNodeRaw[];
+
+      if (typeof fileSubtypeIndex === "number") {
+        if (fileSubtypeIndex < 0 || fileSubtypeIndex >= validNodes.length) {
+          warnings.push(
+            withPath(
+              `${aitype}.files.${filetype}[${fileSubtypeIndex}]`,
+              "Requested file subtype index was not found",
+              "filetype-not-found"
+            )
+          );
+          return [];
+        }
+
+        return [validNodes[fileSubtypeIndex]];
+      }
+
+      return validNodes;
     }
 
     if (isRecord(node)) {
@@ -289,14 +311,15 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     }
 
     const normalizedName = normalizeName(rawName);
-    const parsedFormat = parseFormat(field.format);
+    const rawFormat = field.format ?? field.formInput;
+    const parsedFormat = parseFormat(rawFormat);
     const format: FieldFormat = parsedFormat ?? "short";
 
-    if (!parsedFormat && field.format !== undefined) {
+    if (!parsedFormat && rawFormat !== undefined) {
       context.warnings.push(
         withPath(
           `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template.${context.filesection}[${fieldIndex}].format`,
-          `Unsupported format '${String(field.format)}'. Falling back to 'short'`,
+          `Unsupported format '${String(rawFormat)}'. Falling back to 'short'`,
           "unsupported-format"
         )
       );
@@ -312,12 +335,14 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
       context.warnings.push(withPath(labelKey, "Translation key not found for label", "translation-missing"));
     }
 
-    if (!translatedHint && this.resolveTranslation && typeof field.hint === "string") {
+    const fallbackHint = typeof field.formHint === "string" ? field.formHint : typeof field.hint === "string" ? field.hint : undefined;
+
+    if (!translatedHint && this.resolveTranslation && typeof fallbackHint === "string") {
       context.warnings.push(withPath(hintKey, "Translation key not found for hint", "translation-missing"));
     }
 
     const label = translatedLabel ?? defaultLabelFromName(rawName);
-    const hint = translatedHint ?? (typeof field.hint === "string" ? field.hint : undefined);
+    const hint = translatedHint ?? fallbackHint;
     const required = field.required === true;
 
     return {
@@ -336,7 +361,7 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
       variable: typeof field.variable === "string" ? field.variable : undefined,
       description: typeof field.description === "string" ? field.description : undefined,
       sectionName: typeof field.sectionName === "string" ? field.sectionName : undefined,
-      type: typeof field.type === "string" ? field.type : undefined
+      type: typeof field.type === "string" ? field.type : typeof field.sectionType === "string" ? field.sectionType : undefined
     };
   }
 
@@ -377,7 +402,15 @@ export function buildTemplateForm(
   filetype: FileType,
   filesection: TemplateSection,
   entityName: string,
-  entityDescription: string
+  entityDescription: string,
+  fileSubtypeIndex?: number
 ): BuildFormResult {
-  return templateFormSchemaService.buildForm(aitype, filetype, filesection, entityName, entityDescription);
+  return templateFormSchemaService.buildForm(
+    aitype,
+    filetype,
+    filesection,
+    entityName,
+    entityDescription,
+    fileSubtypeIndex
+  );
 }

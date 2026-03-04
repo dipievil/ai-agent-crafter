@@ -23,8 +23,6 @@ export default function NavbarWizard({
 
   const buttonEmoji = useMemo(() => emojiByType[selectedType], [selectedType]);
 
-  const baseButtonClasses = "";
-
   return (
     <div className="mt-6 flex flex-col gap-3 sm:flex-row">
 

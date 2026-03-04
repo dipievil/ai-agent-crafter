@@ -88,4 +88,26 @@ describe("wizard.form-schema.service", () => {
     expect(nameField?.label).toBe("Nome Traduzido");
     expect(result.warnings.some((warning) => warning.code === "translation-missing")).toBe(true);
   });
+
+  it("returns fields only from the selected file subtype", () => {
+    const allSubtypes = buildTemplateForm(
+      "agent-zero",
+      "agent-instructions",
+      "body",
+      "Agent",
+      "Description"
+    );
+
+    const secondSubtypeOnly = buildTemplateForm(
+      "agent-zero",
+      "agent-instructions",
+      "body",
+      "Agent",
+      "Description",
+      1
+    );
+
+    expect(allSubtypes.section.fields.length).toBe(4);
+    expect(secondSubtypeOnly.section.fields.length).toBe(2);
+  });
 });

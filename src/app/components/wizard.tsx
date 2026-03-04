@@ -10,13 +10,67 @@ import FileTypeStep from "./wizard/file-type-step";
 import EntityNameStep from "./wizard/entity-name-step";
 import EntityDescriptionStep from "./wizard/entity-description-step";
 import TemplateHeaderStep from "./wizard/template-header-step";
+import TemplateBodyStep from "./wizard/template-body-step";
 import SummarySection from "./summary-wizard";
+import type { FileSubtypeOption } from "./wizard/ai-type-step.types";
 
 import {
   clearSelections,
   persistSelections,
   readStoredSelections
 } from "@/features/wizard/infra/wizard.storage.service";
+import { buildTemplateForm } from "@/features/wizard/infra/wizard.form-schema.service";
+
+function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
+  const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
+
+  if (!toolNode || typeof toolNode !== "object") {
+    return false;
+  }
+
+  const files = (toolNode as { files?: Record<string, unknown> }).files;
+  if (!files || typeof files !== "object") {
+    return false;
+  }
+
+  return Object.prototype.hasOwnProperty.call(files, fileType);
+}
+
+function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeOption[] {
+  const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
+
+  if (!toolNode || typeof toolNode !== "object") {
+    return [];
+  }
+
+  const files = (toolNode as { files?: Record<string, unknown> }).files;
+  if (!files || typeof files !== "object") {
+    return [];
+  }
+
+  const fileNode = files[fileType];
+
+  if (!Array.isArray(fileNode)) {
+    return [];
+  }
+
+  return fileNode
+    .map((node, index) => {
+      if (!node || typeof node !== "object") {
+        return undefined;
+      }
+
+      const name = (node as { name?: unknown; title?: unknown }).name;
+      const title = (node as { title?: unknown }).title;
+      const labelSource = typeof name === "string" ? name : typeof title === "string" ? title : undefined;
+
+      return {
+        index,
+        label: labelSource?.trim() || `Subtype ${index + 1}`
+      };
+    })
+    .filter((item): item is FileSubtypeOption => Boolean(item));
+}
 
 
 export default function StepsWizard({
@@ -25,7 +79,7 @@ export default function StepsWizard({
   const defaultType = options[0]?.value ?? "agent-instructions";
 
   const tData = useTranslations("aiApps");
-  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4 | 5 | 6>(1);
 
   const aiTools = Object.entries(aiToolsData).map(([id, tool]) => {
 
@@ -46,42 +100,35 @@ export default function StepsWizard({
     return aiToolOption;
   });
 
-  function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
-    const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
-
-    if (!toolNode || typeof toolNode !== "object") {
-      return false;
-    }
-
-    const files = (toolNode as { files?: Record<string, unknown> }).files;
-    if (!files || typeof files !== "object") {
-      return false;
-    }
-
-    return Object.prototype.hasOwnProperty.call(files, fileType);
-  }
-
   const defaultToolId = aiTools[0]?.id ?? "";
+  const defaultFileSubtypeIndex = 0;
   const defaultFileName = "";
   const defaultDescription = "";
   const defaultHeaderFormValues: Record<string, string | string[]> = {};
+  const defaultBodyFormValues: Record<string, string | string[]> = {};
 
   const storedSelections = readStoredSelections(
     defaultType,
     defaultToolId,
+    defaultFileSubtypeIndex,
     defaultFileName,
     defaultDescription,
     defaultHeaderFormValues,
+    defaultBodyFormValues,
     aiTools
   );
 
   const [selectedType, setSelectedType] = useState<FileType>(storedSelections.fileType);
 
   const [selectedToolId, setSelectedToolId] = useState<string>(storedSelections.toolId);
+  const [selectedFileSubtypeIndex, setSelectedFileSubtypeIndex] = useState<number>(storedSelections.fileSubtypeIndex);
   const [fileName, setFileName] = useState<string>(storedSelections.fileName);
   const [description, setDescription] = useState<string>(storedSelections.description);
   const [headerFormValues, setHeaderFormValues] = useState<Record<string, string | string[]>>(
     storedSelections.headerFormValues
+  );
+  const [bodyFormValues, setBodyFormValues] = useState<Record<string, string | string[]>>(
+    storedSelections.bodyFormValues
   );
 
   const filteredAiTools = useMemo(
@@ -92,29 +139,75 @@ export default function StepsWizard({
     [aiTools, selectedType]
   );
 
-  useEffect(() => {
+  const effectiveSelectedToolId = useMemo(() => {
     if (filteredAiTools.length === 0) {
-      setSelectedToolId("");
-      return;
+      return "";
     }
 
     const hasSelectedTool = filteredAiTools.some((tool) => tool.id === selectedToolId);
-    if (!hasSelectedTool) {
-      setSelectedToolId(filteredAiTools[0].id);
-    }
+    return hasSelectedTool ? selectedToolId : filteredAiTools[0].id;
   }, [filteredAiTools, selectedToolId]);
 
+  const fileSubtypeOptions = useMemo(
+    () => getFileSubtypeOptions(effectiveSelectedToolId, selectedType),
+    [effectiveSelectedToolId, selectedType]
+  );
+
+  const effectiveFileSubtypeIndex = useMemo(() => {
+    if (fileSubtypeOptions.length === 0) {
+      return 0;
+    }
+
+    const isValidSelection = fileSubtypeOptions.some((option) => option.index === selectedFileSubtypeIndex);
+    return isValidSelection ? selectedFileSubtypeIndex : fileSubtypeOptions[0].index;
+  }, [fileSubtypeOptions, selectedFileSubtypeIndex]);
+
+  const hasHeaderFields = useMemo(() => {
+    if (!effectiveSelectedToolId) {
+      return false;
+    }
+
+    const result = buildTemplateForm(
+      effectiveSelectedToolId,
+      selectedType,
+      "header",
+      fileName,
+      description,
+      effectiveFileSubtypeIndex
+    );
+
+    return result.section.fields.length > 0;
+  }, [description, effectiveFileSubtypeIndex, effectiveSelectedToolId, fileName, selectedType]);
+
   useEffect(() => {
-    persistSelections(selectedType, selectedToolId, fileName, description, headerFormValues);
-  }, [selectedType, selectedToolId, fileName, description, headerFormValues]);
+    persistSelections(
+      selectedType,
+      effectiveSelectedToolId,
+      effectiveFileSubtypeIndex,
+      fileName,
+      description,
+      headerFormValues,
+      bodyFormValues
+    );
+  }, [
+    selectedType,
+    effectiveSelectedToolId,
+    effectiveFileSubtypeIndex,
+    fileName,
+    description,
+    headerFormValues,
+    bodyFormValues
+  ]);
 
   function handleBackToPhaseOne() {
     clearSelections();
     setSelectedType(defaultType);
     setSelectedToolId(defaultToolId);
+    setSelectedFileSubtypeIndex(defaultFileSubtypeIndex);
     setFileName(defaultFileName);
     setDescription(defaultDescription);
     setHeaderFormValues(defaultHeaderFormValues);
+    setBodyFormValues(defaultBodyFormValues);
     setStep(1);
   }
 
@@ -140,12 +233,18 @@ export default function StepsWizard({
           <SummarySection
             currentStep={2}
             aiTools={filteredAiTools}
-            selectedToolId={selectedToolId}
+            selectedToolId={effectiveSelectedToolId}
             selectedType={selectedType} />
           <AiTypeStep
-            selectedToolId={selectedToolId}
+            selectedToolId={effectiveSelectedToolId}
             aiTools={filteredAiTools}
-            onToolChange={setSelectedToolId}
+            selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
+            fileSubtypeOptions={fileSubtypeOptions}
+            onToolChange={(toolId) => {
+              setSelectedToolId(toolId);
+              setSelectedFileSubtypeIndex(0);
+            }}
+            onFileSubtypeChange={setSelectedFileSubtypeIndex}
           />
           <NavbarWizard 
             currentStep={2} 
@@ -182,7 +281,7 @@ export default function StepsWizard({
           <SummarySection
             currentStep={4}
             aiTools={filteredAiTools}
-            selectedToolId={selectedToolId}
+            selectedToolId={effectiveSelectedToolId}
             selectedType={selectedType}
             fileName={fileName}
           />
@@ -194,7 +293,7 @@ export default function StepsWizard({
           <NavbarWizard
             currentStep={4}
             selectedType={selectedType}
-            onForward={() => setStep(5)}
+            onForward={() => setStep(hasHeaderFields ? 5 : 6)}
             onBack={() => setStep(3)}
             onCancel={handleBackToPhaseOne}
           />
@@ -206,13 +305,14 @@ export default function StepsWizard({
           <SummarySection
             currentStep={5}
             aiTools={filteredAiTools}
-            selectedToolId={selectedToolId}
+            selectedToolId={effectiveSelectedToolId}
             selectedType={selectedType}
             fileName={fileName}
           />
 
           <TemplateHeaderStep
-            selectedToolId={selectedToolId}
+            selectedToolId={effectiveSelectedToolId}
+            selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
             selectedType={selectedType}
             entityName={fileName}
             entityDescription={description}
@@ -223,8 +323,38 @@ export default function StepsWizard({
           <NavbarWizard
             currentStep={5}
             selectedType={selectedType}
-            onForward={() => setStep(5)}
+            onForward={() => setStep(6)}
             onBack={() => setStep(4)}
+            onCancel={handleBackToPhaseOne}
+          />
+        </section>
+      );
+    case 6:
+      return (
+        <section className="w-full max-w-none items-center rounded-2xl border border-black/10 bg-background p-6 shadow-sm dark:border-white/15">
+          <SummarySection
+            currentStep={6}
+            aiTools={filteredAiTools}
+            selectedToolId={effectiveSelectedToolId}
+            selectedType={selectedType}
+            fileName={fileName}
+          />
+
+          <TemplateBodyStep
+            selectedToolId={effectiveSelectedToolId}
+            selectedFileSubtypeIndex={effectiveFileSubtypeIndex}
+            selectedType={selectedType}
+            entityName={fileName}
+            entityDescription={description}
+            values={bodyFormValues}
+            onValuesChange={setBodyFormValues}
+          />
+
+          <NavbarWizard
+            currentStep={6}
+            selectedType={selectedType}
+            onForward={() => setStep(6)}
+            onBack={() => setStep(5)}
             onCancel={handleBackToPhaseOne}
           />
         </section>

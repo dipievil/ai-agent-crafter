@@ -20,22 +20,30 @@ function isToolId(value: string, aiTools: AiToolOption[]): boolean {
   return aiTools.some((tool) => tool.id === value);
 }
 
+function isNonNegativeInteger(value: unknown): value is number {
+  return typeof value === "number" && Number.isInteger(value) && value >= 0;
+}
+
 class LocalStorageWizardService implements WizardStorageService {
   readStoredSelections(
     defaultFileType: FileType,
     defaultToolId: string,
+    defaultFileSubtypeIndex: number,
     defaultFileName: string,
     defaultDescription: string,
     defaultHeaderFormValues: Record<string, string | string[]>,
+    defaultBodyFormValues: Record<string, string | string[]>,
     aiTools: AiToolOption[]
   ): StoredSelections {
     if (typeof window === "undefined") {
       return {
         fileType: defaultFileType,
         toolId: defaultToolId,
+        fileSubtypeIndex: defaultFileSubtypeIndex,
         fileName: defaultFileName,
         description: defaultDescription,
-        headerFormValues: defaultHeaderFormValues
+        headerFormValues: defaultHeaderFormValues,
+        bodyFormValues: defaultBodyFormValues
       };
     }
 
@@ -46,18 +54,22 @@ class LocalStorageWizardService implements WizardStorageService {
         return {
           fileType: defaultFileType,
           toolId: defaultToolId,
+          fileSubtypeIndex: defaultFileSubtypeIndex,
           fileName: defaultFileName,
           description: defaultDescription,
-          headerFormValues: defaultHeaderFormValues
+          headerFormValues: defaultHeaderFormValues,
+          bodyFormValues: defaultBodyFormValues
         };
       }
 
       const parsed = JSON.parse(raw) as {
         fileType?: unknown;
         toolId?: unknown;
+        fileSubtypeIndex?: unknown;
         fileName?: unknown;
         description?: unknown;
         headerFormValues?: unknown;
+        bodyFormValues?: unknown;
       };
       const fileType = isFileType(parsed.fileType) ? parsed.fileType : defaultFileType;
       const toolId =
@@ -67,23 +79,34 @@ class LocalStorageWizardService implements WizardStorageService {
           ? parsed.toolId
           : defaultToolId;
       const fileName = typeof parsed.fileName === "string" ? parsed.fileName : defaultFileName;
+      const fileSubtypeIndex = isNonNegativeInteger(parsed.fileSubtypeIndex)
+        ? parsed.fileSubtypeIndex
+        : defaultFileSubtypeIndex;
       const description = typeof parsed.description === "string" ? parsed.description : defaultDescription;
       const headerFormValues =
         parsed.headerFormValues &&
         typeof parsed.headerFormValues === "object" &&
         !Array.isArray(parsed.headerFormValues)
-          ? this.normalizeHeaderFormValues(parsed.headerFormValues)
+          ? this.normalizeFormValues(parsed.headerFormValues)
           : defaultHeaderFormValues;
+      const bodyFormValues =
+        parsed.bodyFormValues &&
+        typeof parsed.bodyFormValues === "object" &&
+        !Array.isArray(parsed.bodyFormValues)
+          ? this.normalizeFormValues(parsed.bodyFormValues)
+          : defaultBodyFormValues;
 
-      return { fileType, toolId, fileName, description, headerFormValues };
+      return { fileType, toolId, fileSubtypeIndex, fileName, description, headerFormValues, bodyFormValues };
     } catch {
       window.localStorage.removeItem(STORAGE_KEY);
       return {
         fileType: defaultFileType,
         toolId: defaultToolId,
+        fileSubtypeIndex: defaultFileSubtypeIndex,
         fileName: defaultFileName,
         description: defaultDescription,
-        headerFormValues: defaultHeaderFormValues
+        headerFormValues: defaultHeaderFormValues,
+        bodyFormValues: defaultBodyFormValues
       };
     }
   }
@@ -91,9 +114,11 @@ class LocalStorageWizardService implements WizardStorageService {
   persistSelections(
     fileType: FileType,
     toolId: string,
+    fileSubtypeIndex: number,
     fileName: string,
     description: string,
-    headerFormValues: Record<string, string | string[]>
+    headerFormValues: Record<string, string | string[]>,
+    bodyFormValues: Record<string, string | string[]>
   ): void {
     if (typeof window === "undefined") {
       return;
@@ -102,17 +127,17 @@ class LocalStorageWizardService implements WizardStorageService {
     try {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ fileType, toolId, fileName, description, headerFormValues })
+        JSON.stringify({ fileType, toolId, fileSubtypeIndex, fileName, description, headerFormValues, bodyFormValues })
       );
     } catch {
       window.localStorage.setItem(
         STORAGE_KEY,
-        JSON.stringify({ fileType, toolId, fileName, description, headerFormValues })
+        JSON.stringify({ fileType, toolId, fileSubtypeIndex, fileName, description, headerFormValues, bodyFormValues })
       );
     }
   }
 
-  private normalizeHeaderFormValues(value: unknown): Record<string, string | string[]> {
+  private normalizeFormValues(value: unknown): Record<string, string | string[]> {
     if (!value || typeof value !== "object" || Array.isArray(value)) {
       return {};
     }
@@ -147,17 +172,21 @@ const wizardStorageService: WizardStorageService = new LocalStorageWizardService
 export function readStoredSelections(
   defaultFileType: FileType,
   defaultToolId: string,
+  defaultFileSubtypeIndex: number,
   defaultFileName: string,
   defaultDescription: string,
   defaultHeaderFormValues: Record<string, string | string[]>,
+  defaultBodyFormValues: Record<string, string | string[]>,
   aiTools: AiToolOption[]
 ): StoredSelections {
   return wizardStorageService.readStoredSelections(
     defaultFileType,
     defaultToolId,
+    defaultFileSubtypeIndex,
     defaultFileName,
     defaultDescription,
     defaultHeaderFormValues,
+    defaultBodyFormValues,
     aiTools
   );
 }
@@ -165,11 +194,21 @@ export function readStoredSelections(
 export function persistSelections(
   fileType: FileType,
   toolId: string,
+  fileSubtypeIndex: number,
   fileName: string,
   description: string,
-  headerFormValues: Record<string, string | string[]>
+  headerFormValues: Record<string, string | string[]>,
+  bodyFormValues: Record<string, string | string[]>
 ): void {
-  wizardStorageService.persistSelections(fileType, toolId, fileName, description, headerFormValues);
+  wizardStorageService.persistSelections(
+    fileType,
+    toolId,
+    fileSubtypeIndex,
+    fileName,
+    description,
+    headerFormValues,
+    bodyFormValues
+  );
 }
 
 export function clearSelections(): void {
