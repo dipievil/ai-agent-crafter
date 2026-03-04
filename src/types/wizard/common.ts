@@ -55,8 +55,6 @@ export type MarkdownBuildWarningCode =
   | "section-type-inferred"
   | "section-type-unsupported";
 
-
-
 export type MarkdownBuildWarning = {
   code: MarkdownBuildWarningCode | MarkdownBuildErrorCode;
   message: string;

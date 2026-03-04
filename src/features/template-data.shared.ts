@@ -27,7 +27,7 @@ export function normalizeFieldName(value: string): string {
 export function withParseWarning(
   path: string,
   message: string,
-  code: ParseWarningCode
+  code: ParseWarningCode | ParseErrorCode
 ): ParseWarning {
   return { code, message, path };
 }
