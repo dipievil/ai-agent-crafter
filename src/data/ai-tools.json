@@ -7,8 +7,9 @@
       "specific-instructions": [
         {
           "name": "Project Instructions",
-          "output-file": ["copilot.instructions.md"],
-          "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions.",
+          "output-file": ["copilot-instructions.md"],
+          "hint": "This file contains the main instructions for the project. It can be used to provide detailed guidance and context for the project. You can use variables on the template to customize the instructions based on the repository name or other values.",
+          "installation": "Create a subfolder on repository called \".github\" and put this instruction file.",
           "template": {
             "header" :[
               {
@@ -25,18 +26,18 @@
             "body": [
               {
                 "name": "mainInstructions",
-                "sectionName": "Main instructions",
-                "sectionType": "mainSection",
+                "sectionName": "Copilot Instructions",
+                "sectionType": "main-section",
                 "formInput": "long",
                 "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
                 "required": true
               },
               {
-                "name": "repositoryName",
-                "sectionName": "Repository Name",
-                "sectionType": "mainSection",
-                "variable": "{repository_name}",
-                "formHint": "The name of the repository where the instructions will be used. This variable can be used on the instructions template to customize the instructions based on the repository name."
+                "name": "agentBehavior",
+                "sectionType": "title"
+              },
+              {
+                
               }
             ]
           }
@@ -74,42 +75,40 @@
             {
               "name": "name",              
               "formInput": "short",
-              "type":"valueKey"
+              "type":"value-key"
             },
             {
               "name": "description",
               "formHint": "A short description of the agent that will be used on the agent template.",
               "formInput": "short",
-              "type":"valueKey"
+              "type":"value-key"
             },
             {
               "name": "argument-hint:",
               "formHint": "The inputs this agent expects, e.g., \"a task to implement\" or \"a question to answer\".",
-              "formInput": "comma-list"
+              "formInput": "comma-list",
+              "type":"object-key"
             },
             {
               "name": "tools",
               "formHint": "Specify the tools this agent can use. If not set, all enabled tools are allowed.",
               "formInput": "comma-list",
+              "type":"array-key",
               "required": false
             },
             {
               "name": "mcp-servers",
               "formHint": "The MCPs online or local that only this agent will have access to. Must be in yml format.",
-              "formInput": "long"
+              "formInput": "long",
+              "type":"value-key"              
             }
           ],
           "body": [
             {
               "name": "role",
-              "sectionType": "mainSection",
+              "sectionType": "main-section",
               "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
               "formInput": "long"
-            },
-            {
-              "name": "Repository Name",
-              "variable": "{repository_name}",
-              "description": "The name of the repository where the agent will be used. This variable can be used on the agent template to customize the agent based on the repository name."
             }
           ]
         }
@@ -208,13 +207,13 @@
             {
               "name": "description",
               "sectionName": "Role",
-              "sectionType": "mainSection",
+              "sectionType": "main-section",
               "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
               "formInput": "long"
             },
             {
               "name": "actions",
-              "sectionType": "listParagraph",
+              "sectionType": "list-simple",
               "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
               "required": false,
               "formInput": "list"
@@ -229,13 +228,13 @@
           "body":[
             {
               "name": "role",
-              "sectionType": "mainSection",
+              "sectionType": "main-section",
               "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
               "formInput": "long"
             },
             {
               "name": "actions",
-              "sectionType": "listParagraph",
+              "sectionType": "list-simple",
               "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
               "required": false,
               "formInput": "comma-list"
