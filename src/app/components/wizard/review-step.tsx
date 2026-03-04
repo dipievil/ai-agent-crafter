@@ -2,7 +2,11 @@ import { useTranslations } from "next-intl";
 
 import type { ReviewStepProps } from "./review-step.types";
 
-export default function ReviewStep({ markdown, warnings }: ReviewStepProps) {
+export default function ReviewStep({ 
+  markdown, 
+  warnings,
+  installHint
+}: ReviewStepProps) {
   const t = useTranslations("Step7");
 
   return (
@@ -23,6 +27,13 @@ export default function ReviewStep({ markdown, warnings }: ReviewStepProps) {
           rows={14}
           className="w-full rounded-lg border border-black/20 bg-transparent px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 dark:border-white/25"
         />
+
+      {installHint ? (
+        <div className="mt-4 rounded-lg border border-black/10 bg-gray-100 p-4 text-left dark:border-white/15 dark:bg-background">
+          <p className="text-sm font-medium text-foreground">{t("tipsTitle")}</p>
+          <p className="mt-2 text-sm text-foreground/80">{installHint}</p>
+        </div>
+      ) : null}        
 
         {warnings.length > 0 ? (
           <div className="rounded-lg border border-black/10 bg-gray-100 p-4 dark:border-white/15 dark:bg-background">

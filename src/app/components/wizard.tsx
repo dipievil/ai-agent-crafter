@@ -23,40 +23,46 @@ import {
 import { buildTemplateForm } from "@/features/wizard/infra/wizard.form-schema.service";
 import { buildTemplateMarkdown } from "@/features/wizard/infra/wizard.markdown-builder.service";
 
-function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
+function getFilesNode(toolId: string, fileType: FileType): Record<string, unknown> | undefined {
   const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
 
   if (!toolNode || typeof toolNode !== "object") {
-    return false;
+    return undefined;
   }
 
   const files = (toolNode as { files?: Record<string, unknown> }).files;
   if (!files || typeof files !== "object") {
-    return false;
+    return undefined;
   }
+
+  return files;
+}
+
+function toolSupportsFileType(toolId: string, fileType: FileType): boolean {
+  const files = getFilesNode(toolId, fileType);
 
   return Object.prototype.hasOwnProperty.call(files, fileType);
 }
 
-function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeOption[] {
-  const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
+function getFilesArray(toolId: string, fileType: FileType): FileSubtypeOption[] {
+  const files = getFilesNode(toolId, fileType);
 
-  if (!toolNode || typeof toolNode !== "object") {
-    return [];
-  }
-
-  const files = (toolNode as { files?: Record<string, unknown> }).files;
-  if (!files || typeof files !== "object") {
+  if (!files) {
     return [];
   }
 
   const fileNode = files[fileType];
 
-  if (!Array.isArray(fileNode)) {
-    return [];
-  }
+  const fileNodes = Array.isArray(fileNode) ? fileNode : typeof fileNode === "object" ? [fileNode] : [];
+  
+  return fileNodes;  
+}
 
-  return fileNode
+
+function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeOption[] {
+  const fileNodes = getFilesArray(toolId, fileType);
+
+  return fileNodes
     .map((node, index) => {
       if (!node || typeof node !== "object") {
         return undefined;
@@ -75,33 +81,15 @@ function getFileSubtypeOptions(toolId: string, fileType: FileType): FileSubtypeO
 }
 
 function getHint(toolId: string, fileType: FileType, fileSubtypeIndex: number): string | undefined {
-  const toolNode = (aiToolsData as Record<string, unknown>)[toolId];
-
-  if (!toolNode || typeof toolNode !== "object") {
+  
+  const fileNode = getFilesArray(toolId, fileType);  
+  
+  const subtypeNode = fileNode[fileSubtypeIndex];
+  if (!subtypeNode || typeof subtypeNode !== "object") {
     return undefined;
   }
 
-  const files = (toolNode as { files?: Record<string, unknown> }).files;
-  if (!files || typeof files !== "object") {
-    return undefined;
-  }
-
-  const fileNode = files[fileType];
-  if (Array.isArray(fileNode)) {
-    const subtypeNode = fileNode[fileSubtypeIndex];
-    if (!subtypeNode || typeof subtypeNode !== "object") {
-      return undefined;
-    }
-
-    const hint = (subtypeNode as { hint?: unknown }).hint;
-    return typeof hint === "string" ? hint : undefined;
-  }
-
-  if (!fileNode || typeof fileNode !== "object") {
-    return undefined;
-  }
-
-  const hint = (fileNode as { hint?: unknown }).hint;
+  const hint = (subtypeNode as { hint?: unknown }).hint;
   return typeof hint === "string" ? hint : undefined;
 }
 
