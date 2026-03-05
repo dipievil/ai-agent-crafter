@@ -1,0 +1,149 @@
+{
+  "copilot.prompt": {
+    "header": [
+      {
+        "name": "name",
+        "formInput": "short",
+        "type": "value-key"
+      },
+      {
+        "name": "description",
+        "formHint": "A short description of what this prompt does.",
+        "formInput": "short",
+        "type": "value-key"
+      },
+      {
+        "name": "argument-hint",
+        "formHint": "Optionally specify a focus area or pattern to document for agents.",
+        "formInput": "short",
+        "type": "value-key"
+      },
+      {
+        "name": "agent",
+        "formHint": "The agent to use when running this prompt.",
+        "formInput": "list",
+        "type": "comma-list",
+        "default": "agent",
+        "required": true
+      }
+    ],
+    "body": [
+      {
+        "name": "description",
+        "sectionType": "text",
+        "formHint": "Describes what this prompt does and how to use it. This is the main content of the prompt template and should provide all the necessary information for agents understand the purpose and usage of the prompt.",
+        "formInput": "long"
+      },
+      {
+        "name": "discovery",
+        "sectionType": "main-section",
+        "formHint": "This section is used to provide guidance for agents to search information related to the prompt. This can include relevant files to look at, relevant tools to use, or any other information that can help agents discover the necessary information to complete the task.",
+        "formInput": "long",
+        "required": false
+      },
+      {
+        "name": "guidelines",
+        "sectionType": "list",
+        "formHint": "This section is used to provide guidelines for agents to follow when executing the prompt. This can include best practices, tips, or any other information that can help agents perform the task effectively.",
+        "formInput": "comma-list",
+        "required": false
+      },
+      {
+        "name": "output",
+        "sectionType": "main-section",
+        "formHint": "This section is used to provide guidance for agents on how to format the output of the prompt. This can include examples of expected output, or any other information that can help agents format their output correctly, e.g., a format to follow or specific information to include in the output.",
+        "formInput": "long",
+        "required": false
+      }
+    ]
+  },
+  "agentzero-communication.prompt": {
+    "body": [
+      {
+        "name": "Communication",
+        "sectionType": "main-section",
+        "formHint": "Main communication behavior and context for the Agent Zero communication prompt.",
+        "formInput": "long"
+      },
+      {
+        "name": "Initial Interview",
+        "sectionType": "second-section",
+        "formHint": "Describe how the agent should conduct requirements elicitation before starting autonomous research.",
+        "formInput": "long"
+      },
+      {
+        "name": "Initial Interview Requirements",
+        "sectionType": "list-simple",
+        "formHint": "List required dimensions the interview must clarify before research begins.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Thinking (thoughts)",
+        "sectionType": "second-section",
+        "formHint": "Instructions for the thoughts field and analytical reasoning expectations.",
+        "formInput": "long"
+      },
+      {
+        "name": "Thoughts Analytical Framework",
+        "sectionType": "list-simple",
+        "formHint": "List the required analytical capabilities the agent must include in thoughts.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Thoughts Output Constraint",
+        "sectionType": "text",
+        "formHint": "Concise machine-optimized output constraint for the thoughts field.",
+        "formInput": "long"
+      },
+      {
+        "name": "Tool Calling (tools)",
+        "sectionType": "second-section",
+        "formHint": "Instructions for tool execution behavior and strict schema adherence.",
+        "formInput": "long"
+      },
+      {
+        "name": "Tool Calling Requirements",
+        "sectionType": "list-simple",
+        "formHint": "List optimization requirements for tool arguments and execution quality.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Reply Format",
+        "sectionType": "second-section",
+        "formHint": "Describe the required response envelope and JSON-only constraint.",
+        "formInput": "long"
+      },
+      {
+        "name": "Reply Format Schema",
+        "sectionType": "list-simple",
+        "formHint": "List each required JSON field and constraints.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Rules",
+        "sectionType": "second-section",
+        "formHint": "Special formatting and rendering rules for math, markdown blocks, and emphasis syntax.",
+        "formInput": "long"
+      },
+      {
+        "name": "Response Example",
+        "sectionType": "second-section",
+        "formHint": "Example JSON response demonstrating thoughts, tool_name, and tool_args.",
+        "formInput": "long"
+      },
+      {
+        "name": "include-file",
+        "sectionType": "value-key",
+        "formHint": "Optional include directive to append extra communication additions file.",
+        "formInput": "long",
+        "type": "value-key"
+      },
+      {
+        "name": "description",
+        "formHint": "A short description of what this prompt does.",
+        "formInput": "short",
+        "type": "value-key"
+      }
+    ]
+  }
+}

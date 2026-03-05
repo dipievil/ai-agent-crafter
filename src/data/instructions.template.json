@@ -1,0 +1,94 @@
+{
+  "copilot.project-instructions": {
+    "header": [
+      {
+        "name": "description",
+        "formHint": "A short description of the project that will be used on the instructions template.",
+        "formInput": "short"
+      },
+      {
+        "name": "applyTo",
+        "formHint": "List the extensions files where to apply these instructions.",
+        "formInput": "comma-list"
+      }
+    ],
+    "body": [
+      {
+        "name": "mainInstructions",
+        "sectionName": "Copilot Instructions",
+        "sectionType": "main-section",
+        "formInput": "long",
+        "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
+        "required": true
+      },
+      {
+        "name": "agentBehavior",
+        "sectionType": "title"
+      }
+    ]
+  },
+  "copilot.context-instructions":{
+    "header" :[
+      {
+        "name": "description",
+        "formHint": "A short description of the project that will be used on the instructions template.",
+        "formInput": "short"
+      },
+      {
+        "name": "applyTo",
+        "formHint": "List the extensions files where to apply these instructions.",
+        "formInput": "comma-list"
+      }
+    ],
+    "body": [
+      {
+        "name": "mainInstructions",
+        "sectionName": "Copilot Instructions",
+        "sectionType": "main-section",
+        "formInput": "long",
+        "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
+        "required": true
+      },
+      {
+        "name": "agentBehavior",
+        "sectionType": "title"
+      }
+    ]
+  },
+  "standard.specific-instructions": {
+    "body": [
+      {
+        "name": "mainInstructions",
+        "sectionName": "Agent Instructions",
+        "sectionType": "main-section",
+        "formInput": "long",
+        "formHint": "The core instructions for the agent in this repository.",
+        "required": true
+      }
+    ]
+  },
+  "gemini.specific-instructions": {
+    "body": [
+      {
+        "name": "mainInstructions",
+        "sectionName": "Gemini Instructions",
+        "sectionType": "main-section",
+        "formInput": "long",
+        "formHint": "The main instructions for Gemini in this repository.",
+        "required": true
+      }
+    ]
+  },
+  "codex.specific-instructions": {
+    "body": [
+      {
+        "name": "mainInstructions",
+        "sectionName": "Codex Instructions",
+        "sectionType": "main-section",
+        "formInput": "long",
+        "formHint": "The main instructions for Codex in this repository.",
+        "required": true
+      }
+    ]
+  }
+}

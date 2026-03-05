@@ -1,0 +1,51 @@
+{
+  "skill.md": {
+    "header": [
+      {
+        "name": "name",
+        "formInput": "short",
+        "type": "value-key"
+      },
+      {
+        "name": "description",
+        "formHint": "A short description of what this skill does.",
+        "formInput": "long",
+        "type": "value-key"
+      },
+      {
+        "name": "license",
+        "formHint": "The license under which this skill is released, e.g., \"MIT\" or \"GPL-3.0\".",
+        "formInput": "short",
+        "type": "value-key"
+      },
+      {
+        "name": "allowed-tools",
+        "formHint": "The tools allowed to be used on this skill. If not set, all enabled tools are allowed.",
+        "formInput": "list",
+        "type": "array-key",
+        "required": false
+      },
+      {
+        "name": "compatibility",
+        "formHint": "Prerequisites for this skill to work, e.g., \"requires dotnet framework 4.5\" or \"requires access to the project management tool\".",
+        "formInput": "long",
+        "type": "value-key"
+      },
+      {
+        "name": "metadata",
+        "formHint": "Add any information you want on the template that can be valid for the user, e.g., \"author\" or \"version\".",
+        "formInput": "list",
+        "type": "list-value-key",
+        "required": false
+      }
+    ],
+    "body": [
+      {
+        "name": "instructions",
+        "sectionType": "main-section",
+        "formHint": "The instructions for the skill. This section can be used on the skill template to provide detailed guidance and context for the skill.",
+        "formInput": "long"
+      }
+    ]
+  }
+}

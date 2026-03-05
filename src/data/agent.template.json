@@ -1,0 +1,180 @@
+{
+  "copilot.agent": {
+    "header": [
+      {
+        "name": "name",
+        "formInput": "short",
+        "type": "value-key"
+      },
+      {
+        "name": "description",
+        "formHint": "A short description of the agent that will be used on the agent template.",
+        "formInput": "short",
+        "type": "value-key"
+      },
+      {
+        "name": "argument-hint:",
+        "formHint": "The inputs this agent expects, e.g., \"a task to implement\" or \"a question to answer\".",
+        "formInput": "comma-list",
+        "type": "objects-key"
+      },
+      {
+        "name": "tools",
+        "formHint": "Specify the tools this agent can use. If not set, all enabled tools are allowed.",
+        "formInput": "list",
+        "type": "array-key",
+        "required": false
+      },
+      {
+        "name": "mcp-servers",
+        "formHint": "The MCPs online or local that only this agent will have access to. Must be in yml format.",
+        "formInput": "long",
+        "type": "value-key"
+      }
+    ],
+    "body": [
+      {
+        "name": "role",
+        "sectionType": "main-section",
+        "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
+        "formInput": "long"
+      }
+    ]
+  },
+  "agentzero.agent-context":{
+    "body":[
+      {
+        "name": "description",
+        "sectionName": "Role",
+        "sectionType": "main-section",
+        "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
+        "formInput": "long"
+      },
+      {
+        "name": "actions",
+        "sectionType": "list-simple",
+        "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
+        "required": false,
+        "formInput": "list"
+      }
+    ] 
+  },
+  "agentzero.agent-main":{
+    "body":[
+      {
+        "name": "role",
+        "sectionType": "main-section",
+        "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
+        "formInput": "long"
+      },
+      {
+        "name": "actions",
+        "sectionType": "list-simple",
+        "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
+        "required": false,
+        "formInput": "list"
+      }
+    ]
+  },
+  "agentzero-communication.prompt": {
+    "body": [
+      {
+        "name": "Communication",
+        "sectionType": "main-section",
+        "formHint": "Main communication behavior and context for the Agent Zero communication prompt.",
+        "formInput": "long"
+      },
+      {
+        "name": "Initial Interview",
+        "sectionType": "second-section",
+        "formHint": "Describe how the agent should conduct requirements elicitation before starting autonomous research.",
+        "formInput": "long"
+      },
+      {
+        "name": "Initial Interview Requirements",
+        "sectionType": "list-simple",
+        "formHint": "List required dimensions the interview must clarify before research begins.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Thinking (thoughts)",
+        "sectionType": "second-section",
+        "formHint": "Instructions for the thoughts field and analytical reasoning expectations.",
+        "formInput": "long"
+      },
+      {
+        "name": "Thoughts Analytical Framework",
+        "sectionType": "list-simple",
+        "formHint": "List the required analytical capabilities the agent must include in thoughts.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Thoughts Output Constraint",
+        "sectionType": "text",
+        "formHint": "Concise machine-optimized output constraint for the thoughts field.",
+        "formInput": "long"
+      },
+      {
+        "name": "Tool Calling (tools)",
+        "sectionType": "second-section",
+        "formHint": "Instructions for tool execution behavior and strict schema adherence.",
+        "formInput": "long"
+      },
+      {
+        "name": "Tool Calling Requirements",
+        "sectionType": "list-simple",
+        "formHint": "List optimization requirements for tool arguments and execution quality.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Reply Format",
+        "sectionType": "second-section",
+        "formHint": "Describe the required response envelope and JSON-only constraint.",
+        "formInput": "long"
+      },
+      {
+        "name": "Reply Format Schema",
+        "sectionType": "list-simple",
+        "formHint": "List each required JSON field and constraints.",
+        "formInput": "comma-list"
+      },
+      {
+        "name": "Rules",
+        "sectionType": "second-section",
+        "formHint": "Special formatting and rendering rules for math, markdown blocks, and emphasis syntax.",
+        "formInput": "long"
+      },
+      {
+        "name": "Response Example",
+        "sectionType": "second-section",
+        "formHint": "Example JSON response demonstrating thoughts, tool_name, and tool_args.",
+        "formInput": "long"
+      },
+      {
+        "name": "include-file",
+        "sectionType": "value-key",
+        "formHint": "Optional include directive to append extra communication additions file.",
+        "formInput": "long",
+        "type": "value-key"
+      },
+      {
+        "name": "description",
+        "formHint": "A short description of what this prompt does.",
+        "formInput": "short",
+        "type": "value-key"
+      }
+    ]
+  },
+  "chatgpt.agent": {
+    "body": [
+      {
+        "name": "mainInstructions",
+        "sectionName": "System Instructions",
+        "sectionType": "main-section",
+        "formHint": "The core system instructions for the ChatGPT assistant.",
+        "formInput": "long",
+        "required": true
+      }
+    ]
+  }
+}
