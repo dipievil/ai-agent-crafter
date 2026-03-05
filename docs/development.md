@@ -21,9 +21,7 @@ Example:
           "output-file": ["copilot-instructions.md"],
           "hint": "This file contains the main instructions for the project. It can be used to provide detailed guidance and context for the project. You can use variables on the template to customize the instructions based on the repository name or other values.",
           "installation": "Create a subfolder on repository called \".github\" and put this instruction file.",
-          "template": {
-            ...
-          }
+          "template": "copilot.project-instructions"
         }
     }
 }
@@ -31,9 +29,17 @@ Example:
 
 ## Templates structure
 
-The app will generate the templates based on the json structure for each ai tool and format the user choose on the `src/data/ai-tools.json` file.
+The app will generate templates based on the selected AI tool and file type from `src/data/ai-tools.json`.
 
-The `template`  node has two main nodes 'header' and 'body'. Some projects has different header formart (Github Copilot) but others are markdown file formats exclusive, so the body is the markdown content file.
+The `template` node in `src/data/ai-tools.json` must be a **template id string**.
+This id must exist in the corresponding template data file:
+
+- `src/data/agent.template.json` for `agent-instructions`
+- `src/data/skills.template.json` for `skills`
+- `src/data/promtps.template.json` for `prompts`
+- `src/data/instructions.template.json` for `specific-instructions`
+
+Each template id maps to an object with `header` and/or `body` arrays.
 
 Each item on header and body item will have all data required to create form fieds for user inputs and file format to the application know how to write down the markdown file.
 
@@ -41,16 +47,23 @@ Example:
 
 ```json
 {
-  "body": [
-    {
-      "name": "mainInstructions",
-      "sectionName": "Main instructions",
-      "sectionType": "main-section",
-      "formInput": "long",
-      "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
-      "required": true
-    }
-  ]
+  "copilot.project-instructions": {
+    "header": [
+      {
+        "name": "description",
+        "formInput": "short"
+      }
+    ],
+    "body": [
+      {
+        "name": "mainInstructions",
+        "sectionName": "Copilot Instructions",
+        "sectionType": "main-section",
+        "formInput": "long",
+        "required": true
+      }
+    ]
+  }
 }
 ```
 
@@ -73,11 +86,13 @@ Example:
 
 #### Valid sectionType Values
 
+- **text**: The content is just a paragraph without markdown formatting
 - **main-section**: The content has a title level 1 (single trailing #). This is the default text format in case of missing value.
 - **second-section**: The content has a title level 2 (two trailing #)
 - **list**: A list after a title level 2 (two trailing #)
 - **list-simple**: just a markdown list without no title
 - **value-key**: the name and the content split by ":"
+- **list-value-key**: multiple values and keys split by ":" aligned with double-spaced tabulation
 - **array-key**: the name with a list of the values in JSON array format
 - **objects-key**: the name with user typed values as a list of objects in JSON format
 - **title**: is just a main section title
@@ -191,11 +206,16 @@ The state flow is controlled by a client orchestrator component:
 - `src/app/components/summary.types.ts`
   - Defines `SummarySectionProps` for the summary box contract.
 
-## Data Source for AI Tools
+## Data Source for AI Tools and Templates
 
-- `src/data/ai-tools.json` is the source of truth for available AI tools, file types and descriptions
-- Wizard dropdowns values, and contents are generated from each tool specific nodes.
-- Each item also includes:
+- `src/data/ai-tools.json` is the source of truth for available AI tools, file types, descriptions and template IDs.
+- Template structures are defined in:
+  - `src/data/agent.template.json`
+  - `src/data/skills.template.json`
+  - `src/data/promtps.template.json`
+  - `src/data/instructions.template.json`
+- Wizard dropdown values and contents are generated from each tool specific node in `ai-tools.json`.
+- Each tool item may include:
   - `description` (locale key placeholder or plain text)
   - `url` (official site)
 

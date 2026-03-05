@@ -17,7 +17,7 @@ describe("wizard.form-schema.service", () => {
 
     expect(result.section.fields).toHaveLength(0);
     expect(result.meta.message).toBe("this format file dont need a header");
-    expect(result.warnings.some((warning) => warning.code === "template-not-found")).toBe(true);
+    expect(result.warnings.some((warning) => warning.code === "section-not-found")).toBe(true);
   });
 
   it("maps formats to input types for agent-instructions header", () => {
@@ -107,8 +107,18 @@ describe("wizard.form-schema.service", () => {
       1
     );
 
-    expect(allSubtypes.section.fields.length).toBe(4);
+    const thirdSubtypeOnly = buildTemplateForm(
+      "agent-zero",
+      "agent-instructions",
+      "body",
+      "Agent",
+      "Description",
+      2
+    );
+
+    expect(allSubtypes.section.fields.length).toBe(18);
     expect(secondSubtypeOnly.section.fields.length).toBe(2);
+    expect(thirdSubtypeOnly.section.fields.length).toBe(14);
   });
 
   it("skips fields marked as title section", () => {

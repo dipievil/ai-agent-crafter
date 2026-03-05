@@ -5,12 +5,12 @@ export type FileSubtypeOption = {
   label: string;
 };
 
-export type FileNameCustomField = {
-  label: string;
+export type FileNameSegmentField = {
+  key: string;
+  name: string;
   hint?: string;
   required: boolean;
-  type?: string;
-  defaultName: string;
+  defaultValue?: string;
 };
 
 export type AiTypeStepProps = {

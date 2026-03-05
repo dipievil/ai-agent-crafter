@@ -13,7 +13,7 @@ import TemplateHeaderStep from "./wizard/steps/template-header-step";
 import TemplateBodyStep from "./wizard/steps/template-body-step";
 import ReviewStep from "./wizard/steps/review-step";
 import SummarySection from "./wizard/summary-wizard";
-import type { FileNameCustomField, FileSubtypeOption } from "./wizard/steps/ai-type-step.types";
+import type { FileNameSegmentField, FileSubtypeOption } from "./wizard/steps/ai-type-step.types";
 
 import {
   clearSelections,
@@ -22,16 +22,15 @@ import {
 } from "@/features/wizard/infra/wizard.storage.service";
 import { buildTemplateForm } from "@/features/wizard/infra/wizard.form-schema.service";
 import { buildTemplateMarkdown } from "@/features/wizard/infra/wizard.markdown-builder.service";
-import { normalizeFieldName } from "@/features/template-data.shared";
+import { normalizeFieldName, normalizeLettersOnly } from "@/features/template-data.shared";
 
 type FileNodeRaw = Record<string, unknown>;
 
-type FileNameCustomRaw = {
+type FileNameSegmentRaw = {
   name?: unknown;
   hint?: unknown;
-  type?: unknown;
   required?: unknown;
-  defaultName?: unknown;
+  defaultValue?: unknown;
 };
 
 function getFilesNode(toolId: string): Record<string, unknown> | undefined {
@@ -97,7 +96,7 @@ function getOutputFileTemplate(toolId: string, fileType: FileType, fileSubtypeIn
   return "";
 }
 
-function normalizeCustomToken(value: string): string {
+function normalizeFilenameToken(value: string): string {
   return value
     .trim()
     .toLowerCase()
@@ -105,146 +104,97 @@ function normalizeCustomToken(value: string): string {
     .replace(/[^a-z0-9_-]/g, "");
 }
 
-function getFileNameCustomField(toolId: string, fileType: FileType, fileSubtypeIndex: number): FileNameCustomField | undefined {
+function getFileNameSegments(toolId: string, fileType: FileType, fileSubtypeIndex: number): FileNameSegmentField[] {
   const selectedNode = getSelectedFileNode(toolId, fileType, fileSubtypeIndex);
   if (!selectedNode) {
-    return undefined;
+    return [];
   }
 
-  const customNode = selectedNode["custom"];
-  const customFields = Array.isArray(customNode)
-    ? customNode
-    : typeof customNode === "object" && customNode
-      ? [customNode]
+  const rawSegments = selectedNode["filename-segments"];
+  const segments = Array.isArray(rawSegments)
+    ? rawSegments
+    : typeof rawSegments === "object" && rawSegments
+      ? [rawSegments]
       : [];
 
-  const firstCustom = customFields.find((field): field is FileNameCustomRaw => Boolean(field) && typeof field === "object");
+  return segments
+    .filter((segment): segment is FileNameSegmentRaw => Boolean(segment) && typeof segment === "object")
+    .map((segment) => {
+      const name = typeof segment.name === "string" ? segment.name.trim() : "";
+      if (!name) {
+        return undefined;
+      }
 
-  if (!firstCustom || typeof firstCustom.name !== "string" || firstCustom.name.trim().length === 0) {
-    return undefined;
-  }
-
-  return {
-    label: firstCustom.name.trim(),
-    hint: typeof firstCustom.hint === "string" ? firstCustom.hint : undefined,
-    required: firstCustom.required !== false,
-    type: typeof firstCustom.type === "string" ? firstCustom.type : undefined,
-    defaultName: typeof firstCustom.defaultName === "string" ? firstCustom.defaultName : ""
-  };
+      return {
+        key: normalizeFieldName(name),
+        name,
+        hint: typeof segment.hint === "string" ? segment.hint : undefined,
+        required: segment.required === true,
+        defaultValue: typeof segment.defaultValue === "string" ? segment.defaultValue : undefined
+      };
+    })
+    .filter((segment): segment is FileNameSegmentField => Boolean(segment));
 }
 
-function getFileNameCustomFieldTranslationKey(
+function getFileNameSegmentTranslationKey(
   toolId: string,
   fileType: FileType,
   rawFieldName: string,
   leaf: "label" | "hint"
 ): string {
-  return `templates.${toolId}.${fileType}.custom.${normalizeFieldName(rawFieldName)}.${leaf}`;
+  return `templates.${toolId}.${fileType}.filename-segments.${normalizeFieldName(rawFieldName)}.${leaf}`;
 }
 
-function getTranslatedFileNameCustomField(
+function getTranslatedFileNameSegments(
   toolId: string,
   fileType: FileType,
   fileSubtypeIndex: number,
   resolveTranslation?: (key: string) => string | undefined
-): FileNameCustomField | undefined {
-  const customField = getFileNameCustomField(toolId, fileType, fileSubtypeIndex);
+): FileNameSegmentField[] {
+  const segments = getFileNameSegments(toolId, fileType, fileSubtypeIndex);
 
-  if (!customField || !resolveTranslation) {
-    return customField;
+  if (!resolveTranslation) {
+    return segments;
   }
 
-  const labelKey = getFileNameCustomFieldTranslationKey(toolId, fileType, customField.label, "label");
-  const hintKey = getFileNameCustomFieldTranslationKey(toolId, fileType, customField.label, "hint");
+  return segments.map((segment) => {
+    const labelKey = getFileNameSegmentTranslationKey(toolId, fileType, segment.name, "label");
+    const hintKey = getFileNameSegmentTranslationKey(toolId, fileType, segment.name, "hint");
 
-  const translatedLabel = resolveTranslation(labelKey);
-  const translatedHint = resolveTranslation(hintKey);
+    const translatedLabel = resolveTranslation(labelKey);
+    const translatedHint = resolveTranslation(hintKey);
 
-  return {
-    ...customField,
-    label: translatedLabel ?? customField.label,
-    hint: translatedHint ?? customField.hint
-  };
+    return {
+      ...segment,
+      name: translatedLabel ?? segment.name,
+      hint: translatedHint ?? segment.hint
+    };
+  });
 }
 
 function resolveOutputFileName(
   outputFileTemplate: string,
-  customField: FileNameCustomField | undefined,
-  customValue: string,
-  entityName: string
+  segments: FileNameSegmentField[],
+  segmentEffectiveValues: Record<string, string>
 ): string {
   if (!outputFileTemplate) {
     return "";
   }
 
-  if (!customField) {
+  if (segments.length === 0) {
     return outputFileTemplate;
   }
 
-  const value = resolveDynamicFileNameValue(customValue, customField, entityName);
-  const customToken = normalizeCustomToken(customField.label);
-  const customTypeToken = customField.type ? normalizeCustomToken(customField.type) : "";
-  let isTokenReplaced = false;
+  return outputFileTemplate.replace(/\{([^}]+)\}/g, (rawValue, tokenValue: string) => {
+    const normalizedToken = normalizeFilenameToken(tokenValue);
+    const segment = segments.find((item) => normalizeFilenameToken(item.name) === normalizedToken);
 
-  const resolvedFileName = outputFileTemplate.replace(/\{([^}]+)\}/g, (rawValue, tokenValue: string) => {
-    const normalizedToken = normalizeCustomToken(tokenValue);
-    if (normalizedToken === customToken || (customTypeToken && normalizedToken === customTypeToken)) {
-      isTokenReplaced = true;
-      return value;
+    if (!segment) {
+      return rawValue;
     }
 
-    return rawValue;
+    return (segmentEffectiveValues[segment.key] ?? "").trim();
   });
-
-  if (customField.type === "filenameprefix" && value && !isTokenReplaced) {
-    return `${value}.${resolvedFileName}`;
-  }
-
-  return resolvedFileName;
-}
-
-function resolveDefaultDynamicFileName(defaultName: string, entityName: string): string {
-  const normalizedDefaultName = normalizeCustomToken(defaultName);
-
-  if (normalizedDefaultName === "entityname") {
-    return entityName.trim();
-  }
-
-  return defaultName.trim();
-}
-
-function resolveDynamicFileNameValue(
-  customValue: string,
-  customField: FileNameCustomField | undefined,
-  entityName: string
-): string {
-  if (!customField) {
-    return customValue.trim();
-  }
-
-  const trimmedValue = customValue.trim();
-  if (!trimmedValue) {
-    return resolveDefaultDynamicFileName(customField.defaultName, entityName);
-  }
-
-  const normalizedDefaultName = normalizeCustomToken(customField.defaultName);
-  const normalizedCustomValue = normalizeCustomToken(trimmedValue);
-
-  if (normalizedDefaultName === "entityname" && normalizedCustomValue === "entityname") {
-    return entityName.trim();
-  }
-
-  return trimmedValue;
-}
-
-function getDefaultDynamicFileNameValue(
-  toolId: string,
-  fileType: FileType,
-  fileSubtypeIndex: number,
-  entityName: string
-): string {
-  const defaultName = getFileNameCustomField(toolId, fileType, fileSubtypeIndex)?.defaultName ?? "";
-  return resolveDefaultDynamicFileName(defaultName, entityName);
 }
 
 
@@ -310,7 +260,7 @@ export default function StepsWizard({
 
   const defaultToolId = "";
   const defaultFileSubtypeIndex = 0;
-  const defaultDynamicFileNameValue = "";
+  const defaultFilenameSegmentValues: Record<string, string> = {};
   const defaultEntityName = "";
   const defaultOutputFileName = "";
   const defaultDescription = "";
@@ -321,7 +271,7 @@ export default function StepsWizard({
     defaultType,
     defaultToolId,
     defaultFileSubtypeIndex,
-    defaultDynamicFileNameValue,
+    defaultFilenameSegmentValues,
     defaultEntityName,
     defaultOutputFileName,
     defaultDescription,
@@ -334,7 +284,9 @@ export default function StepsWizard({
 
   const [selectedToolId, setSelectedToolId] = useState<string>(storedSelections.toolId);
   const [selectedFileSubtypeIndex, setSelectedFileSubtypeIndex] = useState<number>(storedSelections.fileSubtypeIndex);
-  const [dynamicFileNameValue, setDynamicFileNameValue] = useState<string>(storedSelections.dynamicFileNameValue);
+  const [filenameSegmentValues, setFilenameSegmentValues] = useState<Record<string, string>>(
+    storedSelections.filenameSegmentValues
+  );
   const [entityName, setEntityName] = useState<string>(storedSelections.entityName);
   const [description, setDescription] = useState<string>(storedSelections.description);
   const [headerFormValues, setHeaderFormValues] = useState<Record<string, string | string[]>>(
@@ -379,9 +331,9 @@ export default function StepsWizard({
     return fileSubtypeOptions.find((option) => option.index === effectiveFileSubtypeIndex)?.label;
   }, [effectiveFileSubtypeIndex, fileSubtypeOptions]);
 
-  const customFileNameField = useMemo(
+  const filenameSegments = useMemo(
     () =>
-      getTranslatedFileNameCustomField(
+      getTranslatedFileNameSegments(
         effectiveSelectedToolId,
         selectedType,
         effectiveFileSubtypeIndex,
@@ -395,14 +347,102 @@ export default function StepsWizard({
     [effectiveFileSubtypeIndex, effectiveSelectedToolId, selectedType]
   );
 
-  const resolvedCustomFileNameValue = useMemo(
-    () => resolveDynamicFileNameValue(dynamicFileNameValue, customFileNameField, entityName),
-    [customFileNameField, dynamicFileNameValue, entityName]
+  const filenameSegmentDefaultValues = useMemo(() => {
+    if (!effectiveSelectedToolId || filenameSegments.length === 0) {
+      return {} as Record<string, string>;
+    }
+
+    const resolvedFieldValues = new Map<string, string>();
+
+    const header = buildTemplateForm(
+      effectiveSelectedToolId,
+      selectedType,
+      "header",
+      entityName,
+      description,
+      effectiveFileSubtypeIndex
+    );
+
+    const body = buildTemplateForm(
+      effectiveSelectedToolId,
+      selectedType,
+      "body",
+      entityName,
+      description,
+      effectiveFileSubtypeIndex
+    );
+
+    const allFields = [...header.section.fields, ...body.section.fields];
+
+    allFields.forEach((field) => {
+      const rawValue = field.section === "header" ? headerFormValues[field.name] : bodyFormValues[field.name];
+      const resolvedValue =
+        typeof rawValue === "string"
+          ? rawValue
+          : Array.isArray(rawValue)
+            ? rawValue.join("")
+            : (field.value ?? "");
+
+      const normalizedName = normalizeFieldName(field.name);
+      const normalizedSourceName = normalizeFieldName(field.sourceName ?? field.name);
+
+      resolvedFieldValues.set(normalizedName, resolvedValue);
+      resolvedFieldValues.set(normalizedSourceName, resolvedValue);
+    });
+
+    return Object.fromEntries(
+      filenameSegments.map((segment) => {
+        const defaultValueReference = (segment.defaultValue ?? "").trim();
+        const normalizedReference = normalizeFieldName(defaultValueReference);
+        const templateFieldValue = resolvedFieldValues.get(normalizedReference);
+
+        if (!defaultValueReference) {
+          return [segment.key, entityName.trim()];
+        }
+
+        if (normalizedReference === "entityname") {
+          return [segment.key, normalizeLettersOnly(entityName)];
+        }
+
+        if (templateFieldValue !== undefined) {
+          return [segment.key, normalizeLettersOnly(templateFieldValue)];
+        }
+
+        return [segment.key, defaultValueReference];
+      })
+    );
+  }, [
+    bodyFormValues,
+    description,
+    effectiveFileSubtypeIndex,
+    effectiveSelectedToolId,
+    entityName,
+    filenameSegments,
+    headerFormValues,
+    selectedType
+  ]);
+
+  const filenameSegmentEffectiveValues = useMemo(
+    () =>
+      Object.fromEntries(
+        filenameSegments.map((segment) => {
+          const typedValue = (filenameSegmentValues[segment.key] ?? "").trim();
+          const defaultValue = (filenameSegmentDefaultValues[segment.key] ?? "").trim();
+
+          return [segment.key, typedValue.length > 0 ? typedValue : defaultValue];
+        })
+      ),
+    [filenameSegmentDefaultValues, filenameSegmentValues, filenameSegments]
   );
 
   const outputFileName = useMemo(
-    () => resolveOutputFileName(outputFileTemplate, customFileNameField, dynamicFileNameValue, entityName),
-    [customFileNameField, dynamicFileNameValue, entityName, outputFileTemplate]
+    () =>
+      resolveOutputFileName(
+        outputFileTemplate,
+        filenameSegments,
+        filenameSegmentEffectiveValues
+      ),
+    [filenameSegmentEffectiveValues, filenameSegments, outputFileTemplate]
   );
 
   const isDownloadReady = useMemo(() => {
@@ -410,12 +450,12 @@ export default function StepsWizard({
       return false;
     }
 
-    if (!customFileNameField || !customFileNameField.required) {
-      return true;
-    }
+    const hasEmptyRequiredSegment = filenameSegments.some(
+      (segment) => segment.required && (filenameSegmentEffectiveValues[segment.key] ?? "").trim().length === 0
+    );
 
-    return resolvedCustomFileNameValue.length > 0;
-  }, [customFileNameField, outputFileName, resolvedCustomFileNameValue]);
+    return !hasEmptyRequiredSegment;
+  }, [filenameSegmentEffectiveValues, filenameSegments, outputFileName]);
 
   const fileHint = useMemo(
     () => getHint(effectiveSelectedToolId, selectedType, effectiveFileSubtypeIndex),
@@ -474,7 +514,7 @@ export default function StepsWizard({
     setSelectedType(fileType);
     setSelectedToolId(defaultToolId);
     setSelectedFileSubtypeIndex(defaultFileSubtypeIndex);
-    setDynamicFileNameValue(defaultDynamicFileNameValue);
+    setFilenameSegmentValues(defaultFilenameSegmentValues);
   }
 
   function handleToolChange(toolId: string) {
@@ -482,12 +522,19 @@ export default function StepsWizard({
 
     setSelectedToolId(toolId);
     setSelectedFileSubtypeIndex(nextSubtypeIndex);
-    setDynamicFileNameValue(getDefaultDynamicFileNameValue(toolId, selectedType, nextSubtypeIndex, entityName));
+    setFilenameSegmentValues(defaultFilenameSegmentValues);
   }
 
   function handleFileSubtypeChange(subtypeIndex: number) {
     setSelectedFileSubtypeIndex(subtypeIndex);
-    setDynamicFileNameValue(getDefaultDynamicFileNameValue(effectiveSelectedToolId, selectedType, subtypeIndex, entityName));
+    setFilenameSegmentValues(defaultFilenameSegmentValues);
+  }
+
+  function handleFilenameSegmentValueChange(segmentKey: string, value: string) {
+    setFilenameSegmentValues((currentValues) => ({
+      ...currentValues,
+      [segmentKey]: value
+    }));
   }
 
   function handleDownloadFile() {
@@ -516,7 +563,7 @@ export default function StepsWizard({
       selectedType,
       effectiveSelectedToolId,
       effectiveFileSubtypeIndex,
-      dynamicFileNameValue,
+      filenameSegmentValues,
       entityName,
       outputFileName,
       description,
@@ -527,7 +574,7 @@ export default function StepsWizard({
     selectedType,
     effectiveSelectedToolId,
     effectiveFileSubtypeIndex,
-    dynamicFileNameValue,
+    filenameSegmentValues,
     entityName,
     outputFileName,
     description,
@@ -540,7 +587,7 @@ export default function StepsWizard({
     setSelectedType(defaultType);
     setSelectedToolId(defaultToolId);
     setSelectedFileSubtypeIndex(defaultFileSubtypeIndex);
-    setDynamicFileNameValue(defaultDynamicFileNameValue);
+    setFilenameSegmentValues(defaultFilenameSegmentValues);
     setEntityName(defaultEntityName);
     setDescription(defaultDescription);
     setHeaderFormValues(defaultHeaderFormValues);
@@ -713,10 +760,10 @@ export default function StepsWizard({
 
           <ReviewStep
             markdown={markdownBuildResult.output.markdown}
-            customFileNameField={customFileNameField}
-            customFileNameValue={resolvedCustomFileNameValue}
+            filenameSegments={filenameSegments}
+            filenameSegmentValues={filenameSegmentEffectiveValues}
             outputFileNamePreview={outputFileName}
-            onCustomFileNameValueChange={setDynamicFileNameValue}
+            onFilenameSegmentValueChange={handleFilenameSegmentValueChange}
           />
 
           <NavbarWizard

@@ -10,159 +10,56 @@
           "output-file": ["copilot-instructions.md"],
           "hint": "This file contains the main instructions for the project. It can be used to provide detailed guidance and context for the project. You can use variables on the template to customize the instructions based on the repository name or other values.",
           "installation": "Create a subfolder on repository called \".github\" and put this instruction file.",
-          "template": {
-            "header" :[
-              {
-                "name": "description",
-                "formHint": "A short description of the project that will be used on the instructions template.",
-                "formInput": "short"
-              },
-              {
-                "name": "applyTo",
-                "formHint": "List the extensions files where to apply these instructions.",
-                "formInput": "comma-list"
-              }
-            ],
-            "body": [
-              {
-                "name": "mainInstructions",
-                "sectionName": "Copilot Instructions",
-                "sectionType": "main-section",
-                "formInput": "long",
-                "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
-                "required": true
-              },
-              {
-                "name": "agentBehavior",
-                "sectionType": "title"
-              }
-            ]
-          }
+          "template": "copilot.project-instructions"
         },
         {
           "name": "Context Instructions",
-          "output-file": "{filenameprefix}.instructions.md",
-          "hint":"This is a specific context instructions file. Use this if you want to separate the context instructions from the main instructions. If you use this, you need to set the \"Context\" custom field with the prefix of the file name, e.g., \"context\".",
-          "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions. You need a main file with the name \"copilot-instructions.md\".",          
-          "template-file": "templates/instructions/copilot-context-instructions.md",
-          "custom": [
+          "output-file": ["{Context}.instructions.md"],
+          "hint":"This is a specific context instructions file. Use this if you want to separate the context instructions from the main instructions. If you use this, you need to set the \"Context\" field with the prefix of the file name, e.g., \"context\".",
+          "installation": "Create a subfolder on repository called \".github/instructions\" and put the instructions. You need a main file with the name \"copilot-instructions.md\".",
+          "filename-segments": [
             {
               "name": "Context",
-              "required": false,
-              "type": "filenameprefix",
-              "defaultName": "entityName",
+              "defaultValue": "entityName",
               "hint": "Prefix of the file name that will contain the context instructions. Use this value instead of the default context instructions file."
             }
           ],
-          "template": {
-            "header" :[
-              {
-                "name": "description",
-                "formHint": "A short description of the project that will be used on the instructions template.",
-                "formInput": "short"
-              },
-              {
-                "name": "applyTo",
-                "formHint": "List the extensions files where to apply these instructions.",
-                "formInput": "comma-list"
-              }
-            ],
-            "body": [
-              {
-                "name": "mainInstructions",
-                "sectionName": "Copilot Instructions",
-                "sectionType": "main-section",
-                "formInput": "long",
-                "formHint": "The main instructions for the project. This section can be used on the instructions template to provide detailed guidance and context for the project.",
-                "required": true
-              },
-              {
-                "name": "agentBehavior",
-                "sectionType": "title"
-              },
-              {
-
-              }
-            ]
-          }        
+          "template": "copilot.context-instructions"    
         }
       ],
       "agent-instructions": {
         "name": "Agent",
-        "custom": [
+        "filename-segments": [
           {
             "name": "Context",
-            "required": false,
-            "type": "filenameprefix",
-            "defaultName": "entityName",
+            "defaultValue": "entityName",
             "hint": "Prefix of the file name to replace the agent name. Use this value instead of the default agent name."
           }
         ],
-        "template-file": "templates/agents/copilot-agent.md",
-        "output-file": ["{filenameprefix}.agent.md"],
+        "output-file": ["{Context}.agent.md"],
         "installation": "Create a subfolder on repository called \".github/agents\" and put the agent file.",
-        "template": {
-          "header" :[
-            {
-              "name": "name",              
-              "formInput": "short",
-              "type":"value-key"
-            },
-            {
-              "name": "description",
-              "formHint": "A short description of the agent that will be used on the agent template.",
-              "formInput": "short",
-              "type":"value-key"
-            },
-            {
-              "name": "argument-hint:",
-              "formHint": "The inputs this agent expects, e.g., \"a task to implement\" or \"a question to answer\".",
-              "formInput": "comma-list",
-              "type":"objects-key"
-            },
-            {
-              "name": "tools",
-              "formHint": "Specify the tools this agent can use. If not set, all enabled tools are allowed.",
-              "formInput": "list",
-              "type":"array-key",
-              "required": false
-            },
-            {
-              "name": "mcp-servers",
-              "formHint": "The MCPs online or local that only this agent will have access to. Must be in yml format.",
-              "formInput": "long",
-              "type":"value-key"              
-            }
-          ],
-          "body": [
-            {
-              "name": "role",
-              "sectionType": "main-section",
-              "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
-              "formInput": "long"
-            }
-          ]
-        }
+        "template": "copilot.agent"
       },
       "skills": {
         "name": "Skill",
-        "template-file": "templates/skills/copilot-skill.md",
         "output-file": ["SKILL.md"],
-        "installation": "Create a subfolder on repository called \".github/skills/[skill_name]/SKILL.md\" and put the skill file."
+        "hint": "A skill file for GitHub Copilot. This file can be used to provide a skill that the agent can use. ",
+        "installation": "Create a subfolder on repository called \".github/skills/[skill_name]/SKILL.md\" and put the skill file.",
+        "template": "skill.md"
+        
       },
       "prompts": {
         "title": "Prompt",
-        "custom": [
+        "filename-segments": [
           {
             "name": "Context",
-            "required": false,
-            "type": "filenameprefix",
+            "defaultValue": "entityName",
             "hint": "Prefix of the file name to replace the prompt name. Use this value instead of the default prompt name."
           }
         ],
-        "template-file": "templates/prompts/copilot-prompt.md",
-        "output-file": ["{name}.prompt.md", "{filenameprefix}.prompt.md"],
-        "installation": "Create a subfolder on repository called \".github/prompts/[prompt_name]/PROMPT.md\" and put the prompt file."
+        "output-file": ["{Context}.prompt.md"],
+        "installation": "Create a subfolder on repository called \".github/prompts/[prompt_name]/PROMPT.md\" and put the prompt file.",
+        "template": "copilot.prompt"
       }
     }
   },
@@ -172,15 +69,15 @@
     "files": {
       "specific-instructions": {
         "name": "Agent",
-        "template-file": "templates/agents/standard-agent.md",
         "output-file": ["AGENTS.md"],
-        "installation": "Check your tools documentation for installation instructions. Mostly is just put on the project root."
+        "installation": "Check your tools documentation for installation instructions. Mostly is just put on the project root.",
+        "template": "standard.specific-instructions"
       },
       "skills":{
         "name": "Skill",
-        "template-file": "templates/skills/skill.md",
         "output-file": ["SKILL.md"],
-        "installation": "Check your tools documentation for installation instructions. Mostly is just put on the project root."
+        "installation": "Check your tools documentation for installation instructions. Mostly is just put on the project root.",
+        "template": "skill.md"
       }
     }
   },
@@ -191,9 +88,9 @@
     "files": {
       "specific-instructions": {
         "title": "Repository Instructions",
-        "template-file": "templates/instructions/gemini-instructions.md",
         "output-file": ["GEMINI.md"],
-        "installation": "On Firebase Studio or Gemini CLI, put the instructions file in the root."
+        "installation": "On Firebase Studio or Gemini CLI, put the instructions file in the root.",
+        "template": "gemini.specific-instructions"
       }
     }
   },
@@ -204,9 +101,9 @@
     "files": {
       "agent-instructions": {
         "title": "Assistant",
-        "template-file": "chatgpt-agent.md",
         "output-file": ["chatgpt-assistant-instructions.md"],
-        "installation": "On your project using ChatGPT, go to Assistants page, click on Create and paste your file content on \"System instructions\" box."
+        "installation": "On your project using ChatGPT, go to Assistants page, click on Create and paste your file content on \"System instructions\" box.",
+        "template": "chatgpt.agent"
       }
     }
   },
@@ -217,9 +114,9 @@
     "files": {
       "specific-instructions": {
         "title": "Codex Instructions",
-        "template-file": "templates/instructions/codex-instructions.md",
         "output-file": ["codex-instructions.md"],
-        "installation": "On Codex, open Settings, on General, paste the file content on the \"Personal Instructions\" field."
+        "installation": "On Codex, open Settings, on General, paste the file content on the \"Personal Instructions\" field.",
+        "template": "codex.specific-instructions"
       }
     }
   },
@@ -233,46 +130,43 @@
         "name": "Agent main Context",
         "output-file": ["_context.md"],
         "installation": "On your Agent Zero instance, create a folder with your agent name and paste this file inside.",
-        "template":{
-          "body":[
-            {
-              "name": "description",
-              "sectionName": "Role",
-              "sectionType": "main-section",
-              "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
-              "formInput": "long"
-            },
-            {
-              "name": "actions",
-              "sectionType": "list-simple",
-              "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
-              "required": false,
-              "formInput": "list"
-            }
-          ]
-        }
+        "template":"agentzero.agent-context"
       },{
         "name": "Agent Main Role",
         "output-file": ["agent.system.main.role.md"],
         "installation": "On your Agent Zero instance, create a subfolder \"prompts\" on your agent folder with your agent name and paste this file inside.",
-        "template":{
-          "body":[
-            {
-              "name": "role",
-              "sectionType": "main-section",
-              "formHint": "Describe the role of the agent in second person. This is important to set the right context for the agent and guide its behavior. For example, \"You are a senior developer with expertise in React and Node.js\" or \"You are a helpful assistant that answers questions about the project\".",
-              "formInput": "long"
-            },
-            {
-              "name": "actions",
-              "sectionType": "list-simple",
-              "formHint": "Describe the actions the agent can perform in second person. This is important to set your agent more specific. For example, \"You can create and manage tasks in the project management tool\" or \"You can provide detailed explanations about the codebase\".",
-              "required": false,
-              "formInput": "list"
-            }
-          ]
-        }
-      }]
+        "template":"agentzero.agent-main"
+      },{
+        "name": "Agent Communication",
+        "output-file": ["agent.system.communication.md"],
+        "installation": "On your Agent Zero instance, create a subfolder \"prompts\" on your agent folder with your agent name and paste this file inside.",
+        "template":"agentzero-communication.prompt"
+      }],
+      "prompts":{
+        "name": "Agent Prompt",
+        "filename-segments": [
+          {
+            "name": "Context",
+            "required": true,
+            "defaultValue": "entityName",
+            "hint": "Prefix of the file name to replace the prompt name. Use this value instead of the default prompt name."
+          },{
+            "name": "AgentName",
+            "required": true,
+            "defaultValue": "your-agent-name",
+            "hint": "Prefix of the file name to replace the prompt name. Use this value instead of the default prompt name."            
+          }
+        ],
+        "output-file": ["agent.system.{AgentName}.{Context}.md"],
+        "installation": "On your Agent Zero instance, place this file on your agent prompts folder (\"agents/<agent_profile>/prompts/\") and put the prompt file inside.",
+        "template": "copilot.prompt"
+      },
+      "skills": {
+        "name": "Skill",
+        "output-file": ["SKILL.md"],
+        "installation": "On your Agent Zero instance, create a subfolder with the skill name on your agent skills folder or for global use on \"usr/skills\" and put the skill file inside.",
+        "template":"skill.md"
+      }
     }
   },
   "warp": {

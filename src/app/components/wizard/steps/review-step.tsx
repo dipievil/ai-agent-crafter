@@ -5,13 +5,12 @@ import type { ReviewStepProps } from "./review-step.types";
 export default function ReviewStep({ 
   markdown,
   installHint,
-  customFileNameField,
-  customFileNameValue,
+  filenameSegments,
+  filenameSegmentValues,
   outputFileNamePreview,
-  onCustomFileNameValueChange
+  onFilenameSegmentValueChange
 }: ReviewStepProps) {
   const t = useTranslations("Step7");
-  const customFileNameHintId = customFileNameField ? "custom-file-name-hint-review" : undefined;
 
   return (
     <>
@@ -32,33 +31,42 @@ export default function ReviewStep({
           className="w-full rounded-lg border border-black/20 bg-transparent px-3 py-2 text-base text-foreground outline-none focus-visible:ring-2 focus-visible:ring-foreground/50 dark:border-white/25"
         />
 
-      {customFileNameField ? (
+      {filenameSegments.length > 0 ? (
         <div className="mt-4 flex flex-col gap-3 text-left">
-          <label htmlFor="custom-file-name-review" className="text-sm font-medium text-foreground">
-            {customFileNameField.label}:
-          </label>
+          {filenameSegments.map((segment) => {
+            const hintId = segment.hint ? `filename-segment-hint-review-${segment.key}` : undefined;
+            const inputId = `filename-segment-review-${segment.key}`;
 
-          <div className="flex h-14 items-center rounded-2xl border-2 border-black/80 px-4 dark:border-white/70">
-            <input
-              id="custom-file-name-review"
-              name="customFileNameReview"
-              type="text"
-              value={customFileNameValue}
-              onChange={(event) => onCustomFileNameValueChange(event.target.value)}
-              required={customFileNameField.required}
-              aria-required={customFileNameField.required}
-              aria-describedby={customFileNameField.hint ? customFileNameHintId : undefined}
-              className="h-full min-w-0 flex-1 bg-transparent text-1xl font-semibold text-foreground outline-none"
-            />
-          </div>
+            return (
+              <div key={segment.key} className="flex flex-col gap-3 text-left">
+                <label htmlFor={inputId} className="text-sm font-medium text-foreground">
+                  {segment.name}:
+                </label>
+
+                <div className="flex h-14 items-center rounded-2xl border-2 border-black/80 px-4 dark:border-white/70">
+                  <input
+                    id={inputId}
+                    name={inputId}
+                    type="text"
+                    value={filenameSegmentValues[segment.key] ?? ""}
+                    onChange={(event) => onFilenameSegmentValueChange(segment.key, event.target.value)}
+                    required={segment.required}
+                    aria-required={segment.required}
+                    aria-describedby={hintId}
+                    className="h-full min-w-0 flex-1 bg-transparent text-1xl font-semibold text-foreground outline-none"
+                  />
+                </div>
+
+                {segment.hint ? (
+                  <p id={hintId} className="text-sm text-foreground/80">
+                    {segment.hint}
+                  </p>
+                ) : null}
+              </div>
+            );
+          })}
 
           <p className="text-base font-semibold text-foreground/60">{outputFileNamePreview}</p>
-
-          {customFileNameField.hint ? (
-            <p id={customFileNameHintId} className="text-sm text-foreground/80">
-              {customFileNameField.hint}
-            </p>
-          ) : null}
         </div>
       ) : null}
 

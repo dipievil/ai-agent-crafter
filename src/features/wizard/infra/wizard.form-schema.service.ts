@@ -8,10 +8,10 @@ import type {
   TemplateFormSchemaService
 } from "./wizard.form-schema.types";
 import { 
-  getTemplateFromNode,
   getTemplateSectionFields,
   normalizeFieldName,
   resolveTemplateFileNodes,
+  resolveTemplateFromNode,
   withParseWarning
 } from "../../template-data.shared";
 
@@ -80,7 +80,14 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
 
     const hasNoHeaderTemplate =
       filesection === "header" &&
-      fileNodes.every((node) => !this.getTemplateFromNode(node));
+      fileNodes.every((node, index) =>
+        this.templateHasNoHeader(
+          node,
+          aitype,
+          filetype,
+          index
+        )
+      );
 
     const message = hasNoHeaderTemplate ? DEFAULT_NO_HEADER_MESSAGE : undefined;
 
@@ -131,15 +138,9 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
       warnings: ParseWarning[];
     }
   ) {
-    const template = this.getTemplateFromNode(node);
+    const templatePath = `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template`;
+    const template = resolveTemplateFromNode(node, context.filetype, context.warnings, templatePath);
     if (!template) {
-      context.warnings.push(
-        withParseWarning(
-          `${context.aitype}.files.${context.filetype}[${context.nodeIndex}].template`,
-          "Template definition was not found for this file node",
-          "template-not-found"
-        )
-      );
       return [];
     }
 
@@ -261,12 +262,25 @@ class JsonTemplateFormSchemaService implements TemplateFormSchemaService {
     return undefined;
   }
 
-  private getTemplateFromNode(node: {
-    name?: unknown;
-    title?: unknown;
-    template?: unknown;
-  }) {
-    return getTemplateFromNode(node);
+  private templateHasNoHeader(
+    node: FileNodeRaw,
+    aitype: string,
+    filetype: FileType,
+    nodeIndex: number
+  ): boolean {
+    const template = resolveTemplateFromNode(
+      node,
+      filetype,
+      [],
+      `${aitype}.files.${filetype}[${nodeIndex}].template`
+    );
+
+    if (!template) {
+      return false;
+    }
+
+    const headerSection = template.header;
+    return !Array.isArray(headerSection) || headerSection.length === 0;
   }
 }
 

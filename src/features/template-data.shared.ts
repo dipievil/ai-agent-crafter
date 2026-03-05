@@ -1,4 +1,8 @@
 import aiToolsData from "@/data/ai-tools.json";
+import agentTemplateData from "@/data/agent.template.json";
+import instructionsTemplateData from "@/data/instructions.template.json";
+import promtpsTemplateData from "@/data/promtps.template.json";
+import skillsTemplateData from "@/data/skills.template.json";
 import type { 
   TemplateSection,
   TemplateFieldRaw,
@@ -12,6 +16,15 @@ type ToolNodeRaw = {
   files?: unknown;
 };
 
+type TemplatesByFileType = Record<FileType, Record<string, unknown>>;
+
+const templatesByFileType: TemplatesByFileType = {
+  "agent-instructions": agentTemplateData as Record<string, unknown>,
+  "specific-instructions": instructionsTemplateData as Record<string, unknown>,
+  prompts: promtpsTemplateData as Record<string, unknown>,
+  skills: skillsTemplateData as Record<string, unknown>
+};
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
 }
@@ -21,6 +34,14 @@ export function normalizeFieldName(value: string): string {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/[^a-zA-Z0-9-_]/g, "")
+    .toLowerCase();
+}
+
+export function normalizeLettersOnly(value: string): string {
+  return value
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-zA-Z]/g, "")
     .toLowerCase();
 }
 
@@ -99,12 +120,31 @@ export function resolveTemplateFileNodes(
   return [];
 }
 
-export function getTemplateFromNode(node: FileNodeRaw): TemplateRaw | undefined {
-  if (!isRecord(node.template)) {
+export function resolveTemplateFromNode(
+  node: FileNodeRaw,
+  filetype: FileType,
+  warnings: ParseWarning[],
+  path: string
+): TemplateRaw | undefined {
+  const templateId = typeof node.template === "string" ? node.template.trim() : "";
+  if (!templateId) {
+    warnings.push(withParseWarning(path, "Template definition was not found for this file node", "template-not-found"));
     return undefined;
   }
 
-  return node.template as TemplateRaw;
+  const templatesRegistry = templatesByFileType[filetype];
+  if (!isRecord(templatesRegistry)) {
+    warnings.push(withParseWarning(path, `Template registry for file type '${filetype}' was not found`, "template-not-found"));
+    return undefined;
+  }
+
+  const templateNode = templatesRegistry[templateId];
+  if (!isRecord(templateNode)) {
+    warnings.push(withParseWarning(path, `Template '${templateId}' was not found for file type '${filetype}'`, "template-not-found"));
+    return undefined;
+  }
+
+  return templateNode as TemplateRaw;
 }
 
 export function getTemplateSectionFields(

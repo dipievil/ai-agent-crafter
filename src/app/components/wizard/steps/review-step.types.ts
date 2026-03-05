@@ -1,10 +1,10 @@
-import type { FileNameCustomField } from "./ai-type-step.types";
+import type { FileNameSegmentField } from "./ai-type-step.types";
 
 export type ReviewStepProps = {
   markdown: string;
   installHint?: string;
-  customFileNameField?: FileNameCustomField;
-  customFileNameValue: string;
+  filenameSegments: FileNameSegmentField[];
+  filenameSegmentValues: Record<string, string>;
   outputFileNamePreview: string;
-  onCustomFileNameValueChange: (value: string) => void;
+  onFilenameSegmentValueChange: (segmentKey: string, value: string) => void;
 };

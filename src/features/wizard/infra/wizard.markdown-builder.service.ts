@@ -5,10 +5,10 @@ import type {
 } from "./wizard.markdown-builder.types";
 
 import {
-  getTemplateFromNode,
   getTemplateSectionFields,
   normalizeFieldName,
-  resolveTemplateFileNodes
+  resolveTemplateFileNodes,
+  resolveTemplateFromNode
 } from "../../template-data.shared";
 
 import type {   
@@ -165,15 +165,9 @@ class JsonWizardMarkdownBuilderService implements WizardMarkdownBuilderService {
     }
 
     return fileNodes.flatMap((node, nodeIndex) => {
-      const template = getTemplateFromNode(node);
+      const templatePath = `${input.aitype}.files.${input.filetype}[${nodeIndex}].template`;
+      const template = resolveTemplateFromNode(node, input.filetype, parseWarnings, templatePath);
       if (!template) {
-        warnings.push(
-          withWarning(
-            "template-not-found",
-            "Template definition was not found for this file node",
-            `${input.aitype}.files.${input.filetype}[${nodeIndex}].template`
-          )
-        );
         return [];
       }
 

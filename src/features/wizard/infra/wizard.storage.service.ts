@@ -29,7 +29,7 @@ class LocalStorageWizardService implements WizardStorageService {
     storedFileType: FileType,
     storedToolId: string,
     storedFileSubtypeIndex: number,
-    storedDynamicFileNameValue: string,
+    storedFilenameSegmentValues: Record<string, string>,
     storedEntityName: string,
     storedOutputFileName: string,
     storedDescription: string,
@@ -43,7 +43,7 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType: storedFileType,
         toolId: storedToolId,
         fileSubtypeIndex: storedFileSubtypeIndex,
-        dynamicFileNameValue: storedDynamicFileNameValue,
+        filenameSegmentValues: storedFilenameSegmentValues,
         entityName: storedEntityName,
         outputFileName: storedOutputFileName,
         description: storedDescription,
@@ -60,7 +60,7 @@ class LocalStorageWizardService implements WizardStorageService {
           fileType: storedFileType,
           toolId: storedToolId,
           fileSubtypeIndex: storedFileSubtypeIndex,
-          dynamicFileNameValue: storedDynamicFileNameValue,
+          filenameSegmentValues: storedFilenameSegmentValues,
           entityName: storedEntityName,
           outputFileName: storedOutputFileName,
           description: storedDescription,
@@ -73,7 +73,7 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType?: unknown;
         toolId?: unknown;
         fileSubtypeIndex?: unknown;
-        dynamicFileNameValue?: unknown;
+        filenameSegmentValues?: unknown;
         entityName?: unknown;
         outputFileName?: unknown;
         description?: unknown;
@@ -98,10 +98,12 @@ class LocalStorageWizardService implements WizardStorageService {
         ? parsed.fileSubtypeIndex
         : storedFileSubtypeIndex;
 
-      const dynamicFileNameValue =
-        typeof parsed.dynamicFileNameValue === "string"
-          ? parsed.dynamicFileNameValue
-          : storedDynamicFileNameValue;
+      const filenameSegmentValues =
+        parsed.filenameSegmentValues &&
+        typeof parsed.filenameSegmentValues === "object" &&
+        !Array.isArray(parsed.filenameSegmentValues)
+          ? this.normalizeStringRecord(parsed.filenameSegmentValues)
+          : storedFilenameSegmentValues;
 
       const description = typeof parsed.description === "string" ? parsed.description : storedDescription;
 
@@ -123,7 +125,7 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType,
         toolId,
         fileSubtypeIndex,
-        dynamicFileNameValue,
+        filenameSegmentValues,
         entityName,
         outputFileName,
         description,
@@ -136,7 +138,7 @@ class LocalStorageWizardService implements WizardStorageService {
         fileType: storedFileType,
         toolId: storedToolId,
         fileSubtypeIndex: storedFileSubtypeIndex,
-        dynamicFileNameValue: storedDynamicFileNameValue,
+        filenameSegmentValues: storedFilenameSegmentValues,
         entityName: storedEntityName,
         outputFileName: storedOutputFileName,
         description: storedDescription,
@@ -150,7 +152,7 @@ class LocalStorageWizardService implements WizardStorageService {
     fileType: FileType,
     toolId: string,
     fileSubtypeIndex: number,
-    dynamicFileNameValue: string,
+    filenameSegmentValues: Record<string, string>,
     entityName: string,
     outputFileName: string,
     description: string,
@@ -168,7 +170,7 @@ class LocalStorageWizardService implements WizardStorageService {
           fileType,
           toolId,
           fileSubtypeIndex,
-          dynamicFileNameValue,
+          filenameSegmentValues,
           entityName,
           outputFileName,
           description,
@@ -183,7 +185,7 @@ class LocalStorageWizardService implements WizardStorageService {
           fileType,
           toolId,
           fileSubtypeIndex,
-          dynamicFileNameValue,
+          filenameSegmentValues,
           entityName,
           outputFileName,
           description,
@@ -215,6 +217,18 @@ class LocalStorageWizardService implements WizardStorageService {
     return Object.fromEntries(entries);
   }
 
+  private normalizeStringRecord(value: unknown): Record<string, string> {
+    if (!value || typeof value !== "object" || Array.isArray(value)) {
+      return {};
+    }
+
+    const entries = Object.entries(value as Record<string, unknown>)
+      .filter(([, entryValue]) => typeof entryValue === "string")
+      .map(([key, entryValue]) => [key, entryValue as string] as const);
+
+    return Object.fromEntries(entries);
+  }
+
   clearSelections(): void {
     if (typeof window === "undefined") {
       return;
@@ -230,7 +244,7 @@ export function readStoredSelections(
   defaultFileType: FileType,
   defaultToolId: string,
   defaultFileSubtypeIndex: number,
-  defaultDynamicFileNameValue: string,
+  defaultFilenameSegmentValues: Record<string, string>,
   defaultEntityName: string,
   defaultOutputFileName: string,
   defaultDescription: string,
@@ -242,7 +256,7 @@ export function readStoredSelections(
     defaultFileType,
     defaultToolId,
     defaultFileSubtypeIndex,
-    defaultDynamicFileNameValue,
+    defaultFilenameSegmentValues,
     defaultEntityName,
     defaultOutputFileName,
     defaultDescription,
@@ -256,7 +270,7 @@ export function persistSelections(
   fileType: FileType,
   toolId: string,
   fileSubtypeIndex: number,
-  dynamicFileNameValue: string,
+  filenameSegmentValues: Record<string, string>,
   entityName: string,
   outputFileName: string,
   description: string,
@@ -267,7 +281,7 @@ export function persistSelections(
     fileType,
     toolId,
     fileSubtypeIndex,
-    dynamicFileNameValue,
+    filenameSegmentValues,
     entityName,
     outputFileName,
     description,
